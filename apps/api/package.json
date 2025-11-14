@@ -1,0 +1,32 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build needed for API'",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint --write .",
+    "lint:check": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "check": "biome check --write .",
+    "check:ci": "biome check .",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev --x-remote-bindings",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "cf-typegen": "wrangler types --env-interface BaseEnv"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.71",
+    "@types/node": "^22.19.1",
+    "typescript": "^5.9.3",
+    "vitest": "~3.2.4",
+    "wrangler": "^4.47.0"
+  },
+  "dependencies": {
+    "@repo/core": "workspace:*",
+    "hono": "^4.10.6",
+    "zod": "^3.25.76"
+  }
+}

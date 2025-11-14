@@ -1,0 +1,42 @@
+{
+  "name": "@repo/email",
+  "version": "1.0.0",
+  "description": "Email service with Resend and React Email templates",
+  "exports": {
+    "./email/setup": {
+      "default": "./dist/email/setup.js",
+      "types": "./dist/email/setup.d.ts"
+    },
+    "./email/types": {
+      "default": "./dist/email/types.js",
+      "types": "./dist/email/types.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json --outDir ./dist && tsc-alias",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint --write .",
+    "lint:check": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "check": "biome check --write .",
+    "check:ci": "biome check ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.22.0",
+  "dependencies": {
+    "@react-email/components": "^1.0.1",
+    "react": "^19.2.0",
+    "react-email": "^5.0.4",
+    "resend": "^6.4.2",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251113.0",
+    "@types/react": "^19.2.4",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3"
+  }
+}

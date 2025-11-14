@@ -1,0 +1,33 @@
+{
+  "name": "onlydonations",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "setup": "pnpm i && pnpm turbo build",
+    "build": "turbo build",
+    "build:core": "turbo build --filter=core",
+    "build:email": "turbo build --filter=email",
+    "dev:web": "turbo dev --filter=web",
+    "dev:api": "turbo dev --filter=api",
+    "deploy:web": "turbo build --filter=web && pnpm --filter web deploy",
+    "deploy:api": "turbo build --filter=api && pnpm --filter api deploy",
+    "format": "turbo format",
+    "format:check": "turbo format:check",
+    "lint": "turbo lint",
+    "lint:check": "turbo lint:check",
+    "check": "turbo check",
+    "check:ci": "turbo check:ci",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.22.0",
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.5",
+    "@types/node": "^22.19.1",
+    "turbo": "^2.6.1",
+    "typescript": "^5.9.3"
+  }
+}

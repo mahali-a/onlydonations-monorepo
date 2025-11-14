@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: onlydonations-postgres
+    environment:
+      POSTGRES_USER: onlydonations_user
+      POSTGRES_PASSWORD: onlydonations_password
+      POSTGRES_DB: onlydonations
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U onlydonations_user -d onlydonations"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - onlydonations
+
+  # PgBouncer for connection pooling
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: onlydonations-pgbouncer
+    environment:
+      DATABASE_URL: "postgresql://onlydonations_user:onlydonations_password@postgres:5432/onlydonations"
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 20
+    ports:
+      - "6432:5432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - onlydonations
+
+networks:
+  onlydonations:
+
+volumes:
+  postgres_data:
