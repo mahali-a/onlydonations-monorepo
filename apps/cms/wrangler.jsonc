@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
   "name": "onlydonations-cms",
-  "compatibility_date": "2025-08-15",
+  "compatibility_date": "2025-09-02",
   "compatibility_flags": [
     // Enable Node.js API
     // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#nodejs-compatibility-flag
@@ -33,7 +33,8 @@
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "assets","preview_bucket_name": "assets",
+      "bucket_name": "assets",
+      "preview_bucket_name": "assets",
     },
     // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
     // {
@@ -47,7 +48,6 @@
       "enabled": true
     }
   },
-
   // Here's how to configure an additional environment
   // It can be deployed with `CLOUDFLARE_ENV=staging pnpm run deploy`
   // "env": {

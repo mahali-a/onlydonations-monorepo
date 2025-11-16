@@ -72,7 +72,8 @@ export const Settings: GlobalConfig = {
           type: 'array',
           label: 'Withdrawal/Transfer Fees',
           admin: {
-            description: 'Fees charged when fundraiser withdraws funds (payment processor fees only)',
+            description:
+              'Fees charged when fundraiser withdraws funds (payment processor fees only)',
           },
           dbName: 'withdrawal_fees',
           fields: [
