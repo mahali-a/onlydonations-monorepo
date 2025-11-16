@@ -58,7 +58,7 @@ export default buildConfig({
       generateTitle: ({ doc }) => `${doc?.title || 'Page'}`,
       generateDescription: ({ doc }) => doc?.description || '',
       generateImage: ({ doc }) => doc?.seo?.ogImage,
-      generateURL: ({ doc, collectionSlug }) => `https://yoursite.com/${doc?.slug}`,
+      generateURL: ({ doc }) => `https://onlydonations.com/${doc?.slug ?? ''}`,
     }),
   ],
 })

@@ -1,4 +1,4 @@
-import type { Page } from "@repo/types";
+import type { Page, Setting } from "@repo/types";
 import { createServerFn } from "@tanstack/react-start";
 import { cmsClient } from "@/lib/cms-client";
 import { logger } from "@/lib/logger";
@@ -35,3 +35,30 @@ export const getPageBySlug = createServerFn({ method: "GET" })
       return null;
     }
   });
+
+/**
+ * Retrieves global settings from Payload CMS.
+ *
+ * @returns The settings global document
+ *
+ * @example
+ * ```typescript
+ * const settings = await getSettings();
+ * console.log(settings.siteName, settings.navigation);
+ * ```
+ */
+export const getSettings = createServerFn({ method: "GET" }).handler(
+  async (): Promise<Setting | null> => {
+    try {
+      const settings = await cmsClient.findGlobal({
+        slug: "settings",
+        depth: 2,
+      });
+
+      return settings || null;
+    } catch (error) {
+      logger.error("Failed to fetch settings:", error);
+      return null;
+    }
+  },
+);

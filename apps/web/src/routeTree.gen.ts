@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestSettingsRouteImport } from './routes/test-settings'
 import { Route as OnboardingRouteRouteImport } from './routes/onboarding/route'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -41,6 +42,11 @@ import { Route as OOrgIdCampaignsCampaignIdIndexRouteImport } from './routes/o.$
 import { Route as OOrgIdCampaignsCampaignIdSharingRouteImport } from './routes/o.$orgId/campaigns.$campaignId/sharing'
 import { Route as OOrgIdCampaignsCampaignIdSettingsRouteImport } from './routes/o.$orgId/campaigns.$campaignId/settings'
 
+const TestSettingsRoute = TestSettingsRouteImport.update({
+  id: '/test-settings',
+  path: '/test-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRouteRoute = OnboardingRouteRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -206,6 +212,7 @@ const OOrgIdCampaignsCampaignIdSettingsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/test-settings': typeof TestSettingsRoute
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
   '/magic-code': typeof PublicMagicCodeRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/test-settings': typeof TestSettingsRoute
   '/login': typeof PublicLoginRoute
   '/magic-code': typeof PublicMagicCodeRoute
   '/f/$slug': typeof FSlugRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_public': typeof PublicRouteRouteWithChildren
   '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/test-settings': typeof TestSettingsRoute
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
   '/_public/magic-code': typeof PublicMagicCodeRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/onboarding'
+    | '/test-settings'
     | '/o/$orgId'
     | '/login'
     | '/magic-code'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/test-settings'
     | '/login'
     | '/magic-code'
     | '/f/$slug'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_public'
     | '/onboarding'
+    | '/test-settings'
     | '/o/$orgId'
     | '/_public/login'
     | '/_public/magic-code'
@@ -393,6 +405,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
+  TestSettingsRoute: typeof TestSettingsRoute
   OOrgIdRouteRoute: typeof OOrgIdRouteRouteWithChildren
   FSlugRoute: typeof FSlugRoute
   R2SplatRoute: typeof R2SplatRoute
@@ -403,6 +416,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-settings': {
+      id: '/test-settings'
+      path: '/test-settings'
+      fullPath: '/test-settings'
+      preLoaderRoute: typeof TestSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -745,6 +765,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PublicRouteRoute: PublicRouteRouteWithChildren,
   OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
+  TestSettingsRoute: TestSettingsRoute,
   OOrgIdRouteRoute: OOrgIdRouteRouteWithChildren,
   FSlugRoute: FSlugRoute,
   R2SplatRoute: R2SplatRoute,

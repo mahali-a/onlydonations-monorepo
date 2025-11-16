@@ -1,4 +1,5 @@
 import type { SelectMember, SelectOrganization, SelectUser } from "@repo/core/database/types";
+import type { Setting } from "@repo/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
@@ -9,6 +10,7 @@ import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme";
 import { logger } from "@/lib/logger";
+import { getSettings } from "@/server/functions/cms";
 import appCss from "@/styles.css?url";
 import { seo } from "@/utils/seo";
 
@@ -18,9 +20,16 @@ interface RouterContext {
   queryClient: QueryClient;
   organization?: (SelectOrganization & { members?: SelectMember[] }) | null;
   user?: SelectUser | null;
+  settings?: Setting | null;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
+  beforeLoad: async () => {
+    const settings = await getSettings();
+    return {
+      settings,
+    };
+  },
   head: () => ({
     meta: [
       {

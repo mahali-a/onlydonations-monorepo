@@ -1,5 +1,6 @@
 import { PayloadSDK } from "@payloadcms/sdk";
 import type { Config } from "@repo/types/payload";
+import { env } from "cloudflare:workers";
 
 /**
  * Payload CMS SDK client instance.
@@ -19,7 +20,7 @@ import type { Config } from "@repo/types/payload";
  * ```
  */
 export const cmsClient = new PayloadSDK<Config>({
-  baseURL: import.meta.env.CMS_API_URL || "http://localhost:3001/api",
+  baseURL: env.CMS_API_URL || "http://localhost:3005/api",
   baseInit: {
     credentials: "include",
   },
