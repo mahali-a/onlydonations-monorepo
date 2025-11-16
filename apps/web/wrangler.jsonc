@@ -47,5 +47,11 @@
 				"queue": "email-queue"
 			}
 		]
-	}
+	},
+	"kv_namespaces": [
+		{
+			"binding": "KV_CACHE",
+			"id": "a7009c46d5fe45f8bf26666b29949418",
+		}
+	]
 }
