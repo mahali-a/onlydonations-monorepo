@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { avatarSchema } from "../account-schemas";
 import { updateUserAvatarOnServer } from "../server";
 
-interface AvatarFormProps {
+type AvatarFormProps = {
   currentAvatar?: string;
   userName?: string;
-}
+};
 
 export function AvatarForm({ currentAvatar, userName = "User" }: AvatarFormProps) {
   const router = useRouter();

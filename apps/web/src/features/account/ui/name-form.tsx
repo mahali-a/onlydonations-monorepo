@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { nameSchema } from "../account-schemas";
 import { updateUserNameOnServer } from "../server";
 
-interface NameFormProps {
+type NameFormProps = {
   defaultName?: string;
-}
+};
 
 export function NameForm({ defaultName = "" }: NameFormProps) {
   const router = useRouter();

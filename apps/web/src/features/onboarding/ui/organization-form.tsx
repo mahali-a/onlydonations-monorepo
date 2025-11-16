@@ -4,18 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-interface OrganizationFormData {
+type OrganizationFormData = {
   organizationName: string;
-}
+};
 
 const defaultOrganizationForm: OrganizationFormData = {
   organizationName: "",
 };
 
-interface OrganizationFormProps {
+type OrganizationFormProps = {
   onSubmit: (values: OrganizationFormData) => Promise<{ error?: string } | null>;
   defaultName?: string;
-}
+};
 
 export function OrganizationForm({ onSubmit, defaultName }: OrganizationFormProps) {
   const form = useForm({

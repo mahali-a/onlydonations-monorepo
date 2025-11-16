@@ -329,12 +329,12 @@ async function _seedCategories() {
 
 type CampaignStatus = "DRAFT" | "UNDER_REVIEW" | "ACTIVE" | "COMPLETED" | "REJECTED" | "CANCELLED";
 
-interface StatusConfig {
+type StatusConfig = {
   weight: number;
   minAge: number; // in days
   maxAge: number;
   donationRange: [number, number];
-}
+};
 
 const statusConfigs: Record<CampaignStatus, StatusConfig> = {
   DRAFT: { weight: 0.1, minAge: 0, maxAge: 7, donationRange: [0, 0] },

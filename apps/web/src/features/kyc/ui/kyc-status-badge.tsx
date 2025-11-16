@@ -2,10 +2,10 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { KycStatus } from "../kyc-types";
 
-interface KycStatusBadgeProps {
+type KycStatusBadgeProps = {
   status: KycStatus;
   className?: string;
-}
+};
 
 const STATUS_STYLES: Record<KycStatus, string> = {
   PENDING: "border-amber-200 bg-amber-50 text-amber-700",

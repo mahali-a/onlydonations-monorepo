@@ -1,6 +1,6 @@
-interface WelcomeHeaderProps {
+type WelcomeHeaderProps = {
   userName?: string | null;
-}
+};
 
 export function WelcomeHeader({ userName }: WelcomeHeaderProps) {
   const displayName = userName ? userName.split(" ")[0] : "there";

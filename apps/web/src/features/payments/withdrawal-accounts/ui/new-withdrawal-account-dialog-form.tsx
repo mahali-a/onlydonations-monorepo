@@ -31,13 +31,13 @@ type NewWithdrawalAccountDialogProps = {
   ghipssBanks: PaystackBank[];
 };
 
-interface FormData {
+type FormData = {
   accountType: "mobile_money" | "ghipss" | "";
   accountNumber: string;
   bankCode: string;
   mobileMoneyProvider: string;
   name: string;
-}
+};
 
 const defaultFormValues: FormData = {
   accountType: "",

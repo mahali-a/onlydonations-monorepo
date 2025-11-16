@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { emailSchema } from "../account-schemas";
 import { updateUserEmailOnServer } from "../server";
 
-interface EmailFormProps {
+type EmailFormProps = {
   defaultEmail?: string;
-}
+};
 
 export function EmailForm({ defaultEmail = "" }: EmailFormProps) {
   const router = useRouter();

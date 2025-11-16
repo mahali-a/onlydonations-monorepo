@@ -31,10 +31,10 @@ type WithdrawalFormProps = {
   currency: string;
 };
 
-interface FormData {
+type FormData = {
   payoutAccountId: string;
   amount: number;
-}
+};
 
 const defaultFormValues: FormData = {
   payoutAccountId: "",

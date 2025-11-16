@@ -3,9 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { formatDonationAmount } from "@/features/dashboard/dashboard-utils";
 import type { CampaignPerformance as CampaignPerformanceType } from "@/features/dashboard/dashboard-models";
 
-interface CampaignPerformanceProps {
+type CampaignPerformanceProps = {
   campaigns: CampaignPerformanceType[];
-}
+};
 
 export function CampaignPerformance({ campaigns }: CampaignPerformanceProps) {
   return (

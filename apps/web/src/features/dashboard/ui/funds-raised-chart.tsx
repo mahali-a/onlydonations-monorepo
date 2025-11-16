@@ -5,9 +5,9 @@ import { Card } from "@/components/ui/card";
 import { formatMetricValue } from "@/lib/utils/dashboard-utils";
 import type { ChartDataPoint } from "@/features/dashboard/dashboard-models";
 
-interface FundsRaisedChartProps {
+type FundsRaisedChartProps = {
   data: ChartDataPoint[];
-}
+};
 
 function formatDateForChart(dateStr: string): string {
   const date = new Date(dateStr);

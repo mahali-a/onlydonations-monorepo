@@ -14,10 +14,10 @@ export const generateLoginHoneypotFromServer = createServerFn({ method: "GET" })
   },
 );
 
-interface SendLoginOtpOnServerInput {
+type SendLoginOtpOnServerInput = {
   email: string;
   honeypotData: Record<string, string>;
-}
+};
 
 export const sendLoginOtpOnServer = createServerFn({ method: "POST" })
   .inputValidator((data: SendLoginOtpOnServerInput) => data)
@@ -37,7 +37,7 @@ export const sendLoginOtpOnServer = createServerFn({ method: "POST" })
 
       const auth = getAuth();
       // @ts-expect-error - Better Auth type inference limitation
-      const result = await auth.api.sendOtp({
+      const result = await auth.api.sendVerificationOTP({
         body: {
           email: data.email,
           type: "sign-in",

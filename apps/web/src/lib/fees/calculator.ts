@@ -59,6 +59,15 @@ export function calculateFees(
   };
 }
 
-export function formatCurrency(amount: number, currency: string = "$"): string {
-  return `${currency}${amount.toFixed(2)}`;
+export function formatCurrency(amount: number, currency: string = "GHS"): string {
+  const symbols: Record<string, string> = {
+    GHS: "₵",
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    NGN: "₦",
+  };
+
+  const symbol = symbols[currency] || currency;
+  return `${symbol}${amount.toFixed(2)}`;
 }

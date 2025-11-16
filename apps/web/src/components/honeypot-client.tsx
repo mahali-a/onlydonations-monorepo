@@ -5,7 +5,7 @@ type HoneypotContextType = Partial<HoneypotInputProps>;
 
 const HoneypotContext = React.createContext<HoneypotContextType>({});
 
-export interface HoneypotInputsProps {
+export type HoneypotInputsProps = {
   label?: string;
   nonce?: string;
   /**
@@ -13,7 +13,7 @@ export interface HoneypotInputsProps {
    * @default "__honeypot_inputs"
    */
   className?: string;
-}
+};
 
 export function HoneypotInputs({
   label = "Please leave this field blank",
@@ -57,9 +57,9 @@ export function HoneypotInputs({
   );
 }
 
-export interface HoneypotProviderProps extends HoneypotContextType {
+export type HoneypotProviderProps = HoneypotContextType & {
   children: React.ReactNode;
-}
+};
 
 export function HoneypotProvider({ children, ...context }: HoneypotProviderProps) {
   return <HoneypotContext.Provider value={context}>{children}</HoneypotContext.Provider>;

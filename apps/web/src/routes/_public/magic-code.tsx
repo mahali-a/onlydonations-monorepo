@@ -18,9 +18,9 @@ export const Route = createFileRoute("/_public/magic-code")({
   component: MagicCodePage,
 });
 
-interface MagicCodeForm {
+type MagicCodeForm = {
   code: string;
-}
+};
 
 const defaultMagicCodeForm: MagicCodeForm = {
   code: "",

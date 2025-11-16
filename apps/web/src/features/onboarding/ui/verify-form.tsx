@@ -6,19 +6,19 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
-interface VerifyFormData {
+type VerifyFormData = {
   code: string;
-}
+};
 
 const defaultVerifyForm: VerifyFormData = {
   code: "",
 };
 
-interface VerifyFormProps {
+type VerifyFormProps = {
   phoneNumber: string;
   onSubmit: (values: VerifyFormData) => Promise<{ error?: string } | null>;
   onResend: () => Promise<void>;
-}
+};
 
 export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps) {
   const [timeLeft, setTimeLeft] = useState(600);

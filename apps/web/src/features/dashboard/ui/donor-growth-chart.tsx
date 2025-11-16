@@ -13,9 +13,9 @@ import { Card } from "@/components/ui/card";
 import { calculatePercentageChange, formatChartDate } from "@/features/dashboard/dashboard-utils";
 import type { ChartDataPoint } from "@/features/dashboard/dashboard-models";
 
-interface DonorGrowthChartProps {
+type DonorGrowthChartProps = {
   data: ChartDataPoint[];
-}
+};
 
 export function DonorGrowthChart({ data }: DonorGrowthChartProps) {
   if (!data || data.length === 0) {

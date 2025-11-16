@@ -25,12 +25,12 @@ import { seo } from "@/utils/seo";
 
 const rootLogger = logger.createChildLogger("root");
 
-interface RouterContext {
+type RouterContext = {
   queryClient: QueryClient;
   organization?: (SelectOrganization & { members?: SelectMember[] }) | null;
   user?: SelectUser | null;
   settings?: Setting | null;
-}
+};
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
@@ -60,8 +60,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       ...seo({
         title: loaderData?.settings?.siteName ?? "",
         description: loaderData?.settings?.siteDescription ?? "",
-        ...(loaderData?.settings?.meta &&
-        loaderData.settings.meta.image &&
+        ...(loaderData?.settings?.meta?.image &&
         typeof loaderData.settings.meta.image !== "number" &&
         "url" in loaderData.settings.meta.image
           ? {

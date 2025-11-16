@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-interface ProfileFormData {
+type ProfileFormData = {
   firstName: string;
   lastName: string;
   subscribeToUpdates: boolean;
-}
+};
 
 const defaultProfileForm: ProfileFormData = {
   firstName: "",
@@ -17,9 +17,9 @@ const defaultProfileForm: ProfileFormData = {
   subscribeToUpdates: false,
 };
 
-interface ProfileFormProps {
+type ProfileFormProps = {
   onSubmit: (values: ProfileFormData) => Promise<{ error?: string } | null>;
-}
+};
 
 export function ProfileForm({ onSubmit }: ProfileFormProps) {
   const form = useForm({

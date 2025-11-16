@@ -22,9 +22,9 @@ export const Route = createFileRoute("/_public/login")({
   component: LoginPage,
 });
 
-interface LoginForm {
+type LoginForm = {
   email: string;
-}
+};
 
 const defaultLoginForm: LoginForm = {
   email: "",

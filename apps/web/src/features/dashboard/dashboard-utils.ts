@@ -26,7 +26,7 @@ export function formatMetricValue(value: number, type: "currency" | "number" = "
 }
 
 export function formatCurrency(amount: number, currency: string = "GHS"): string {
-  const formatter = new Intl.NumberFormat("en-US", {
+  const formatter = new Intl.NumberFormat("en-GH", {
     style: "currency",
     currency,
     minimumFractionDigits: 0,

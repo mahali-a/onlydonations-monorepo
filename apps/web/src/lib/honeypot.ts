@@ -1,6 +1,6 @@
 import { decrypt, encrypt, randomString } from "./crypto";
 
-export interface HoneypotInputProps {
+export type HoneypotInputProps = {
 	/**
 	 * The name expected to be used by the honeypot input field.
 	 */
@@ -13,9 +13,9 @@ export interface HoneypotInputProps {
 	 * The encrypted value of the current timestamp.
 	 */
 	encryptedValidFrom: string;
-}
+};
 
-export interface HoneypotConfig {
+export type HoneypotConfig = {
 	/**
 	 * Enable randomization of the name field name, this way the honeypot field
 	 * name will be different for each request.
@@ -33,7 +33,7 @@ export interface HoneypotConfig {
 	 * The seed used for the encryption of the valid from timestamp.
 	 */
 	encryptionSeed?: string;
-}
+};
 
 /**
  * The error thrown when the Honeypot fails, meaning some automated bot filled

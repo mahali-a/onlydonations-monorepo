@@ -13,7 +13,7 @@ import type {
   ChartDataPoint,
 } from "./dashboard-models";
 
-interface DashboardProps {
+type DashboardProps = {
   user?: { name: string | null } | null;
   allTimeStats: DashboardStats | null;
   currentMonthTotal: number;
@@ -21,7 +21,7 @@ interface DashboardProps {
   recentDonations: RecentDonation[];
   topCampaigns: CampaignPerformanceType[];
   chartData: ChartDataPoint[];
-}
+};
 
 export function Dashboard({
   user,

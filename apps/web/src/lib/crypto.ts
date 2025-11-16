@@ -92,7 +92,7 @@ export async function decrypt(encryptedValue: string, seed: string): Promise<str
 
 		const decoder = new TextDecoder();
 		return decoder.decode(decrypted);
-	} catch (error) {
+	} catch (_error) {
 		// Decryption failed
 		return null;
 	}

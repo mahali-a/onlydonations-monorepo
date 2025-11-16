@@ -2,9 +2,9 @@ import { FundsRaisedChart } from "./funds-raised-chart";
 import { DonorGrowthChart } from "./donor-growth-chart";
 import type { ChartDataPoint } from "@/features/dashboard/dashboard-models";
 
-interface ChartsWrapperProps {
+type ChartsWrapperProps = {
   chartData: ChartDataPoint[];
-}
+};
 
 export function ChartsWrapper({ chartData }: ChartsWrapperProps) {
   return (

@@ -1,8 +1,8 @@
 type LogLevel = "debug" | "info" | "warn" | "error";
 
-interface LogMetadata {
+type LogMetadata = {
   [key: string]: unknown;
-}
+};
 
 class Logger {
   private context?: string;

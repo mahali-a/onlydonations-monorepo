@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { deleteSessionOnServer } from "../server";
 
-interface Session {
+type Session = {
   id: string;
   token: string;
   ipAddress: string | null | undefined;
@@ -14,12 +14,12 @@ interface Session {
   updatedAt: Date;
   expiresAt: Date;
   isCurrent: boolean;
-}
+};
 
-interface SecuritySectionProps {
+type SecuritySectionProps = {
   sessions: Session[];
   loginMethod: string;
-}
+};
 
 function formatLastActive(updatedAt: Date): string {
   const now = new Date();

@@ -4,17 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-interface PhoneFormData {
+type PhoneFormData = {
   phoneNumber: string;
-}
+};
 
 const defaultPhoneForm: PhoneFormData = {
   phoneNumber: "",
 };
 
-interface PhoneFormProps {
+type PhoneFormProps = {
   onSubmit: (values: PhoneFormData) => Promise<{ error?: string } | null>;
-}
+};
 
 export function PhoneForm({ onSubmit }: PhoneFormProps) {
   const form = useForm({

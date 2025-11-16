@@ -1,6 +1,7 @@
 import { FinancialMetrics } from "@/features/payments/insights/ui/financial-metrics";
 import { useDonationMetrics } from "../hooks/use-donation-metrics";
 import type { DonationStats } from "../donations-models";
+import { formatCurrency } from "@/lib/money";
 
 type DonationStatsProps = {
   stats: DonationStats | null;
@@ -23,7 +24,7 @@ export function DonationStatsCard({ stats }: DonationStatsProps) {
       value: stats.topDonor.isAnonymous ? "Anonymous" : stats.topDonor.name || "Unknown",
       change: 0,
       metric: "topDonor",
-      trendMessage: `Contributed GHS ${(stats.topDonor.totalContribution / 100).toFixed(2)}`,
+      trendMessage: `Contributed ${formatCurrency(stats.topDonor.totalContribution, "GHS")}`,
     });
   }
 

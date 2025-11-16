@@ -2,9 +2,9 @@ import { Card } from "@/components/ui/card";
 import { formatDashboardDate, formatDonationAmount } from "@/features/dashboard/dashboard-utils";
 import type { RecentDonation } from "@/features/dashboard/dashboard-models";
 
-interface RecentActivityProps {
+type RecentActivityProps = {
   donations: RecentDonation[];
-}
+};
 
 export function RecentActivity({ donations }: RecentActivityProps) {
   return (

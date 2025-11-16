@@ -1,4 +1,5 @@
 import type { DonationStats } from "../donations-models";
+import { formatCurrency } from "@/lib/money";
 
 type MetricItem = {
   title: string;
@@ -18,7 +19,7 @@ const calculatePercentageChange = (current: number, previous: number): number =>
 
 const formatMetricValue = (value: number, type: "currency" | "count" = "count"): string => {
   if (type === "currency") {
-    return `GHS ${(value / 100).toFixed(2)}`;
+    return formatCurrency(value, "GHS");
   }
   return value.toString();
 };
@@ -44,7 +45,7 @@ export function useDonationMetrics(stats: DonationStats | null): MetricItem[] {
       },
       {
         title: "Average Donation",
-        value: "GHS 0.00",
+        value: formatCurrency(0, "GHS"),
         change: 0,
         isIncrease: false,
         metric: "average",
@@ -52,7 +53,7 @@ export function useDonationMetrics(stats: DonationStats | null): MetricItem[] {
       },
       {
         title: "Total Raised",
-        value: "GHS 0.00",
+        value: formatCurrency(0, "GHS"),
         change: 0,
         isIncrease: false,
         metric: "total",
