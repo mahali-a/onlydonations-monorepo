@@ -12,7 +12,7 @@ export function RecipientsFilters({ search, onSearchChange }: RecipientsFiltersP
       <div className="flex w-full md:flex-1">
         <div className="relative flex-1">
           <div className="pointer-events-none absolute top-0 bottom-0 left-3 z-10 flex items-center gap-0.5 text-gray-9">
-            <Search className="h-4 w-4 text-gray-500" />
+            <Search className="h-4 w-4 text-muted-foreground" />
           </div>
           <Input
             className="rounded-lg pl-10"

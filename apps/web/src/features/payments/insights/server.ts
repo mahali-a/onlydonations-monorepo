@@ -1,11 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { authMiddleware } from "@/core/middleware/auth";
-import { insightsLoader } from "./insights-loaders";
+import { authMiddleware } from "@/server/middleware/auth";
+import { retrieveFinancialInsightsFromServer as insightsLoaderUtil } from "./insights-loaders";
 
-export { insightsLoader } from "./insights-loaders";
-
-export const getFinancialInsights = createServerFn({ method: "GET" })
+export const retrieveFinancialInsightsFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .inputValidator(
     z.object({
@@ -15,5 +13,5 @@ export const getFinancialInsights = createServerFn({ method: "GET" })
     }),
   )
   .handler(async ({ data }) => {
-    return await insightsLoader(data.organizationId, data.page, data.limit);
+    return await insightsLoaderUtil(data.organizationId, data.page, data.limit);
   });

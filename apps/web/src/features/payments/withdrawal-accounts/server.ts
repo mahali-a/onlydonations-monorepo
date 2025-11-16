@@ -1,7 +1,7 @@
 export {
-  createWithdrawalAccount,
-  deleteWithdrawalAccount,
-  resolveAccountNumber,
+  createWithdrawalAccountOnServer,
+  deleteWithdrawalAccountOnServer,
+  resolvePaystackAccountNumberOnServer,
 } from "./withdrawal-accounts-actions";
 
-export { getWithdrawalAccountsData } from "./withdrawal-accounts-loaders";
+export { retrieveWithdrawalAccountsFromServer } from "./withdrawal-accounts-loaders";

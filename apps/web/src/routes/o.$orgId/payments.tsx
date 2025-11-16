@@ -3,13 +3,14 @@ import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
 import PaymentsLayout from "@/features/payments/layout/payments-layout";
-import { getPaymentLayoutMetrics } from "@/features/payments/layout/server";
+import { retrievePaymentLayoutMetricsFromServer } from "@/features/payments/layout/server";
 
-const paymentLayoutMetricsQueryOptions = (orgId: string) => queryOptions({
-  queryKey: ['payment-layout-metrics', orgId],
-  queryFn: () => getPaymentLayoutMetrics({ data: { organizationId: orgId } }),
-  staleTime: ms('5 minutes'),
-});
+const paymentLayoutMetricsQueryOptions = (orgId: string) =>
+  queryOptions({
+    queryKey: ["payment-layout-metrics", orgId],
+    queryFn: () => retrievePaymentLayoutMetricsFromServer({ data: { organizationId: orgId } }),
+    staleTime: ms("5 minutes"),
+  });
 
 export const Route = createFileRoute("/o/$orgId/payments")({
   component: RouteComponent,
@@ -31,7 +32,9 @@ function RouteComponent() {
     throw new Error("Organization context is required");
   }
 
-  const { data: { financialStats } } = useSuspenseQuery(paymentLayoutMetricsQueryOptions(organization.id));
+  const {
+    data: { financialStats },
+  } = useSuspenseQuery(paymentLayoutMetricsQueryOptions(organization.id));
 
   return <PaymentsLayout organization={organization} financialStats={financialStats} />;
 }

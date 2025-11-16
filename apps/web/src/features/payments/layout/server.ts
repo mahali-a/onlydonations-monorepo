@@ -1,1 +1,1 @@
-export { getPaymentLayoutMetrics } from "./payments-layout-loaders";
+export { retrievePaymentLayoutMetricsFromServer } from "./payments-layout-loaders";

@@ -1,7 +1,8 @@
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, useParams } from "@tanstack/react-router";
 import { Building2, CheckCircle2, Loader2, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useAsyncDebouncer } from "@tanstack/react-pacer";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import type { PaystackBank } from "@/lib/paystack/types";
 import { cn } from "@/lib/utils";
-import { createWithdrawalAccount, resolveAccountNumber } from "../server";
+import { createWithdrawalAccountOnServer, resolvePaystackAccountNumberOnServer } from "../server";
 
 type NewWithdrawalAccountDialogProps = {
   mobileMoneyBanks: PaystackBank[];
@@ -51,16 +52,18 @@ export function NewWithdrawalAccountDialog({
   ghipssBanks,
 }: NewWithdrawalAccountDialogProps) {
   const [open, setOpen] = useState(false);
-  const [isResolving, setIsResolving] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const router = useRouter();
+
+  const params = useParams({ from: "/o/$orgId/finance" });
 
   const form = useForm({
     defaultValues: defaultFormValues,
     validators: {
       onSubmitAsync: async ({ value }) => {
-        const result = await createWithdrawalAccount({
+        const result = await createWithdrawalAccountOnServer({
           data: {
+            organizationId: params.orgId,
             accountType: value.accountType as "mobile_money" | "ghipss",
             accountNumber: value.accountNumber,
             name: value.name,
@@ -76,7 +79,6 @@ export function NewWithdrawalAccountDialog({
           };
         }
 
-        // Close dialog and reset form
         setOpen(false);
         setIsVerified(false);
         router.invalidate();
@@ -86,24 +88,11 @@ export function NewWithdrawalAccountDialog({
     },
   });
 
-  // Reset form when dialog closes
-  useEffect(() => {
-    if (!open) {
-      form.reset();
-      setIsResolving(false);
-      setIsVerified(false);
-    }
-  }, [open, form]);
-
-  const handleResolveAccount = async (accountNumber: string, bankOrProviderCode: string) => {
-    if (!accountNumber || !bankOrProviderCode || accountNumber.length < 5) return;
-
-    setIsResolving(true);
-    setIsVerified(false);
-
-    try {
-      const result = await resolveAccountNumber({
+  const resolveAccountDebounced = useAsyncDebouncer(
+    async (accountNumber: string, bankOrProviderCode: string) => {
+      const result = await resolvePaystackAccountNumberOnServer({
         data: {
+          organizationId: params.orgId,
           accountNumber,
           bankCode: bankOrProviderCode,
         },
@@ -117,12 +106,18 @@ export function NewWithdrawalAccountDialog({
       const resolvedName = result.data.account_name;
       form.setFieldValue("name", resolvedName);
       setIsVerified(true);
-    } catch (_error) {
+    },
+    { wait: 500 },
+    (state) => ({ isExecuting: state.isExecuting }),
+  );
+
+  useEffect(() => {
+    if (!open) {
+      form.reset();
       setIsVerified(false);
-    } finally {
-      setIsResolving(false);
+      resolveAccountDebounced.cancel();
     }
-  };
+  }, [open, form, resolveAccountDebounced]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -396,10 +391,10 @@ export function NewWithdrawalAccountDialog({
                                 field.state.value.length >= 5 &&
                                 field.state.meta.errors.length === 0
                               ) {
-                                // Delay to allow user to finish typing
-                                setTimeout(() => {
-                                  handleResolveAccount(field.state.value, bankOrProviderCode);
-                                }, 300);
+                                resolveAccountDebounced.maybeExecute(
+                                  field.state.value,
+                                  bankOrProviderCode,
+                                );
                               }
                             }}
                             className={cn(
@@ -407,12 +402,12 @@ export function NewWithdrawalAccountDialog({
                               field.state.meta.errors.length > 0 && "border-destructive",
                             )}
                           />
-                          {isResolving && (
+                          {resolveAccountDebounced.state.isExecuting && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
                               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                             </div>
                           )}
-                          {isVerified && !isResolving && (
+                          {isVerified && !resolveAccountDebounced.state.isExecuting && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
                               <CheckCircle2 className="h-4 w-4 text-green-600" />
                             </div>

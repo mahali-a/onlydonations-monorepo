@@ -1,13 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { getUserOrganizations } from "@/core/functions/organizations";
-import { checkOnboardingStatus } from "@/features/onboarding/server";
+import { retrieveUserOrganizationsFromServer } from "@/server/functions/organizations";
+import { getIsOnboardingCompleteFromServer } from "@/features/onboarding/server";
 import { logger } from "@/lib/logger";
 
-const appRouterLogger = logger.child("app-router");
+const appRouterLogger = logger.createChildLogger("app-router");
 
 export const Route = createFileRoute("/app/")({
   loader: async () => {
-    const { requiredStep } = await checkOnboardingStatus();
+    const { requiredStep } = await getIsOnboardingCompleteFromServer();
 
     if (requiredStep) {
       throw redirect({
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/app/")({
     }
 
     try {
-      const { organizations } = await getUserOrganizations();
+      const { organizations } = await retrieveUserOrganizationsFromServer();
 
       if (organizations && organizations.length > 0) {
         const firstOrg = organizations[0];

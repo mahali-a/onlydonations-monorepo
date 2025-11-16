@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { emailSchema } from "../account-schemas";
-import { updateEmail } from "../server";
+import { updateUserEmailOnServer } from "../server";
 
 interface EmailFormProps {
   defaultEmail?: string;
@@ -23,7 +23,7 @@ export function EmailForm({ defaultEmail = "" }: EmailFormProps) {
         const formData = new FormData();
         formData.append("email", value.email);
 
-        const result = await updateEmail({ data: formData });
+        const result = await updateUserEmailOnServer({ data: formData });
 
         if (result?.error) {
           return {

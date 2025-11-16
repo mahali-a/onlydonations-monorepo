@@ -3,13 +3,14 @@ import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { WithdrawalAccountsComponent } from "@/features/payments/withdrawal-accounts";
-import { getWithdrawalAccountsData } from "@/features/payments/withdrawal-accounts/server";
+import { retrieveWithdrawalAccountsFromServer } from "@/features/payments/withdrawal-accounts/server";
 
-const withdrawalAccountsQueryOptions = (orgId: string) => queryOptions({
-  queryKey: ['withdrawal-accounts', orgId],
-  queryFn: () => getWithdrawalAccountsData({ data: { orgId } }),
-  staleTime: ms('5 minutes'),
-});
+const withdrawalAccountsQueryOptions = (orgId: string) =>
+  queryOptions({
+    queryKey: ["withdrawal-accounts", orgId],
+    queryFn: () => retrieveWithdrawalAccountsFromServer({ data: { orgId } }),
+    staleTime: ms("5 minutes"),
+  });
 
 export const Route = createFileRoute("/o/$orgId/payments/withdrawal-accounts")({
   component: WithdrawalAccounts,

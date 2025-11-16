@@ -1,49 +1,41 @@
 import { relations, sql } from "drizzle-orm";
-import { check, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { auth_user } from "../auth-schema";
 import { paymentTransaction } from "./payment-transaction.schema";
 
 const createId = () => nanoid(10);
 
-export const refund = pgTable(
-  "refund",
-  {
-    id: text("id")
-      .$defaultFn(() => createId())
-      .primaryKey(),
-    donationId: text("donation_id").notNull(),
-    transactionId: text("transaction_id")
-      .notNull()
-      .references(() => paymentTransaction.id),
+export const refund = sqliteTable("refund", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  donationId: text("donation_id").notNull(),
+  transactionId: text("transaction_id")
+    .notNull()
+    .references(() => paymentTransaction.id),
 
-    amount: integer("amount").notNull(),
-    reason: text("reason").notNull(),
+  amount: integer("amount").notNull(),
+  reason: text("reason").notNull(),
 
-    processor: text("processor").notNull(),
-    processorRefundId: text("processor_refund_id"),
+  processor: text("processor").notNull(),
+  processorRefundId: text("processor_refund_id"),
 
-    status: text("status", {
-      enum: ["PENDING", "SUCCESS", "FAILED"],
-    })
-      .notNull()
-      .default("PENDING"),
+  status: text("status").notNull().default("PENDING"),
 
-    initiatedBy: text("initiated_by"),
-    processedAt: timestamp("processed_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
-  },
-  (table) => ({
-    amountCheck: check(
-      "refund_amount_check",
-      sql`${table.amount} > 0 AND ${table.amount} <= 500000000`,
-    ),
-  }),
-);
+  initiatedBy: text("initiated_by"),
+  processedAt: integer("processed_at", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => new Date()),
+});
+
+export const refundDonationIdIdx = index("refund_donation_id_idx").on(refund.donationId);
+export const refundTransactionIdIdx = index("refund_transaction_id_idx").on(refund.transactionId);
+export const refundStatusIdx = index("refund_status_idx").on(refund.status);
+export const refundProcessorIdx = index("refund_processor_idx").on(refund.processor);
 
 export const refundRelations = relations(refund, ({ one }) => ({
   transaction: one(paymentTransaction, {

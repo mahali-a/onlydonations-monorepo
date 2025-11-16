@@ -28,7 +28,7 @@ export type PaystackChargeData = {
   metadata?: Record<string, any>;
 };
 
-export type PaystackDisputeData = PaystackChargeData & {
+type PaystackDisputeData = PaystackChargeData & {
   dispute?: {
     id: number;
     amount: number;
@@ -39,7 +39,7 @@ export type PaystackDisputeData = PaystackChargeData & {
   };
 };
 
-export type PaystackRefundData = PaystackChargeData & {
+type PaystackRefundData = PaystackChargeData & {
   refund?: {
     id: number;
     amount: number;
@@ -202,10 +202,10 @@ export type ListTransactionsData = PaystackChargeData[];
 
 export type InitiateTransferParams = {
   source: "balance";
-  amount: number; // In minor units (pesewas for GHS, kobo for NGN)
-  recipient: string; // recipient_code from withdrawal account
-  reference: string; // Unique transaction reference
-  reason?: string; // Transfer description
+  amount: number;
+  recipient: string;
+  reference: string;
+  reason?: string;
   currency?: "NGN" | "GHS" | "KES" | "ZAR";
 };
 
@@ -224,5 +224,5 @@ export type TransferData = {
   updatedAt: string;
   transferred_at: string | null;
   fee_charged?: number;
-  fees_breakdown?: any;
+  fees_breakdown?: Record<string, unknown>;
 };

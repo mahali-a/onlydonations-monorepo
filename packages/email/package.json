@@ -10,6 +10,18 @@
     "./email/types": {
       "default": "./dist/email/types.js",
       "types": "./dist/email/types.d.ts"
+    },
+    "./email/queue": {
+      "default": "./dist/email/queue.js",
+      "types": "./dist/email/queue.d.ts"
+    },
+    "./email/registry": {
+      "default": "./dist/email/registry.js",
+      "types": "./dist/email/registry.d.ts"
+    },
+    "./email/schema": {
+      "default": "./dist/email/schema.js",
+      "types": "./dist/email/schema.d.ts"
     }
   },
   "scripts": {
@@ -28,14 +40,14 @@
   "packageManager": "pnpm@10.22.0",
   "dependencies": {
     "@react-email/components": "^1.0.1",
+    "nanoid": "^5.1.6",
     "react": "^19.2.0",
-    "react-email": "^5.0.4",
     "resend": "^6.4.2",
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251113.0",
-    "@types/react": "^19.2.4",
+    "@cloudflare/workers-types": "^4.20251115.0",
+    "@types/react": "^19.2.5",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   }

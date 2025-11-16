@@ -3,26 +3,30 @@ import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { SecuritySection } from "@/features/security";
-import { getLoginMethod, getSessions } from "@/features/security/server";
+import {
+  retrieveLoginMethodFromServer,
+  retrieveSessionsFromServer,
+} from "@/features/security/server";
+import { promiseHash } from "@/utils/promise-hash";
 
 const sessionsQueryOptions = queryOptions({
-  queryKey: ['sessions'],
-  queryFn: () => getSessions(),
-  staleTime: ms('2 minutes'),
+  queryKey: ["sessions"],
+  queryFn: () => retrieveSessionsFromServer(),
+  staleTime: ms("2 minutes"),
 });
 
 const loginMethodQueryOptions = queryOptions({
-  queryKey: ['login-method'],
-  queryFn: () => getLoginMethod(),
-  staleTime: ms('30 minutes'),
+  queryKey: ["login-method"],
+  queryFn: () => retrieveLoginMethodFromServer(),
+  staleTime: ms("30 minutes"),
 });
 
 export const Route = createFileRoute("/o/$orgId/account/security")({
   loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(sessionsQueryOptions),
-      context.queryClient.ensureQueryData(loginMethodQueryOptions),
-    ]);
+    await promiseHash({
+      sessions: context.queryClient.ensureQueryData(sessionsQueryOptions),
+      loginMethod: context.queryClient.ensureQueryData(loginMethodQueryOptions),
+    });
   },
   component: SecuritySettings,
 });

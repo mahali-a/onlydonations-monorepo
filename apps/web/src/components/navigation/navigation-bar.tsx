@@ -54,7 +54,6 @@ export function NavigationBar() {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo and Brand */}
           <Link to="/" className="group flex items-center space-x-3 no-underline">
             <div className="flex flex-col">
               <span className="text-lg lg:text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/80 transition-all duration-300">
@@ -66,7 +65,6 @@ export function NavigationBar() {
             </div>
           </Link>
 
-          {/* Auth Button - Desktop */}
           <div className="hidden lg:block">
             {session ? (
               <AccountDialog>
@@ -88,7 +86,6 @@ export function NavigationBar() {
             )}
           </div>
 
-          {/* Mobile Menu Button + Theme Toggle */}
           <div className="lg:hidden flex items-center space-x-2">
             <ThemeToggle variant="ghost" align="end" />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -115,7 +112,6 @@ export function NavigationBar() {
                   </SheetDescription>
                 </SheetHeader>
 
-                {/* Mobile Auth */}
                 <div className="pt-4 border-t border-border/50">
                   {session ? (
                     <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent/30">

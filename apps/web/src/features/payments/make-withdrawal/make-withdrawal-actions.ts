@@ -1,29 +1,31 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { logger } from "@/lib/logger";
 import { paystackService } from "@/lib/paystack";
-import { financialInsightsModel } from "../models/financial-insights-model";
-import { paymentTransactionModel } from "../models/payment-transaction-model";
-import { withdrawalAccountModel } from "../models/withdrawal-account-model";
+import {
+  retrieveTotalRaisedFromDatabaseByOrganization,
+  retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus,
+  savePaymentTransactionToDatabase,
+  updatePaymentTransactionInDatabase,
+  retrieveWithdrawalAccountFromDatabaseById,
+} from "../payments-models";
 import { requestWithdrawalSchema } from "./make-withdrawal-schemas";
+import { promiseHash } from "@/utils/promise-hash";
 
-const makeWithdrawalLogger = logger.child("make-withdrawal-actions");
+const makeWithdrawalLogger = logger.createChildLogger("make-withdrawal-actions");
 
-export const requestWithdrawal = createServerFn({ method: "POST" })
+export const createWithdrawalRequestOnServer = createServerFn({ method: "POST" })
   .inputValidator(requestWithdrawalSchema)
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
-    // @ts-expect-error - Type not inferred
-    const organizationId = context.session?.session?.activeOrganizationId;
-    if (!organizationId) {
-      throw new Error("No active organization");
-    }
+    const { organizationId, payoutAccountId, amount, currency } = data;
 
-    const { payoutAccountId, amount, currency } = data;
+    await requireOrganizationAccess(organizationId, context.user.id);
 
-    makeWithdrawalLogger.info("request_withdrawal.start", {
+    makeWithdrawalLogger.error("request_withdrawal.start", {
       organizationId,
       payoutAccountId,
       amount,
@@ -31,7 +33,7 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
     });
 
     try {
-      const withdrawalAccount = await withdrawalAccountModel.findById(
+      const withdrawalAccount = await retrieveWithdrawalAccountFromDatabaseById(
         payoutAccountId,
         organizationId,
       );
@@ -49,14 +51,18 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
 
       const totalAmount = amountInMinorUnits + transferFee;
 
-      // Get raw data from models
-      const [donations, completedWithdrawals, pendingWithdrawals] = await Promise.all([
-        financialInsightsModel.getTotalRaisedByOrganization(organizationId),
-        paymentTransactionModel.getTotalWithdrawalsByStatus(organizationId, "SUCCESS"),
-        paymentTransactionModel.getTotalWithdrawalsByStatus(organizationId, "PENDING"),
-      ]);
+      const { donations, completedWithdrawals, pendingWithdrawals } = await promiseHash({
+        donations: retrieveTotalRaisedFromDatabaseByOrganization(organizationId),
+        completedWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+          organizationId,
+          "SUCCESS",
+        ),
+        pendingWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+          organizationId,
+          "PENDING",
+        ),
+      });
 
-      // Business logic calculation
       const availableBalance = Math.max(
         0,
         donations.totalRaised - completedWithdrawals - pendingWithdrawals,
@@ -71,7 +77,7 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
 
       const reference = `wdl_${nanoid(16)}`;
 
-      const transaction = await paymentTransactionModel.create({
+      const transaction = await savePaymentTransactionToDatabase({
         organizationId,
         processor: "paystack_transfer",
         processorRef: reference,
@@ -102,18 +108,11 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
         currency: currency as "GHS" | "NGN",
       });
 
-      const updatedTransaction = await paymentTransactionModel.update(transaction.id, {
+      const updatedTransaction = await updatePaymentTransactionInDatabase(transaction.id, {
         processorTransactionId: transferResult.data.transfer_code,
         status: transferResult.data.status === "success" ? "SUCCESS" : "PENDING",
         fees: transferResult.data.fee_charged || 0,
         completedAt: transferResult.data.status === "success" ? new Date() : undefined,
-      });
-
-      makeWithdrawalLogger.info("request_withdrawal.success", {
-        organizationId,
-        transactionId: transaction.id,
-        transferCode: transferResult.data.transfer_code,
-        status: transferResult.data.status,
       });
 
       return {

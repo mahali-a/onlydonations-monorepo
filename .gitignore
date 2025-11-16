@@ -140,6 +140,7 @@ vite.config.ts.timestamp-*
 
 # Wrangler cache
 .wrangler/
+.wrangler-config/
 
 # Turborepo
 .turbo/

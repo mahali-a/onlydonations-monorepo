@@ -8,22 +8,13 @@ type WithdrawalHistoryTableProps = {
   withdrawals: SelectPaymentTransaction[];
 };
 
-const getStatusBadgeVariant = (status: string) => {
-  switch (status) {
-    case "SUCCESS":
-      return "default";
-    case "PENDING":
-      return "secondary";
-    case "FAILED":
-      return "destructive";
-    case "DISPUTED":
-      return "outline";
-    case "REFUNDED":
-    case "REFUND_PENDING":
-      return "outline";
-    default:
-      return "outline";
-  }
+const PAYMENT_STATUS_STYLES: Record<string, string> = {
+  PENDING: "border-amber-200 bg-amber-50 text-amber-700",
+  SUCCESS: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  FAILED: "border-rose-200 bg-rose-50 text-rose-700",
+  DISPUTED: "border-blue-200 bg-blue-50 text-blue-700",
+  REFUNDED: "border-gray-200 bg-gray-50 text-gray-700",
+  REFUND_PENDING: "border-gray-200 bg-gray-50 text-gray-700",
 };
 
 const getStatusLabel = (status: string) => {
@@ -63,7 +54,7 @@ export function WithdrawalHistoryTable({ withdrawals }: WithdrawalHistoryTablePr
       header: "Date",
       cell: ({ row }) => <time className="text-sm">{formatDate(row.getValue("createdAt"))}</time>,
       meta: {
-        className: "min-w-[180px]",
+        className: "min-w-[150px] sm:min-w-[180px]",
       },
     },
     {
@@ -75,7 +66,7 @@ export function WithdrawalHistoryTable({ withdrawals }: WithdrawalHistoryTablePr
         </span>
       ),
       meta: {
-        className: "min-w-[120px]",
+        className: "min-w-[100px] sm:min-w-[120px]",
       },
     },
     {
@@ -87,17 +78,23 @@ export function WithdrawalHistoryTable({ withdrawals }: WithdrawalHistoryTablePr
         </span>
       ),
       meta: {
-        className: "min-w-[100px]",
+        className: "hidden sm:table-cell min-w-[100px]",
       },
     },
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }) => (
-        <Badge variant={getStatusBadgeVariant(row.getValue("status")) as any}>
-          {getStatusLabel(row.getValue("status"))}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        return (
+          <Badge
+            className={`h-6 rounded-lg px-2 text-xs font-medium capitalize ${PAYMENT_STATUS_STYLES[status] ?? PAYMENT_STATUS_STYLES.PENDING}`}
+            variant="outline"
+          >
+            {getStatusLabel(status)}
+          </Badge>
+        );
+      },
       meta: {
         className: "min-w-[120px]",
       },
@@ -111,23 +108,25 @@ export function WithdrawalHistoryTable({ withdrawals }: WithdrawalHistoryTablePr
         </span>
       ),
       meta: {
-        className: "min-w-[150px]",
+        className: "hidden md:table-cell min-w-[150px]",
       },
     },
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={withdrawals}
-      emptyMessage={
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-muted-foreground">No withdrawals found.</p>
-          <p className="text-xs text-muted-foreground">
-            Your withdrawal history will appear here once you make your first withdrawal.
-          </p>
-        </div>
-      }
-    />
+    <div className="overflow-x-auto rounded-md border">
+      <DataTable
+        columns={columns}
+        data={withdrawals}
+        emptyMessage={
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-sm text-muted-foreground">No withdrawals found.</p>
+            <p className="text-xs text-muted-foreground">
+              Your withdrawal history will appear here once you make your first withdrawal.
+            </p>
+          </div>
+        }
+      />
+    </div>
   );
 }

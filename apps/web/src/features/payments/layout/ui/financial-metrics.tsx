@@ -42,7 +42,7 @@ export function FinancialMetrics({ metrics }: FinancialMetricsProps) {
                 className={cn({
                   "border-green-600 bg-green-100 text-green-600": metric.change > 0,
                   "border-red-600 bg-red-100 text-red-600": metric.change < 0,
-                  "border-gray-600 bg-gray-100 text-gray-600": metric.change === 0,
+                  "border-gray-600 bg-muted text-muted-foreground": metric.change === 0,
                 })}
                 variant="outline"
               >

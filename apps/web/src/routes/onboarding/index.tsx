@@ -1,14 +1,13 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { queryOptions } from "@tanstack/react-query";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { z } from "zod";
 import { OnboardingLayout, OrganizationForm, PhoneForm, ProfileForm } from "@/features/onboarding";
 import {
-  getOnboardingUser,
-  handleOrganizationForm,
-  handlePhoneForm,
-  handleProfileForm,
+  retrieveOnboardingUserFromServer,
+  createOrganizationOnServer,
+  updateUserPhoneOnServer,
+  updateUserProfileOnServer,
 } from "@/features/onboarding/server";
 
 const onboardingSearchSchema = z.object({
@@ -18,9 +17,9 @@ const onboardingSearchSchema = z.object({
 });
 
 const onboardingUserQueryOptions = queryOptions({
-  queryKey: ['onboarding-user'],
-  queryFn: () => getOnboardingUser(),
-  staleTime: ms('2 minutes'), // onboarding status can change frequently
+  queryKey: ["onboarding-user"],
+  queryFn: () => retrieveOnboardingUserFromServer(),
+  staleTime: ms("2 minutes"),
 });
 
 export const Route = createFileRoute("/onboarding/")({
@@ -31,7 +30,9 @@ export const Route = createFileRoute("/onboarding/")({
     change: search.change,
   }),
   loader: async ({ deps, location, context }) => {
-    const { user, requiredStep } = await context.queryClient.ensureQueryData(onboardingUserQueryOptions);
+    const { user, requiredStep } = await context.queryClient.ensureQueryData(
+      onboardingUserQueryOptions,
+    );
 
     const isOnboardingSubRoute = location.pathname !== "/onboarding";
 
@@ -68,7 +69,7 @@ function OnboardingPage() {
     lastName: string;
     subscribeToUpdates: boolean;
   }) => {
-    const result = await handleProfileForm({ data: values });
+    const result = await updateUserProfileOnServer({ data: values });
     if (result.success) {
       navigate({ to: "/onboarding", search: { step: "phone", next: "/app" } });
     }
@@ -76,7 +77,7 @@ function OnboardingPage() {
   };
 
   const handlePhoneSubmit = async (values: { phoneNumber: string }) => {
-    const result = await handlePhoneForm({ data: values });
+    const result = await updateUserPhoneOnServer({ data: values });
     if (result.success) {
       navigate({
         to: "/onboarding/verify",
@@ -87,7 +88,7 @@ function OnboardingPage() {
   };
 
   const handleOrganizationSubmit = async (values: { organizationName: string }) => {
-    const result = await handleOrganizationForm({ data: values });
+    const result = await createOrganizationOnServer({ data: values });
     if (result.success && result.organizationId) {
       navigate({ to: `/o/${result.organizationId}` });
     }

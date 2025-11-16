@@ -46,7 +46,7 @@ export function PhoneForm({ onSubmit }: PhoneFormProps) {
       <form.Subscribe selector={(state) => [state.errorMap]}>
         {([errorMap]) =>
           errorMap?.onSubmit ? (
-            <div className="text-left text-sm text-red-600">{errorMap.onSubmit.toString()}</div>
+            <div className="text-left text-sm text-destructive">{errorMap.onSubmit.toString()}</div>
           ) : null
         }
       </form.Subscribe>
@@ -56,7 +56,7 @@ export function PhoneForm({ onSubmit }: PhoneFormProps) {
         validators={{
           onChange: ({ value }) => {
             if (!value) return "Phone number is required";
-            // E.164 format validation: +[country code][number]
+
             if (!/^\+[1-9]\d{1,14}$/.test(value)) {
               return "Invalid phone number format. Use E.164 format (e.g., +11234567890)";
             }
@@ -66,7 +66,7 @@ export function PhoneForm({ onSubmit }: PhoneFormProps) {
       >
         {(field) => (
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700" htmlFor="phoneNumber">
+            <Label className="text-sm font-medium text-foreground" htmlFor="phoneNumber">
               Phone Number
             </Label>
             <Input
@@ -77,14 +77,15 @@ export function PhoneForm({ onSubmit }: PhoneFormProps) {
               onBlur={field.handleBlur}
               className={cn(
                 "h-10",
-                field.state.meta.errors.length > 0 && "border-red-300 focus-visible:ring-red-500",
+                field.state.meta.errors.length > 0 &&
+                  "border-destructive focus-visible:ring-destructive",
               )}
               placeholder="+1 (555) 123-4567"
             />
             {field.state.meta.errors.length > 0 && (
-              <div className="text-left text-sm text-red-600">{field.state.meta.errors[0]}</div>
+              <div className="text-left text-sm text-destructive">{field.state.meta.errors[0]}</div>
             )}
-            <p className="text-left text-xs text-gray-500">
+            <p className="text-left text-xs text-muted-foreground">
               Include country code (e.g., +1 for US)
             </p>
           </div>

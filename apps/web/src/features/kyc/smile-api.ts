@@ -1,11 +1,6 @@
 import { nanoid } from "nanoid";
 import type { SmileTokenRequest, SmileTokenResponse } from "./kyc-types";
 
-/**
- * Generate a web token for Smile Identity verification
- * Implements the Smile Identity Web API without using their npm package
- * to maintain Cloudflare Workers compatibility
- */
 export async function generateSmileToken(
   request: SmileTokenRequest,
   config: {
@@ -56,17 +51,11 @@ export async function generateSmileToken(
   };
 }
 
-/**
- * Generate signature for Smile Identity API authentication
- * Uses HMAC-SHA256 with the API key
- * Format: HMAC-SHA256(timestamp + partner_id + "sid_request", api_key)
- */
 async function generateSignature(params: {
   partnerId: string;
   timestamp: string;
   apiKey: string;
 }): Promise<string> {
-  // Smile Identity expects: timestamp + partner_id + "sid_request"
   const message = `${params.timestamp}${params.partnerId}sid_request`;
 
   const encoder = new TextEncoder();
@@ -83,23 +72,16 @@ async function generateSignature(params: {
 
   const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
 
-  // Convert to base64
   const signatureArray = Array.from(new Uint8Array(signature));
   const signatureBase64 = btoa(String.fromCharCode(...signatureArray));
 
   return signatureBase64;
 }
 
-/**
- * Generate a unique job ID for Smile Identity
- */
 export function generateJobId(): string {
   return `job-${nanoid()}`;
 }
 
-/**
- * Verify webhook signature from Smile Identity
- */
 export async function verifyWebhookSignature(
   payload: string,
   signature: string,
@@ -119,7 +101,6 @@ export async function verifyWebhookSignature(
 
   const expectedSignature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
 
-  // Convert to hex string
   const hashArray = Array.from(new Uint8Array(expectedSignature));
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 

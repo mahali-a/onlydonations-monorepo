@@ -18,7 +18,7 @@ export function OnboardingLayout({ step, children }: OnboardingLayoutProps) {
         {step === "name" && (
           <div className="mt-2 space-y-1">
             <h2 className="text-xl font-semibold">Complete your profile</h2>
-            <p className="text-sm leading-relaxed text-gray-600">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Let's get started with your basic information to set up your account.
             </p>
           </div>
@@ -27,7 +27,7 @@ export function OnboardingLayout({ step, children }: OnboardingLayoutProps) {
         {step === "phone" && (
           <div className="space-y-4 text-left">
             <h2 className="text-xl font-semibold">Phone verification</h2>
-            <p className="text-sm leading-relaxed text-gray-600">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               To keep your account secure, we will send a unique code to your phone number to verify
               your identity.
             </p>
@@ -37,7 +37,7 @@ export function OnboardingLayout({ step, children }: OnboardingLayoutProps) {
         {step === "verify" && (
           <div className="mt-2 space-y-1">
             <h2 className="text-xl font-semibold">Verify your phone</h2>
-            <p className="text-sm leading-relaxed text-gray-600">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Enter the verification code we sent to your phone.
             </p>
           </div>
@@ -46,7 +46,7 @@ export function OnboardingLayout({ step, children }: OnboardingLayoutProps) {
         {step === "organization" && (
           <div className="mt-2 space-y-1">
             <h2 className="text-xl font-semibold">Create your organization</h2>
-            <p className="text-sm leading-relaxed text-gray-600">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Set up your workspace to start managing your campaigns.
             </p>
           </div>

@@ -2,16 +2,13 @@ import { getAuth } from "@repo/core/auth/server";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { nanoid } from "nanoid";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
-import { userModel } from "./models/user-model";
+import { updateOnboardingUserInDatabase } from "./onboarding-models";
 import { organizationSchema, phoneSchema, profileSchema } from "./onboarding-schemas";
 
-const onboardingLogger = logger.child("onboarding-actions");
+const onboardingLogger = logger.createChildLogger("onboarding-actions");
 
-/**
- * Sanitize a string to be used as a URL slug
- */
 function sanitizeSlug(name: string): string {
   return name
     .toLowerCase()
@@ -21,35 +18,33 @@ function sanitizeSlug(name: string): string {
     .substring(0, 30);
 }
 
-export const handleProfileForm = createServerFn({ method: "POST" })
+export const updateUserProfileOnServer = createServerFn({ method: "POST" })
   .inputValidator(profileSchema)
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
     const user = context.user;
     const name = `${data.firstName} ${data.lastName}`;
 
-    await userModel.update(user.id, {
+    await updateOnboardingUserInDatabase(user.id, {
       name,
-      subscribedAt: data.subscribeToUpdates ? new Date() : undefined,
     });
 
     return { success: true };
   });
 
-export const handlePhoneForm = createServerFn({ method: "POST" })
+export const updateUserPhoneOnServer = createServerFn({ method: "POST" })
   .inputValidator(phoneSchema)
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
     const user = context.user;
     const auth = getAuth();
 
-    await userModel.update(user.id, {
+    await updateOnboardingUserInDatabase(user.id, {
       phoneNumber: data.phoneNumber,
       phoneNumberVerified: false,
     });
 
-    // Send OTP via Better Auth
-    // @ts-expect-error - Type not inferred due to parameterized createBetterAuth config
+    // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
     await auth.api.sendPhoneNumberOTP({
       body: {
         phoneNumber: data.phoneNumber,
@@ -59,19 +54,17 @@ export const handlePhoneForm = createServerFn({ method: "POST" })
     return { success: true, phoneNumber: data.phoneNumber };
   });
 
-export const handleOrganizationForm = createServerFn({ method: "POST" })
+export const createOrganizationOnServer = createServerFn({ method: "POST" })
   .inputValidator(organizationSchema)
   .middleware([authMiddleware])
   .handler(async ({ data }) => {
     const auth = getAuth();
     const req = getRequest();
 
-    // Generate unique slug from organization name + random suffix
     const baseSlug = sanitizeSlug(data.organizationName);
     const slug = `${baseSlug}-${nanoid(6)}`;
 
-    // Create organization via Better Auth
-    // @ts-expect-error - Type not inferred due to parameterized createBetterAuth config
+    // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
     const organization = await auth.api.createOrganization({
       body: {
         name: data.organizationName,
@@ -84,8 +77,7 @@ export const handleOrganizationForm = createServerFn({ method: "POST" })
       throw new Error("Failed to create organization");
     }
 
-    // Set as active organization in session
-    // @ts-expect-error - Type not inferred
+    // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
     await auth.api.setActiveOrganization({
       body: { organizationId: organization.id },
       headers: req.headers,
@@ -98,7 +90,7 @@ export const handleOrganizationForm = createServerFn({ method: "POST" })
     };
   });
 
-export const createDefaultOrganization = createServerFn({ method: "POST" })
+export const createDefaultOrganizationOnServer = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const user = context.user;
@@ -106,12 +98,10 @@ export const createDefaultOrganization = createServerFn({ method: "POST" })
     const req = getRequest();
 
     try {
-      // Generate unique slug from user name + random suffix
       const baseSlug = sanitizeSlug(user.name || "user");
       const slug = `${baseSlug}-${nanoid(6)}`;
 
-      // Create organization via Better Auth
-      // @ts-expect-error - Type not inferred due to parameterized createBetterAuth config
+      // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
       const organization = await auth.api.createOrganization({
         body: {
           name: `${user.name}'s Organization`,
@@ -124,8 +114,7 @@ export const createDefaultOrganization = createServerFn({ method: "POST" })
         throw new Error("Failed to create organization");
       }
 
-      // Set as active organization in session
-      // @ts-expect-error - Type not inferred
+      // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
       await auth.api.setActiveOrganization({
         body: { organizationId: organization.id },
         headers: req.headers,

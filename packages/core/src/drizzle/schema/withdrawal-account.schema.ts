@@ -1,17 +1,15 @@
-import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { organization } from "../auth-schema";
 
 const createId = () => nanoid(10);
 
-export const withdrawalAccount = pgTable("withdrawal_account", {
+export const withdrawalAccount = sqliteTable("withdrawal_account", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
-  accountType: text("account_type", {
-    enum: ["mobile_money", "ghipss"],
-  }).notNull(),
+  accountType: text("account_type").notNull(),
   bankCode: text("bank_code"),
   accountNumber: text("account_number").notNull(),
   accountName: text("account_name"),
@@ -21,13 +19,25 @@ export const withdrawalAccount = pgTable("withdrawal_account", {
   organizationId: text("organization_id")
     .notNull()
     .references(() => organization.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-  deletedAt: timestamp("deleted_at"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => new Date()),
+  deletedAt: integer("deleted_at", { mode: "timestamp" }),
 });
+
+export const withdrawalAccountOrganizationIdIdx = index(
+  "withdrawal_account_organization_id_idx",
+).on(withdrawalAccount.organizationId);
+export const withdrawalAccountDeletedAtIdx = index("withdrawal_account_deleted_at_idx").on(
+  withdrawalAccount.deletedAt,
+);
+// Composite index for common query: organizationId + deletedAt
+export const withdrawalAccountOrgDeletedIdx = index("withdrawal_account_org_deleted_idx").on(
+  withdrawalAccount.organizationId,
+  withdrawalAccount.deletedAt,
+);
 
 export const withdrawalAccountRelations = relations(withdrawalAccount, ({ one }) => ({
   organization: one(organization, {

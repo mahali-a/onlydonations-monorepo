@@ -1,9 +1,9 @@
 /**
  * @see https://twitter.com/buildsghost/status/1507109734519750680
  */
-export type PromiseHash = Record<string, Promise<unknown>>;
+type PromiseHash = Record<string, Promise<unknown>>;
 
-export type AwaitedPromiseHash<Hash> = Hash extends PromiseHash
+type AwaitedPromiseHash<Hash> = Hash extends PromiseHash
   ? {
       [Key in keyof Hash]: Awaited<Hash[Key]>;
     }

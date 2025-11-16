@@ -1,6 +1,6 @@
 import type { SelectWithdrawalAccount } from "@repo/core/database/types";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, useParams } from "@tanstack/react-router";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/money";
-import { requestWithdrawal } from "../server";
+import { createWithdrawalRequestOnServer } from "../server";
 
 type WithdrawalFormProps = {
   payoutAccounts: SelectWithdrawalAccount[];
@@ -49,12 +49,15 @@ export function WithdrawalForm({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const router = useRouter();
 
+  const params = useParams({ from: "/o/$orgId/finance" });
+
   const form = useForm({
     defaultValues: defaultFormValues,
     validators: {
       onSubmitAsync: async ({ value }) => {
-        const result = await requestWithdrawal({
+        const result = await createWithdrawalRequestOnServer({
           data: {
+            organizationId: params.orgId,
             payoutAccountId: value.payoutAccountId,
             amount: value.amount,
             currency,
@@ -67,7 +70,6 @@ export function WithdrawalForm({
           };
         }
 
-        // Success: close dialog, reset form, invalidate router
         setShowConfirmDialog(false);
         form.reset();
         router.invalidate();
@@ -103,7 +105,6 @@ export function WithdrawalForm({
         </div>
 
         <form onSubmit={handleFormSubmit} className="space-y-4">
-          {/* Form-level error display */}
           <form.Subscribe selector={(state) => [state.errorMap]}>
             {([errorMap]) => {
               const error = errorMap?.onSubmit;
@@ -159,14 +160,11 @@ export function WithdrawalForm({
                 if (!value || value <= 0) return "Amount must be greater than 0";
                 const minAmount = 1;
 
-                // Get selected account to calculate transfer fee
                 const payoutAccountId = fieldApi.form.getFieldValue("payoutAccountId");
                 const selectedAccount = payoutAccounts.find((acc) => acc.id === payoutAccountId);
 
-                // Calculate transfer fee
                 const transferFee = selectedAccount?.accountType === "mobile_money" ? 100 : 800;
 
-                // Total amount needed = withdrawal amount + transfer fee
                 const amountInMinorUnits = Math.round(value * 100);
                 const totalNeeded = amountInMinorUnits + transferFee;
 
@@ -202,7 +200,6 @@ export function WithdrawalForm({
             )}
           </form.Field>
 
-          {/* Transfer fees display based on account type */}
           <form.Subscribe selector={(state) => [state.values.amount, state.values.payoutAccountId]}>
             {([amount, payoutAccountId]) => {
               const amountValue = typeof amount === "number" ? amount : 0;
@@ -211,11 +208,7 @@ export function WithdrawalForm({
               const selectedAccount = payoutAccounts.find((acc) => acc.id === payoutAccountId);
               if (!selectedAccount) return null;
 
-              // Paystack GHS transfer fees
-              const transferFee =
-                selectedAccount.accountType === "mobile_money"
-                  ? 100 // GHS 1.00 in pesewas
-                  : 800; // GHS 8.00 in pesewas
+              const transferFee = selectedAccount.accountType === "mobile_money" ? 100 : 800;
 
               const amountInMinorUnits = Math.round(amountValue * 100);
               const totalDeduction = amountInMinorUnits + transferFee;
@@ -267,7 +260,6 @@ export function WithdrawalForm({
         </form>
       </div>
 
-      {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
@@ -288,10 +280,7 @@ export function WithdrawalForm({
               if (!selectedAccount) return null;
 
               const amountValue = typeof values.amount === "number" ? values.amount : 0;
-              const transferFee =
-                selectedAccount.accountType === "mobile_money"
-                  ? 100 // GHS 1.00
-                  : 800; // GHS 8.00
+              const transferFee = selectedAccount.accountType === "mobile_money" ? 100 : 800;
               const amountInMinorUnits = Math.round(amountValue * 100);
               const totalDeduction = amountInMinorUnits + transferFee;
 

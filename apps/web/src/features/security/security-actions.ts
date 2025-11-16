@@ -1,13 +1,13 @@
 import { getAuth } from "@repo/core/auth/server";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
 import { revokeSessionSchema } from "./security-schemas";
 
-const securityLogger = logger.child("security-actions");
+const securityLogger = logger.createChildLogger("security-actions");
 
-export const revokeSession = createServerFn({ method: "POST" })
+export const deleteSessionOnServer = createServerFn({ method: "POST" })
   .inputValidator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error("Expected FormData");

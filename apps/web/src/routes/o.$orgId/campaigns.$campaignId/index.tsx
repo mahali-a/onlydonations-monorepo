@@ -1,13 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { CampaignDetails } from "@/features/campaigns/org/details";
 
 export const Route = createFileRoute("/o/$orgId/campaigns/$campaignId/")({
-  component: CampaignOverview,
+  component: CampaignDetails,
 });
-
-function CampaignOverview() {
-  return (
-    <div>
-      <h1>Campaign Overview</h1>
-    </div>
-  );
-}

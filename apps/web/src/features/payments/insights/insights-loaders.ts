@@ -1,17 +1,28 @@
-import { campaignModel } from "@/features/campaigns/models/campaign-model";
 import { formatMetricValue, getTrendMessage } from "@/lib/utils/dashboard-utils";
-import { financialInsightsModel } from "../models/financial-insights-model";
+import {
+  retrieveDonationAggregateFromDatabaseByOrganization,
+  retrieveDailyDonationAggregateFromDatabaseByOrganization,
+  retrieveCampaignDonationStatsFromDatabaseByOrganization,
+  retrieveTotalCampaignCountFromDatabaseByOrganization,
+} from "../payments-models";
+import { promiseHash } from "@/utils/promise-hash";
 
-export async function insightsLoader(organizationId: string, page: number = 1, limit: number = 10) {
-  // Fetch raw data from database
-  const [totalStats, dailyData, campaignStats, totalCampaigns] = await Promise.all([
-    financialInsightsModel.getTotalDonationsByOrganization(organizationId),
-    financialInsightsModel.getDailyDonationsByOrganization(organizationId),
-    financialInsightsModel.getCampaignDonationStats(organizationId, page, limit),
-    campaignModel.getCount(organizationId),
-  ]);
+export async function retrieveFinancialInsightsFromServer(
+  organizationId: string,
+  page: number = 1,
+  limit: number = 10,
+) {
+  const { totalStats, dailyData, campaignStats, totalCampaigns } = await promiseHash({
+    totalStats: retrieveDonationAggregateFromDatabaseByOrganization(organizationId),
+    dailyData: retrieveDailyDonationAggregateFromDatabaseByOrganization(organizationId),
+    campaignStats: retrieveCampaignDonationStatsFromDatabaseByOrganization(
+      organizationId,
+      page,
+      limit,
+    ),
+    totalCampaigns: retrieveTotalCampaignCountFromDatabaseByOrganization(organizationId),
+  });
 
-  // Calculate current month stats for trends
   const now = new Date();
   const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -25,19 +36,17 @@ export async function insightsLoader(organizationId: string, page: number = 1, l
   const currentMonthTotal = currentMonthData.reduce((sum: number, d) => sum + d.amount, 0);
   const previousMonthTotal = previousMonthData.reduce((sum: number, d) => sum + d.amount, 0);
 
-  // Calculate fees and metrics
   const totalRaised = totalStats.totalRaised;
-  const totalFees = Math.round(totalRaised * 0.0295); // 2.95% platform + payment fees
+  const totalFees = Math.round(totalRaised * 0.0295);
   const netEarnings = totalRaised - totalFees;
   const avgDonation =
     totalStats.donationCount > 0 ? Math.round(totalRaised / totalStats.donationCount) : 0;
 
-  // Calculate trends
   const totalRaisedChange =
     previousMonthTotal > 0
       ? ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100
       : 0;
-  const feesChange = totalRaisedChange; // Fees follow the same trend as total raised
+  const feesChange = totalRaisedChange;
   const netEarningsChange = totalRaisedChange;
 
   const currentAvg =
@@ -50,7 +59,6 @@ export async function insightsLoader(organizationId: string, page: number = 1, l
       : 0;
   const avgDonationChange = previousAvg > 0 ? ((currentAvg - previousAvg) / previousAvg) * 100 : 0;
 
-  // Format metrics for the cards
   const metrics = [
     {
       title: "Total Raised",
@@ -82,10 +90,8 @@ export async function insightsLoader(organizationId: string, page: number = 1, l
     },
   ];
 
-  // Chart data (all time, formatted for recharts)
   const chartData = dailyData;
 
-  // Calculate campaign performance (business logic)
   const campaigns = campaignStats.map(
     (campaign: {
       campaignId: string;
@@ -124,7 +130,6 @@ export async function insightsLoader(organizationId: string, page: number = 1, l
     },
   );
 
-  // Pagination metadata
   const totalPages = Math.ceil(totalCampaigns / limit);
   const pagination = {
     page,

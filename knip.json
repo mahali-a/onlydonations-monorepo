@@ -1,0 +1,65 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [],
+      "project": ["**/*.{ts,tsx}", "!**/*.test.{ts,tsx}", "!**/*.spec.{ts,tsx}", "!**/node_modules/**"]
+    },
+    "apps/web": {
+      "entry": [
+        "src/start.tsx",
+        "src/server.ts",
+        "src/router.tsx",
+        "src/routes/**/*.{ts,tsx}",
+        "vite.config.ts"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
+      "ignore": [
+        "dist/**",
+        "migrations/**"
+      ]
+    },
+    "apps/api": {
+      "entry": [
+        "src/index.ts",
+        "wrangler.jsonc"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"]
+    },
+    "packages/core": {
+      "entry": [
+        "src/**/*.{ts,tsx}"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"]
+    },
+    "packages/email": {
+      "entry": [
+        "src/**/*.{ts,tsx}"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"]
+    }
+  },
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.turbo/**",
+    "**/routeTree.gen.ts",
+    "**/*.config.{ts,js}",
+    "**/migrations/**"
+  ],
+  "ignoreDependencies": [
+    "@types/*",
+    "typescript",
+    "@biomejs/biome",
+    "turbo",
+    "wrangler",
+    "vitest",
+    "@cloudflare/*",
+    "@vitejs/*",
+    "@tanstack/react-router-devtools",
+    "@tanstack/react-query-devtools",
+    "@tanstack/react-pacer-devtools",
+    "@tanstack/react-devtools"
+  ],
+}
+

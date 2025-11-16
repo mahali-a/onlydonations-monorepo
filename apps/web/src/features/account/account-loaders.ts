@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
 
-export const getAccountUser = createServerFn({ method: "GET" })
+export const retrieveAccountUserFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     return context.user;

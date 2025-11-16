@@ -1,16 +1,22 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { logger } from "@/lib/logger";
 import { paystackService } from "@/lib/paystack";
-import { withdrawalAccountModel } from "../models/withdrawal-account-model";
+import {
+  saveWithdrawalAccountToDatabase,
+  retrieveWithdrawalAccountFromDatabaseById,
+  deleteWithdrawalAccountInDatabase,
+} from "../payments-models";
 
-const withdrawalAccountsLogger = logger.child("withdrawal-accounts-actions");
+const withdrawalAccountsLogger = logger.createChildLogger("withdrawal-accounts-actions");
 
-export const createWithdrawalAccount = createServerFn({ method: "POST" })
+export const createWithdrawalAccountOnServer = createServerFn({ method: "POST" })
   .inputValidator(
     z.object({
+      organizationId: z.string().min(1, "Organization ID is required"),
       accountType: z.enum(["mobile_money", "ghipss"]),
       accountNumber: z.string(),
       bankCode: z.string().optional(),
@@ -20,19 +26,10 @@ export const createWithdrawalAccount = createServerFn({ method: "POST" })
   )
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
-    // @ts-expect-error - Type not inferred
-    const organizationId = context.session?.session?.activeOrganizationId;
-    if (!organizationId) {
-      throw new Error("No active organization");
-    }
+    const { organizationId, accountType, accountNumber, bankCode, name, mobileMoneyProvider } =
+      data;
 
-    const { accountType, accountNumber, bankCode, name, mobileMoneyProvider } = data;
-
-    withdrawalAccountsLogger.info("create_withdrawal_account.start", {
-      organizationId,
-      accountType,
-      accountNumber,
-    });
+    await requireOrganizationAccess(organizationId, context.user.id);
 
     try {
       const paystack = paystackService(env);
@@ -80,7 +77,7 @@ export const createWithdrawalAccount = createServerFn({ method: "POST" })
         recipientCode = recipientResult.data.recipient_code;
       }
 
-      const account = await withdrawalAccountModel.create({
+      const account = await saveWithdrawalAccountToDatabase({
         organizationId,
         accountType,
         bankCode: bankCode || undefined,
@@ -88,12 +85,6 @@ export const createWithdrawalAccount = createServerFn({ method: "POST" })
         accountName: resolvedAccountName || undefined,
         name,
         mobileMoneyProvider: mobileMoneyProvider || undefined,
-        recipientCode,
-      });
-
-      withdrawalAccountsLogger.info("create_withdrawal_account.success", {
-        organizationId,
-        accountId: account?.id,
         recipientCode,
       });
 
@@ -113,24 +104,24 @@ export const createWithdrawalAccount = createServerFn({ method: "POST" })
     }
   });
 
-export const deleteWithdrawalAccount = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ accountId: z.string() }))
+export const deleteWithdrawalAccountOnServer = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      organizationId: z.string().min(1, "Organization ID is required"),
+      accountId: z.string(),
+    }),
+  )
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
-    // @ts-expect-error - Type not inferred
-    const organizationId = context.session?.session?.activeOrganizationId;
-    if (!organizationId) {
-      throw new Error("No active organization");
-    }
-    const { accountId } = data;
+    const { organizationId, accountId } = data;
 
-    withdrawalAccountsLogger.info("delete_withdrawal_account.start", {
-      organizationId,
-      accountId,
-    });
+    await requireOrganizationAccess(organizationId, context.user.id);
 
     try {
-      const existingAccount = await withdrawalAccountModel.findById(accountId, organizationId);
+      const existingAccount = await retrieveWithdrawalAccountFromDatabaseById(
+        accountId,
+        organizationId,
+      );
 
       if (!existingAccount) {
         return {
@@ -139,16 +130,11 @@ export const deleteWithdrawalAccount = createServerFn({ method: "POST" })
         };
       }
 
-      const deleted = await withdrawalAccountModel.softDelete(accountId, organizationId);
+      const deleted = await deleteWithdrawalAccountInDatabase(accountId, organizationId);
 
       if (!deleted) {
         throw new Error("Failed to delete withdrawal account");
       }
-
-      withdrawalAccountsLogger.info("delete_withdrawal_account.success", {
-        organizationId,
-        accountId,
-      });
 
       return {
         success: true,
@@ -165,16 +151,19 @@ export const deleteWithdrawalAccount = createServerFn({ method: "POST" })
     }
   });
 
-export const resolveAccountNumber = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ accountNumber: z.string(), bankCode: z.string() }))
+export const resolvePaystackAccountNumberOnServer = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      organizationId: z.string().min(1, "Organization ID is required"),
+      accountNumber: z.string(),
+      bankCode: z.string(),
+    }),
+  )
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
-    // @ts-expect-error - Type not inferred
-    const organizationId = context.session?.session?.activeOrganizationId;
-    if (!organizationId) {
-      throw new Error("No active organization");
-    }
-    const { accountNumber, bankCode } = data;
+    const { organizationId, accountNumber, bankCode } = data;
+
+    await requireOrganizationAccess(organizationId, context.user.id);
 
     if (!accountNumber || !bankCode) {
       return {
@@ -182,12 +171,6 @@ export const resolveAccountNumber = createServerFn({ method: "POST" })
         error: "Account number and bank code are required",
       };
     }
-
-    withdrawalAccountsLogger.info("resolve_account.start", {
-      organizationId,
-      accountNumber,
-      bankCode,
-    });
 
     try {
       const paystack = paystackService(env);
@@ -202,11 +185,6 @@ export const resolveAccountNumber = createServerFn({ method: "POST" })
           error: "Unable to verify account details. Please check your account number.",
         };
       }
-
-      withdrawalAccountsLogger.info("resolve_account.success", {
-        organizationId,
-        accountName: result.data.account_name,
-      });
 
       return {
         success: true,

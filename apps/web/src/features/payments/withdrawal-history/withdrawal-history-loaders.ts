@@ -1,29 +1,27 @@
 import { createServerFn } from "@tanstack/react-start";
-import { authMiddleware } from "@/core/middleware/auth";
+import { z } from "zod";
+import { authMiddleware } from "@/server/middleware/auth";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { logger } from "@/lib/logger";
-import { paymentTransactionModel } from "../models/payment-transaction-model";
+import { retrievePaymentTransactionWithdrawalsFromDatabaseByOrganization } from "../payments-models";
 
-const withdrawalHistoryLogger = logger.child("withdrawal-history-loaders");
+const withdrawalHistoryLogger = logger.createChildLogger("withdrawal-history-loaders");
 
-export const getWithdrawalHistory = createServerFn({ method: "GET" })
+export const retrieveWithdrawalHistoryFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .handler(async ({ context }) => {
-    // @ts-expect-error - Type not inferred
-    const organizationId = context.session?.session?.activeOrganizationId;
-    if (!organizationId) {
-      throw new Error("No active organization");
-    }
+  .inputValidator(z.object({ orgId: z.string() }))
+  .handler(async ({ data, context }) => {
+    const { orgId } = data;
 
-    withdrawalHistoryLogger.info("get_withdrawal_history.start", { organizationId });
+    await requireOrganizationAccess(orgId, context.user.id);
+
+    const organizationId = orgId;
+
+    withdrawalHistoryLogger.error("get_withdrawal_history.start", { organizationId });
 
     try {
       const withdrawals =
-        await paymentTransactionModel.findWithdrawalsByOrganization(organizationId);
-
-      withdrawalHistoryLogger.info("get_withdrawal_history.success", {
-        organizationId,
-        count: withdrawals.length,
-      });
+        await retrievePaymentTransactionWithdrawalsFromDatabaseByOrganization(organizationId);
 
       return {
         withdrawals,

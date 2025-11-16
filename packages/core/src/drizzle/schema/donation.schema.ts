@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { boolean, check, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { auth_user } from "../auth-schema";
 import { campaign } from "./campaign.schema";
@@ -8,7 +8,7 @@ import { paymentTransaction } from "./payment-transaction.schema";
 
 const createId = () => nanoid(10);
 
-export const donation = pgTable(
+export const donation = sqliteTable(
   "donation",
   {
     id: text("id")
@@ -27,30 +27,25 @@ export const donation = pgTable(
 
     paymentTransactionId: text("payment_transaction_id").references(() => paymentTransaction.id),
 
-    isAnonymous: boolean("is_anonymous").notNull().default(false),
+    isAnonymous: integer("is_anonymous", { mode: "boolean" }).notNull().default(false),
     donorId: text("donor_id").references(() => auth_user.id, {
       onDelete: "set null",
     }),
     donorName: text("donor_name"),
     donorEmail: text("donor_email"),
     donorMessage: text("donor_message"),
-    showMessage: boolean("show_message").notNull().default(true),
+    showMessage: integer("show_message", { mode: "boolean" }).notNull().default(true),
 
-    status: text("status", {
-      enum: ["PENDING", "SUCCESS", "FAILED"],
-    })
+    status: text("status").notNull().default("PENDING"),
+
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
-      .default("PENDING"),
-
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
-    completedAt: timestamp("completed_at"),
+      .default(sql`(unixepoch())`)
+      .$onUpdate(() => new Date()),
+    completedAt: integer("completed_at", { mode: "timestamp" }),
   },
   (table) => ({
-    amountCheck: check("amount_check", sql`${table.amount} > 0 AND ${table.amount} <= 100000000`),
     campaignIdIndex: index("donation_campaign_id_idx").on(table.campaignId),
     donorIdIndex: index("donation_donor_id_idx").on(table.donorId),
     donorEmailIndex: index("donation_donor_email_idx").on(table.donorEmail),

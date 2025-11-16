@@ -12,7 +12,7 @@
     "check": "biome check --write .",
     "check:ci": "biome check .",
     "deploy": "wrangler deploy",
-    "dev": "wrangler dev --x-remote-bindings",
+    "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest",
     "cf-typegen": "wrangler types --env-interface BaseEnv"
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@repo/core": "workspace:*",
-    "hono": "^4.10.6",
-    "zod": "^3.25.76"
+    "@repo/email": "workspace:*",
+    "hono": "^4.10.6"
   }
 }

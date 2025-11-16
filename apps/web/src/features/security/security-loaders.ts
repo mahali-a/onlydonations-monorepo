@@ -2,9 +2,9 @@ import { getAuth } from "@repo/core/auth/server";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { UAParser } from "ua-parser-js";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
 
-export const getSessions = createServerFn({ method: "GET" })
+export const retrieveSessionsFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async () => {
     const auth = getAuth();
@@ -47,7 +47,7 @@ export const getSessions = createServerFn({ method: "GET" })
     return sessions;
   });
 
-export const getLoginMethod = createServerFn({ method: "GET" })
+export const retrieveLoginMethodFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const user = context.user;

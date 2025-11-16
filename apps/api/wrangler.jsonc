@@ -3,13 +3,46 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-  "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "onlydonations-data-service",
-  "main": "./src/index.ts",
-  "compatibility_date": "2025-04-01",
-  "compatibility_flags": ["nodejs_compat"],
-
-  "observability": {
-    "enabled": true,
-  },
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "onlydonations-data-service",
+	"main": "./src/index.ts",
+	"compatibility_date": "2025-09-02",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "onlydonations-db-stg",
+			"database_id": "8c78dc78-a524-4892-a982-4349bd556fde"
+		}
+	],
+	"queues": {
+		"consumers": [
+			{
+				"queue": "email-queue",
+				"max_batch_size": 10,
+				"max_batch_timeout": 5,
+				"max_retries": 3,
+				"dead_letter_queue": "email-dlq",
+				"max_concurrency": 1
+			}
+		]
+	},
+	"vars": {
+		"EMAIL_FROM": "onlydonations@mahali.dev",
+		"ENVIRONMENT": "production"
+	},
+	"observability": {
+		"enabled": true,
+		"traces": {
+			"enabled": true
+		}
+	},
+	"routes": [
+		{
+			"pattern": "api.stg.onlydonations.com",
+			"custom_domain": true
+		}
+	]
 }

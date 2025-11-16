@@ -1,12 +1,12 @@
-import { relations } from "drizzle-orm";
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { auth_user } from "../auth-schema";
 import { campaign } from "./campaign.schema";
 
 const createId = () => nanoid(10);
 
-export const campaignUpdate = pgTable("campaign_update", {
+export const campaignUpdate = sqliteTable("campaign_update", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -19,14 +19,14 @@ export const campaignUpdate = pgTable("campaign_update", {
     .notNull()
     .references(() => auth_user.id),
 
-  isPinned: boolean("is_pinned"),
-  isHidden: boolean("is_hidden"),
+  isPinned: integer("is_pinned", { mode: "boolean" }),
+  isHidden: integer("is_hidden", { mode: "boolean" }),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => new Date()),
 });
 
 export const campaignUpdateRelations = relations(campaignUpdate, ({ one }) => ({

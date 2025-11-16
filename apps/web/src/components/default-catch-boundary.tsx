@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { logger } from "@/lib/logger";
 
-const errorLogger = logger.child("catch-boundary");
+const errorLogger = logger.createChildLogger("catch-boundary");
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter();
@@ -20,7 +20,6 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
   errorLogger.error("Caught error in boundary", error);
 
-  // Format error details for display
   const errorMessage = error?.message || "An unexpected error occurred";
   const errorStack = error?.stack || "";
   const hasStack = errorStack.length > 0;
@@ -51,13 +50,11 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Error Alert */}
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription className="font-medium">{errorMessage}</AlertDescription>
           </Alert>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3">
             <Button onClick={() => router.invalidate()} className="flex items-center gap-2">
               <RefreshCw className="h-4 w-4" />
@@ -83,7 +80,6 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
             )}
           </div>
 
-          {/* Error Details (Collapsible) */}
           {hasStack && (
             <Collapsible open={showDetails} onOpenChange={setShowDetails}>
               <CollapsibleTrigger asChild>
@@ -110,7 +106,6 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
             </Collapsible>
           )}
 
-          {/* Help Section */}
           <div className="border-t pt-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div className="text-sm text-muted-foreground">

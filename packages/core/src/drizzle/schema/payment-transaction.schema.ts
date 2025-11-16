@@ -1,54 +1,58 @@
 import { relations, sql } from "drizzle-orm";
-import { check, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 import { organization } from "../auth-schema";
 import { currencies } from "./currencies.schema";
 
 const createId = () => nanoid(10);
 
-export const paymentTransaction = pgTable(
-  "payment_transaction",
-  {
-    id: text("id")
-      .$defaultFn(() => createId())
-      .primaryKey(),
+export const paymentTransaction = sqliteTable("payment_transaction", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
 
-    organizationId: text("organization_id").references(() => organization.id, {
-      onDelete: "cascade",
-    }),
-
-    processor: text("processor").notNull(),
-    processorRef: text("processor_ref").unique().notNull(),
-    processorTransactionId: text("processor_transaction_id").default(sql`NULL`),
-
-    amount: integer("amount").notNull(),
-    fees: integer("fees").notNull().default(0),
-    currency: text("currency")
-      .notNull()
-      .references(() => currencies.code),
-    paymentMethod: text("payment_method"),
-
-    status: text("status", {
-      enum: ["PENDING", "SUCCESS", "FAILED", "DISPUTED", "REFUNDED", "REFUND_PENDING"],
-    })
-      .notNull()
-      .default("PENDING"),
-    statusMessage: text("status_message"),
-
-    metadata: text("metadata"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
-      .$onUpdate(() => new Date())
-      .notNull(),
-    completedAt: timestamp("completed_at"),
-  },
-  (table) => ({
-    amountCheck: check(
-      "payment_amount_check",
-      sql`${table.amount} > 0 AND ${table.amount} <= 500000000`,
-    ),
+  organizationId: text("organization_id").references(() => organization.id, {
+    onDelete: "cascade",
   }),
+
+  processor: text("processor").notNull(),
+  processorRef: text("processor_ref").unique().notNull(),
+  processorTransactionId: text("processor_transaction_id"),
+
+  amount: integer("amount").notNull(),
+  fees: integer("fees").notNull().default(0),
+  currency: text("currency")
+    .notNull()
+    .references(() => currencies.code),
+  paymentMethod: text("payment_method"),
+
+  status: text("status").notNull().default("PENDING"),
+  statusMessage: text("status_message"),
+
+  metadata: text("metadata"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => new Date()),
+  completedAt: integer("completed_at", { mode: "timestamp" }),
+});
+
+export const paymentTransactionOrganizationIdIdx = index(
+  "payment_transaction_organization_id_idx",
+).on(paymentTransaction.organizationId);
+export const paymentTransactionProcessorIdx = index("payment_transaction_processor_idx").on(
+  paymentTransaction.processor,
+);
+export const paymentTransactionStatusIdx = index("payment_transaction_status_idx").on(
+  paymentTransaction.status,
+);
+// Composite index for common query: organizationId + processor + status
+export const paymentTransactionOrgProcessorStatusIdx = index(
+  "payment_transaction_org_processor_status_idx",
+).on(paymentTransaction.organizationId, paymentTransaction.processor, paymentTransaction.status);
+export const paymentTransactionCreatedAtIdx = index("payment_transaction_created_at_idx").on(
+  paymentTransaction.createdAt,
 );
 
 export const paymentTransactionRelations = relations(paymentTransaction, ({ one }) => ({

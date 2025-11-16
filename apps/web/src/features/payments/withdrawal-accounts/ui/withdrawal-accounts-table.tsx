@@ -1,5 +1,5 @@
 import type { SelectWithdrawalAccount } from "@repo/core/database/types";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, useParams } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteWithdrawalAccount } from "../server";
+import { deleteWithdrawalAccountOnServer } from "../server";
 
 type WithdrawalAccountsTableProps = {
   accounts: SelectWithdrawalAccount[];
@@ -38,7 +38,7 @@ const getAccountTypeLabel = (accountType: string) => {
   }
 };
 
-const getAccountTypeBadgeVariant = (accountType: string) => {
+const getAccountTypeBadgeVariant = (accountType: string): "default" | "secondary" | "outline" => {
   switch (accountType) {
     case "mobile_money":
       return "default";
@@ -69,12 +69,12 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
       accessorKey: "accountType",
       header: "Account Type",
       cell: ({ row }) => (
-        <Badge variant={getAccountTypeBadgeVariant(row.getValue("accountType")) as any}>
-          {getAccountTypeLabel(row.getValue("accountType"))}
+        <Badge variant={getAccountTypeBadgeVariant(row.getValue("accountType") as string)}>
+          {getAccountTypeLabel(row.getValue("accountType") as string)}
         </Badge>
       ),
       meta: {
-        className: "min-w-[150px]",
+        className: "min-w-[130px] sm:min-w-[150px]",
       },
     },
     {
@@ -84,7 +84,7 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
         <span className="text-sm">{row.getValue("mobileMoneyProvider") || "Bank Account"}</span>
       ),
       meta: {
-        className: "min-w-[180px]",
+        className: "min-w-[150px] sm:min-w-[180px]",
       },
     },
     {
@@ -96,7 +96,7 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
         </span>
       ),
       meta: {
-        className: "min-w-[150px]",
+        className: "hidden sm:table-cell min-w-[150px]",
       },
     },
     {
@@ -108,7 +108,7 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
         </span>
       ),
       meta: {
-        className: "min-w-[200px]",
+        className: "hidden md:table-cell min-w-[200px]",
       },
     },
     {
@@ -120,7 +120,7 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
         </time>
       ),
       meta: {
-        className: "min-w-[120px]",
+        className: "hidden lg:table-cell min-w-[120px]",
       },
     },
     {
@@ -139,7 +139,9 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
   ];
 
   return (
-    <DataTable columns={columns} data={accounts} emptyMessage="No withdrawal accounts found." />
+    <div className="overflow-x-auto rounded-md border">
+      <DataTable columns={columns} data={accounts} emptyMessage="No withdrawal accounts found." />
+    </div>
   );
 }
 
@@ -153,10 +155,17 @@ function AccountActionsDialog({ accountId, accountName }: AccountActionsDialogPr
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
+  const params = useParams({ from: "/o/$orgId/finance" });
+
   const handleDelete = async () => {
     setIsDeleting(true);
 
-    const result = await deleteWithdrawalAccount({ data: { accountId } });
+    const result = await deleteWithdrawalAccountOnServer({
+      data: {
+        organizationId: params.orgId,
+        accountId,
+      },
+    });
 
     if (result.success) {
       setOpen(false);

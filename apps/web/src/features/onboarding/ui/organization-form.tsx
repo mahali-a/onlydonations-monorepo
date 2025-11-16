@@ -50,7 +50,7 @@ export function OrganizationForm({ onSubmit, defaultName }: OrganizationFormProp
       <form.Subscribe selector={(state) => [state.errorMap]}>
         {([errorMap]) =>
           errorMap?.onSubmit ? (
-            <div className="text-left text-sm text-red-600">{errorMap.onSubmit.toString()}</div>
+            <div className="text-left text-sm text-destructive">{errorMap.onSubmit.toString()}</div>
           ) : null
         }
       </form.Subscribe>
@@ -67,7 +67,7 @@ export function OrganizationForm({ onSubmit, defaultName }: OrganizationFormProp
       >
         {(field) => (
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700" htmlFor="organizationName">
+            <Label className="text-sm font-medium text-foreground" htmlFor="organizationName">
               Organization Name
             </Label>
             <Input
@@ -79,15 +79,15 @@ export function OrganizationForm({ onSubmit, defaultName }: OrganizationFormProp
               className={cn(
                 "h-12 text-base",
                 field.state.meta.errors.length > 0
-                  ? "border-red-500 focus-visible:ring-red-500"
-                  : "border-gray-300",
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : "border-input",
               )}
               placeholder="My Organization"
             />
             {field.state.meta.errors.length > 0 && (
-              <p className="text-left text-sm text-red-600">{field.state.meta.errors[0]}</p>
+              <p className="text-left text-sm text-destructive">{field.state.meta.errors[0]}</p>
             )}
-            <p className="text-left text-xs text-gray-500">
+            <p className="text-left text-xs text-muted-foreground">
               This will be the name of your workspace
             </p>
           </div>

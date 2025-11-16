@@ -1,29 +1,33 @@
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { index, sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-export const auth_user = pgTable("auth_user", {
+export const auth_user = sqliteTable("auth_user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
+  emailVerified: integer("email_verified", { mode: "boolean" }).default(false).notNull(),
   image: text("image"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   phoneNumber: text("phone_number").unique(),
-  phoneNumberVerified: boolean("phone_number_verified"),
-  isAnonymous: boolean("is_anonymous"),
+  phoneNumberVerified: integer("phone_number_verified", { mode: "boolean" }),
+  isAnonymous: integer("is_anonymous", { mode: "boolean" }),
   lastLoginMethod: text("last_login_method"),
-  subscribedAt: timestamp("subscribed_at"),
 });
 
-export const auth_session = pgTable("auth_session", {
+export const auth_session = sqliteTable("auth_session", {
   id: text("id").primaryKey(),
-  expiresAt: timestamp("expires_at").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
   ipAddress: text("ip_address"),
@@ -34,7 +38,12 @@ export const auth_session = pgTable("auth_session", {
   activeOrganizationId: text("active_organization_id"),
 });
 
-export const auth_account = pgTable("auth_account", {
+export const authSessionUserIdIdx = index("auth_session_user_id_idx").on(auth_session.userId);
+export const authSessionExpiresAtIdx = index("auth_session_expires_at_idx").on(
+  auth_session.expiresAt,
+);
+
+export const auth_account = sqliteTable("auth_account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -44,38 +53,51 @@ export const auth_account = pgTable("auth_account", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at"),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  accessTokenExpiresAt: integer("access_token_expires_at", {
+    mode: "timestamp_ms",
+  }),
+  refreshTokenExpiresAt: integer("refresh_token_expires_at", {
+    mode: "timestamp_ms",
+  }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
 
-export const auth_verification = pgTable("auth_verification", {
+export const authAccountUserIdIdx = index("auth_account_user_id_idx").on(auth_account.userId);
+export const authAccountProviderIdIdx = index("auth_account_provider_id_idx").on(
+  auth_account.providerId,
+);
+
+export const auth_verification = sqliteTable("auth_verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
 
-export const organization = pgTable("organization", {
+export const organization = sqliteTable("organization", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   logo: text("logo"),
-  createdAt: timestamp("created_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   metadata: text("metadata"),
 });
 
-export const member = pgTable("member", {
+export const member = sqliteTable("member", {
   id: text("id").primaryKey(),
   organizationId: text("organization_id")
     .notNull()
@@ -84,10 +106,20 @@ export const member = pgTable("member", {
     .notNull()
     .references(() => auth_user.id, { onDelete: "cascade" }),
   role: text("role").default("member").notNull(),
-  createdAt: timestamp("created_at").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
-export const invitation = pgTable("invitation", {
+export const memberOrganizationIdIdx = index("member_organization_id_idx").on(
+  member.organizationId,
+);
+export const memberUserIdIdx = index("member_user_id_idx").on(member.userId);
+// Composite index for common query: userId + organizationId
+export const memberUserOrgIdx = index("member_user_org_idx").on(
+  member.userId,
+  member.organizationId,
+);
+
+export const invitation = sqliteTable("invitation", {
   id: text("id").primaryKey(),
   organizationId: text("organization_id")
     .notNull()
@@ -95,8 +127,14 @@ export const invitation = pgTable("invitation", {
   email: text("email").notNull(),
   role: text("role"),
   status: text("status").default("pending").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
   inviterId: text("inviter_id")
     .notNull()
     .references(() => auth_user.id, { onDelete: "cascade" }),
 });
+
+export const invitationOrganizationIdIdx = index("invitation_organization_id_idx").on(
+  invitation.organizationId,
+);
+export const invitationEmailIdx = index("invitation_email_idx").on(invitation.email);
+export const invitationStatusIdx = index("invitation_status_idx").on(invitation.status);

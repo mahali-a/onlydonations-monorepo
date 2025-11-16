@@ -32,8 +32,3 @@ export const organizationSchema = z.object({
     .min(1, "Organization name is required")
     .max(100, "Organization name must be 100 characters or less"),
 });
-
-export type ProfileFormData = z.infer<typeof profileSchema>;
-export type PhoneFormData = z.infer<typeof phoneSchema>;
-export type VerifyFormData = z.infer<typeof verifySchema>;
-export type OrganizationFormData = z.infer<typeof organizationSchema>;

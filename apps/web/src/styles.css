@@ -36,6 +36,31 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.871 0.006 286.286);
+
+  /* Editor variables */
+  --editor-highlight-blue: oklch(0.7 0.15 240);
+  --editor-text-default: oklch(0.145 0 0);
+  --editor-text-blue: oklch(0.6 0.2 240);
+  --editor-text-gray: oklch(0.556 0 0);
+  --editor-bg-default: oklch(1 0 0);
+  --editor-bg-muted: oklch(0.97 0 0);
+  --editor-bg-subtle: oklch(0.97 0 0);
+  --editor-border-default: oklch(0.922 0 0);
+  --editor-border-strong: oklch(0.8 0 0);
+  --editor-font-sans: ui-sans-serif, system-ui, sans-serif;
+  --editor-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --editor-spacing-1: 0.25rem;
+  --editor-spacing-2: 0.5rem;
+  --editor-spacing-3: 0.75rem;
+  --editor-spacing-4: 1rem;
+  --editor-spacing-6: 1.5rem;
+  --editor-spacing-8: 2rem;
+  --editor-spacing-12: 3rem;
+  --editor-spacing-16: 4rem;
+  --editor-transition-fast: 150ms;
+  --editor-transition-normal: 200ms;
+  --editor-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --editor-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 .dark {
@@ -71,6 +96,17 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.274 0.006 286.033);
   --sidebar-ring: oklch(0.442 0.017 285.786);
+
+  /* Dark mode editor variables */
+  --editor-highlight-blue: oklch(0.6 0.2 240);
+  --editor-text-default: oklch(0.985 0 0);
+  --editor-text-blue: oklch(0.8 0.2 240);
+  --editor-text-gray: oklch(0.7 0.01 0);
+  --editor-bg-default: oklch(0.141 0.005 285.823);
+  --editor-bg-muted: oklch(0.2 0.004 286);
+  --editor-bg-subtle: oklch(0.18 0.004 286);
+  --editor-border-default: oklch(0.274 0.006 286.033);
+  --editor-border-strong: oklch(0.4 0.008 286);
 }
 
 @theme inline {
@@ -119,4 +155,223 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* TipTap / ProseMirror Editor Styles */
+.ProseMirror:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.ProseMirror .selection,
+.ProseMirror *::selection {
+  background-color: var(--editor-highlight-blue);
+}
+
+.ProseMirror > .react-renderer {
+  margin: var(--editor-spacing-12) 0;
+  transition: all var(--editor-transition-normal);
+}
+
+.ProseMirror > .react-renderer:first-child {
+  margin-top: 0;
+}
+
+.ProseMirror > .react-renderer:last-child {
+  margin-bottom: 0;
+}
+
+/* Typography Styles */
+.ProseMirror p {
+  line-height: 1.75;
+  margin: var(--editor-spacing-2) 0;
+  color: var(--editor-text-default);
+  font-size: 1rem;
+}
+
+.ProseMirror > p {
+  margin: var(--editor-spacing-3) 0;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4 {
+  font-family: var(--editor-font-sans);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--editor-text-default);
+  scroll-margin-top: var(--editor-spacing-16);
+  line-height: 1.2;
+}
+
+.ProseMirror h1 {
+  font-size: 2rem;
+  margin: var(--editor-spacing-8) 0 var(--editor-spacing-4);
+}
+
+.ProseMirror h2 {
+  font-size: 1.75rem;
+  margin: var(--editor-spacing-8) 0 var(--editor-spacing-4);
+}
+
+.ProseMirror h3 {
+  font-size: 1.375rem;
+  margin: var(--editor-spacing-6) 0 var(--editor-spacing-3);
+}
+
+.ProseMirror h4 {
+  font-size: 1.125rem;
+  margin: var(--editor-spacing-4) 0 var(--editor-spacing-2);
+}
+
+.ProseMirror a {
+  color: var(--editor-text-blue);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.2em;
+  transition: all var(--editor-transition-fast);
+}
+
+.ProseMirror a:hover {
+  color: var(--editor-text-blue);
+  text-decoration-thickness: 0.2em;
+}
+
+.ProseMirror code {
+  font-family: var(--editor-font-mono);
+  font-size: 0.9em;
+  background-color: var(--editor-bg-muted);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  color: var(--editor-text-default);
+  border: 1px solid var(--editor-border-default);
+}
+
+.ProseMirror pre {
+  margin: var(--editor-spacing-6) 0;
+  padding: var(--editor-spacing-4);
+  background-color: var(--editor-bg-subtle);
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid var(--editor-border-default);
+}
+
+.ProseMirror pre code {
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--editor-text-default);
+}
+
+.ProseMirror blockquote {
+  margin: var(--editor-spacing-6) 0;
+  padding: var(--editor-spacing-4) var(--editor-spacing-6);
+  border-left: 4px solid var(--editor-border-strong);
+  font-style: italic;
+  color: var(--editor-text-gray);
+  background-color: var(--editor-bg-subtle);
+  border-radius: 0 8px 8px 0;
+}
+
+/* Lists */
+.ProseMirror ul,
+.ProseMirror ol {
+  margin: var(--editor-spacing-4) 0;
+  padding-left: var(--editor-spacing-6);
+}
+
+.ProseMirror li {
+  margin: var(--editor-spacing-2) 0;
+  padding-left: var(--editor-spacing-2);
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+}
+
+.ProseMirror ul ul {
+  list-style-type: circle;
+}
+
+.ProseMirror ul ul ul {
+  list-style-type: square;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+}
+
+.ProseMirror ol ol {
+  list-style-type: lower-alpha;
+}
+
+.ProseMirror ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* Images */
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--editor-border-default);
+  box-shadow: var(--editor-shadow-sm);
+  transition: all var(--editor-transition-normal);
+  display: block;
+  margin: var(--editor-spacing-1) auto;
+}
+
+.ProseMirror img:hover {
+  box-shadow: var(--editor-shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Horizontal Rule */
+.ProseMirror hr {
+  margin: var(--editor-spacing-8) 0;
+  border: none;
+  border-top: 2px solid var(--editor-border-default);
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: "Start writing...";
+  color: var(--editor-text-gray);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  .ProseMirror {
+    padding: var(--editor-spacing-8) var(--editor-spacing-4);
+  }
+
+  .ProseMirror h1 {
+    font-size: 2rem;
+  }
+  .ProseMirror h2 {
+    font-size: 1.75rem;
+  }
+  .ProseMirror h3 {
+    font-size: 1.5rem;
+  }
+  .ProseMirror h4 {
+    font-size: 1.25rem;
+  }
+  .ProseMirror p {
+    font-size: 0.875rem;
+  }
+}
+
+.is-editor-empty::before {
+  color: var(--editor-text-gray);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

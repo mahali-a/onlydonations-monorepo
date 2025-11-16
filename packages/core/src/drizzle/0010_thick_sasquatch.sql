@@ -1,1 +1,0 @@
-ALTER TABLE "payment_transaction" ALTER COLUMN "processor_transaction_id" SET DEFAULT NULL;

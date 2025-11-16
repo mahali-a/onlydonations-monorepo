@@ -9,8 +9,14 @@
     "build:email": "turbo build --filter=email",
     "dev:web": "turbo dev --filter=web",
     "dev:api": "turbo dev --filter=api",
-    "deploy:web": "turbo build --filter=web && pnpm --filter web deploy",
-    "deploy:api": "turbo build --filter=api && pnpm --filter api deploy",
+    "deploy:web": "turbo build --filter=web && pnpm --filter web run deploy",
+    "deploy:api": "turbo build --filter=api && pnpm --filter api run deploy",
+    "db:generate": "pnpm --filter @repo/core drizzle:generate",
+    "db:migrate:local": "cd apps/web && wrangler d1 migrations apply onlydonations-db-stg --local",
+    "db:migrate:remote": "cd apps/web && wrangler d1 migrations apply onlydonations-db-stg --remote",
+    "db:migrate": "pnpm db:migrate:local",
+    "db:auth:generate": "pnpm --filter @repo/core better-auth:generate",
+    "db:setup": "pnpm db:auth:generate && pnpm db:generate && pnpm db:migrate:local",
     "format": "turbo format",
     "format:check": "turbo format:check",
     "lint": "turbo lint",
@@ -18,7 +24,8 @@
     "check": "turbo check",
     "check:ci": "turbo check:ci",
     "typecheck": "turbo typecheck",
-    "test": "turbo test"
+    "test": "turbo test",
+    "knip": "knip"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +34,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
     "@types/node": "^22.19.1",
+    "knip": "^5.69.1",
     "turbo": "^2.6.1",
     "typescript": "^5.9.3"
   }

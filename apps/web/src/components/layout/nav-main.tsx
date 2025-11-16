@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import type { ComponentType } from "react";
 import {
   SidebarGroup,
@@ -15,20 +15,21 @@ type NavItem = {
 };
 
 export function NavMain({ items, orgId }: { items: NavItem[]; orgId?: string }) {
+  const navigate = useNavigate();
+
   return (
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => {
             const url = item.path ? `/o/${orgId}/${item.path}` : `/o/${orgId}`;
+            const handleClick = () => navigate({ to: url });
 
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild tooltip={item.title}>
-                  <Link to={url as any}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                  </Link>
+                <SidebarMenuButton tooltip={item.title} onClick={handleClick}>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );

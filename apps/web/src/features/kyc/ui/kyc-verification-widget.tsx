@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import type { KycProduct, SmileIdentityConfig } from "../kyc-types";
-import { generateVerificationToken } from "../server";
+import { generateKycVerificationTokenOnServer } from "../server";
 
 type KycVerificationWidgetProps = {
   partnerId: string;
@@ -36,9 +36,8 @@ export function KycVerificationWidget({
           const formData = new FormData();
           formData.append("product", value.product);
 
-          const result = await generateVerificationToken({ data: formData });
+          const result = await generateKycVerificationTokenOnServer({ data: formData });
 
-          // Check if result is valid and has success property
           if (!result || typeof result !== "object" || !("success" in result)) {
             return {
               form: "Error starting verification. Please try again later.",
@@ -51,7 +50,6 @@ export function KycVerificationWidget({
             };
           }
 
-          // Launch Smile Identity widget
           if (window?.SmileIdentity && result.token && result.jobId && result.userId) {
             const config = createSmileConfig(result.token, result.jobId, result.userId);
             window.SmileIdentity(config);
@@ -63,7 +61,6 @@ export function KycVerificationWidget({
 
           return null;
         } catch (_error) {
-          // Catch any network errors or unexpected issues
           return {
             form: "Error starting verification. Please try again later.",
           };
@@ -72,7 +69,6 @@ export function KycVerificationWidget({
     },
   });
 
-  // Load Smile Identity CDN script
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
@@ -197,8 +193,8 @@ export function KycVerificationWidget({
       </form.Subscribe>
 
       {!isScriptLoaded && !error && (
-        <Alert className="border-orange-200 bg-orange-50">
-          <AlertDescription className="text-orange-800">
+        <Alert className="border-primary/30 bg-primary/10">
+          <AlertDescription className="text-primary/80">
             <div className="flex items-center">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Loading Smile Identity verification widget...
@@ -213,13 +209,13 @@ export function KycVerificationWidget({
           form.handleSubmit();
         }}
       >
-        <div className="rounded-lg border border-orange-200 bg-orange-50 p-6">
+        <div className="rounded-lg border border-primary/30 bg-primary/10 p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-            <ShieldCheck className="h-6 w-6 shrink-0 text-orange-600" />
+            <ShieldCheck className="h-6 w-6 shrink-0 text-primary" />
             <div className="flex-1 space-y-3">
               <div>
-                <h3 className="text-lg font-semibold text-orange-900">Complete Biometric KYC</h3>
-                <p className="mt-1 text-sm text-orange-700">
+                <h3 className="text-lg font-semibold text-primary">Complete Biometric KYC</h3>
+                <p className="mt-1 text-sm text-primary/80">
                   Full identity verification with ID document scan and live selfie capture. This is
                   the most comprehensive verification option.
                 </p>

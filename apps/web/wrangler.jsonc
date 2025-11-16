@@ -1,32 +1,51 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "onlydonations",
-  "compatibility_date": "2025-09-02",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "main": "./src/server.ts",
-  "vars": {
-    "ENVIRONMENT": "production",
-    "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
-    "SMILE_PARTNER_ID": "7634",
-    "SMILE_API_KEY": "4f59f505-a94a-4537-b0e5-deb0bccf443b",
-    "SMILE_ENVIRONMENT": "sandbox",
-    "SMILE_CALLBACK_URL": "https://stg.onlydonations.com/api/smile/callback"
-  },
-  "observability": {
-    "enabled": true
-  },
-  "routes": [
-    {
-      "pattern": "stg.onlydonations.com",
-      "custom_domain": true
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "ASSETS",
-      "bucket_name": "assets"
-    }
-  ]
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "onlydonations",
+	"compatibility_date": "2025-09-02",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"main": "./src/server.ts",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "onlydonations-db-stg",
+			"database_id": "8c78dc78-a524-4892-a982-4349bd556fde",
+			"migrations_dir": "migrations"
+		}
+	],
+	"vars": {
+		"ENVIRONMENT": "production",
+		"R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
+		"SMILE_PARTNER_ID": "7634",
+		"SMILE_API_KEY": "4f59f505-a94a-4537-b0e5-deb0bccf443b",
+		"SMILE_ENVIRONMENT": "sandbox",
+		"SMILE_CALLBACK_URL": "https://stg.onlydonations.com/api/smile/callback"
+	},
+	"observability": {
+		"enabled": true,
+		"traces": {
+			"enabled": true
+		}
+	},
+	"routes": [
+		{
+			"pattern": "stg.onlydonations.com",
+			"custom_domain": true
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "ASSETS",
+			"bucket_name": "assets"
+		}
+	],
+	"queues": {
+		"producers": [
+			{
+				"binding": "EMAIL_QUEUE",
+				"queue": "email-queue"
+			}
+		]
+	}
 }

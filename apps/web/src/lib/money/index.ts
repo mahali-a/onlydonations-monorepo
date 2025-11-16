@@ -1,9 +1,9 @@
-export type MoneyValue = {
+type MoneyValue = {
   amount: number;
   currency: string;
 };
 
-export type FormattedMoney = {
+type FormattedMoney = {
   value: string;
   symbol: string;
   code: string;
@@ -25,7 +25,9 @@ export class Money {
   }
 
   static fromMajor(amount: number, currency: string = "GHS"): Money {
-    const minorUnits = Math.round(amount * 100);
+    const amountStr = amount.toFixed(2);
+    const [major = "0", minor = "00"] = amountStr.split(".");
+    const minorUnits = parseInt(major, 10) * 100 + parseInt(minor.padEnd(2, "0").slice(0, 2), 10);
     return new Money(minorUnits, currency);
   }
 
@@ -42,7 +44,7 @@ export class Money {
     return this.amount;
   }
 
-  getCurrency(): string {
+  retrieveCurrency(): string {
     return this.currency;
   }
 
@@ -50,7 +52,7 @@ export class Money {
     const { withSymbol = true, withCode = false, decimals = 2 } = options;
 
     const majorAmount = this.toMajor();
-    const symbol = this.getCurrencySymbol();
+    const symbol = this.retrieveCurrencySymbol();
 
     const formattedAmount = majorAmount.toFixed(decimals);
 
@@ -70,12 +72,12 @@ export class Money {
   formatDetailed(): FormattedMoney {
     return {
       value: this.format({ withSymbol: false, decimals: 2 }),
-      symbol: this.getCurrencySymbol(),
+      symbol: this.retrieveCurrencySymbol(),
       code: this.currency,
     };
   }
 
-  getCurrencySymbol(): string {
+  retrieveCurrencySymbol(): string {
     const symbols: Record<string, string> = {
       GHS: "₵",
       USD: "$",
@@ -117,18 +119,18 @@ export class Money {
     return this.multiply(percent / 100);
   }
 
-  equals(other: Money): boolean {
+  getEquals(other: Money): boolean {
     return this.currency === other.currency && this.amount === other.amount;
   }
 
-  greaterThan(other: Money): boolean {
+  getIsGreaterThan(other: Money): boolean {
     if (this.currency !== other.currency) {
       throw new Error("Cannot compare money with different currencies");
     }
     return this.amount > other.amount;
   }
 
-  lessThan(other: Money): boolean {
+  getIsLessThan(other: Money): boolean {
     if (this.currency !== other.currency) {
       throw new Error("Cannot compare money with different currencies");
     }
@@ -205,10 +207,10 @@ export function addMoney(...values: Money[]): Money {
     throw new Error("At least one money value is required");
   }
 
-  const currency = firstValue.getCurrency();
+  const currency = firstValue.retrieveCurrency();
 
   values.forEach((value) => {
-    if (value.getCurrency() !== currency) {
+    if (value.retrieveCurrency() !== currency) {
       throw new Error("All money values must have same currency");
     }
   });
@@ -242,9 +244,9 @@ export function formatForDashboard(
   const majorAmount = money.toMajor();
 
   if (majorAmount >= 1000000) {
-    return `${money.getCurrencySymbol()}${(majorAmount / 1000000).toFixed(1)}M`;
+    return `${money.retrieveCurrencySymbol()}${(majorAmount / 1000000).toFixed(1)}M`;
   } else if (majorAmount >= 1000) {
-    return `${money.getCurrencySymbol()}${(majorAmount / 1000).toFixed(1)}K`;
+    return `${money.retrieveCurrencySymbol()}${(majorAmount / 1000).toFixed(1)}K`;
   } else {
     return money.format({ decimals: 0 });
   }

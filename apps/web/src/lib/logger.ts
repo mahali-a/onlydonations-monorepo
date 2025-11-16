@@ -1,11 +1,3 @@
-/**
- * Logger utility for Cloudflare Workers edge runtime
- *
- * Provides structured logging with consistent formatting and optional metadata.
- * Uses console methods under the hood, which work well in Cloudflare Workers
- * and integrate with Cloudflare's logging infrastructure.
- */
-
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogMetadata {
@@ -19,10 +11,7 @@ class Logger {
     this.context = context;
   }
 
-  /**
-   * Create a child logger with additional context
-   */
-  child(context: string): Logger {
+  createChildLogger(context: string): Logger {
     const childContext = this.context ? `${this.context}:${context}` : context;
     return new Logger(childContext);
   }
@@ -41,30 +30,18 @@ class Logger {
     return formattedMsg;
   }
 
-  /**
-   * Log debug messages (development/troubleshooting)
-   */
   debug(message: string, metadata?: LogMetadata): void {
     console.log(this.formatMessage("debug", message, metadata));
   }
 
-  /**
-   * Log informational messages
-   */
   info(message: string, metadata?: LogMetadata): void {
     console.log(this.formatMessage("info", message, metadata));
   }
 
-  /**
-   * Log warning messages
-   */
   warn(message: string, metadata?: LogMetadata): void {
     console.warn(this.formatMessage("warn", message, metadata));
   }
 
-  /**
-   * Log error messages
-   */
   error(message: string, error?: Error | unknown, metadata?: LogMetadata): void {
     const errorMetadata: LogMetadata = { ...metadata };
 
@@ -81,9 +58,6 @@ class Logger {
     console.error(this.formatMessage("error", message, errorMetadata));
   }
 
-  /**
-   * Log with custom level (rarely needed)
-   */
   log(level: LogLevel, message: string, metadata?: LogMetadata): void {
     const formatted = this.formatMessage(level, message, metadata);
 

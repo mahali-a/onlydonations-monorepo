@@ -1,5 +1,8 @@
 import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
+import { logger } from "@/lib/logger";
+
+const r2Logger = logger.createChildLogger("r2-route");
 
 export const Route = createFileRoute("/r2/$")({
   server: {
@@ -30,7 +33,7 @@ export const Route = createFileRoute("/r2/$")({
 
           return new Response(file.body, { headers });
         } catch (error) {
-          console.error(`Error fetching key "${key}" from R2:`, error);
+          r2Logger.error(`Error fetching key "${key}" from R2`, error);
           return new Response("Internal Server Error", { status: 500 });
         }
       },

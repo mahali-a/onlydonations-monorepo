@@ -18,7 +18,3 @@ export const emailSchema = z.object({
 export const avatarSchema = z.object({
   avatar: z.instanceof(File).nullable(),
 });
-
-export type NameFormData = z.infer<typeof nameSchema>;
-export type EmailFormData = z.infer<typeof emailSchema>;
-export type AvatarFormData = z.infer<typeof avatarSchema>;

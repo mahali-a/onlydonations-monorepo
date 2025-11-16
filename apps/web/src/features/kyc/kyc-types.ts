@@ -2,30 +2,6 @@ export type KycProduct = "biometric_kyc" | "doc_verification" | "authentication"
 
 export type KycStatus = "PENDING" | "VERIFIED" | "REJECTED" | "REQUIRES_INPUT";
 
-export type VerificationJobStatus = "pending" | "completed" | "failed" | "cancelled";
-
-export type VerificationJob = {
-  id: string;
-  userId: string;
-  smileJobId: string;
-  product: KycProduct;
-  status: VerificationJobStatus;
-  resultCode?: string | null;
-  resultText?: string | null;
-  rawResult?: Record<string, unknown> | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type UserKycStatus = {
-  userId: string;
-  kycStatus: KycStatus;
-  kycVerifiedAt?: Date | null;
-  smileJobId?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 export type SmileIdentityConfig = {
   token: string;
   product: string;
@@ -56,7 +32,6 @@ declare global {
   }
 }
 
-// Smile Identity API types for server-side token generation
 export type SmileTokenRequest = {
   user_id: string;
   job_id: string;
@@ -70,7 +45,6 @@ export type SmileTokenResponse = {
   userId: string;
 };
 
-// Webhook payload types
 export type SmileWebhookPayload = {
   job_id: string;
   user_id: string;

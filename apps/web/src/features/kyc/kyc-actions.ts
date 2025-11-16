@@ -1,24 +1,19 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
 import { retry } from "@/lib/retry";
 import type { KycProduct } from "./kyc-types";
-import { kycModel } from "./models/kyc-model";
+import { kycModel } from "./kyc-models";
 
-const kycLogger = logger.child("kyc-actions");
+const kycLogger = logger.createChildLogger("kyc-actions");
 
-/**
- * Generate HMAC-SHA256 signature for Smile Identity
- * Format: HMAC-SHA256(timestamp | partner_id | "sid_request", api_key)
- */
 async function generateSmileSignature(
   partnerId: string,
   apiKey: string,
   timestamp: string,
 ): Promise<string> {
-  // Smile Identity expects: timestamp + partner_id + "sid_request"
   const message = `${timestamp}${partnerId}sid_request`;
 
   const encoder = new TextEncoder();
@@ -35,14 +30,13 @@ async function generateSmileSignature(
 
   const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
 
-  // Convert to base64
   const signatureArray = Array.from(new Uint8Array(signature));
   const signatureBase64 = btoa(String.fromCharCode(...signatureArray));
 
   return signatureBase64;
 }
 
-export const generateVerificationToken = createServerFn({ method: "POST" })
+export const generateKycVerificationTokenOnServer = createServerFn({ method: "POST" })
   .inputValidator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error("Expected FormData");
@@ -77,7 +71,6 @@ export const generateVerificationToken = createServerFn({ method: "POST" })
       const jobId = `job-${nanoid()}`;
       const timestamp = new Date().toISOString();
 
-      // Generate signature
       const signature = await generateSmileSignature(
         env.SMILE_PARTNER_ID,
         env.SMILE_API_KEY,
@@ -89,7 +82,6 @@ export const generateVerificationToken = createServerFn({ method: "POST" })
           ? "https://api.smileidentity.com/v1"
           : "https://testapi.smileidentity.com/v1";
 
-      // Call Smile Identity Web Token API with retry logic
       const result = await retry(
         async () => {
           const response = await fetch(`${baseUrl}/token`, {
@@ -136,8 +128,7 @@ export const generateVerificationToken = createServerFn({ method: "POST" })
         },
       );
 
-      // Create verification job in database
-      await kycModel.createVerificationJob({
+      await kycModel.saveVerificationJobToDatabase({
         userId: user.id,
         smileJobId: jobId,
         product: data.product,

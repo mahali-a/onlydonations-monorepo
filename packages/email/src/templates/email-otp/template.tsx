@@ -81,5 +81,3 @@ export const EmailOtpTemplate = ({
     </Html>
   );
 };
-
-export default EmailOtpTemplate;

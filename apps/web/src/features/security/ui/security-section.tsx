@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { revokeSession } from "../server";
+import { deleteSessionOnServer } from "../server";
 
 interface Session {
   id: string;
@@ -48,7 +48,7 @@ function SessionItem({ session }: { session: Session }) {
         const formData = new FormData();
         formData.append("token", value.token);
 
-        const result = await revokeSession({ data: formData });
+        const result = await deleteSessionOnServer({ data: formData });
 
         if (result?.error) {
           return {

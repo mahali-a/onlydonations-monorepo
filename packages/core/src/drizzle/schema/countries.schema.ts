@@ -1,19 +1,19 @@
-import { relations } from "drizzle-orm";
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { currencies } from "./currencies.schema";
 
-export const countries = pgTable("countries", {
+export const countries = sqliteTable("countries", {
   code: text("code").primaryKey(),
   name: text("name").notNull(),
   currencyCode: text("currency_code")
     .notNull()
     .references(() => currencies.code),
-  enabled: boolean("enabled").notNull().default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => new Date()),
 });
 
 export const countriesRelations = relations(countries, ({ one }) => ({

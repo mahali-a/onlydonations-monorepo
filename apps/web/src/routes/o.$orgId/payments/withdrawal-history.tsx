@@ -3,13 +3,14 @@ import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { WithdrawalHistoryComponent } from "@/features/payments/withdrawal-history";
-import { getWithdrawalHistory } from "@/features/payments/withdrawal-history/server";
+import { retrieveWithdrawalHistoryFromServer } from "@/features/payments/withdrawal-history/server";
 
-const withdrawalHistoryQueryOptions = (orgId: string) => queryOptions({
-  queryKey: ['withdrawal-history', orgId],
-  queryFn: () => getWithdrawalHistory(),
-  staleTime: ms('2 minutes'),
-});
+const withdrawalHistoryQueryOptions = (orgId: string) =>
+  queryOptions({
+    queryKey: ["withdrawal-history", orgId],
+    queryFn: () => retrieveWithdrawalHistoryFromServer({ data: { orgId } }),
+    staleTime: ms("2 minutes"),
+  });
 
 export const Route = createFileRoute("/o/$orgId/payments/withdrawal-history")({
   component: WithdrawalHistory,
@@ -26,17 +27,11 @@ export const Route = createFileRoute("/o/$orgId/payments/withdrawal-history")({
 
 function WithdrawalHistory() {
   const { organization } = Route.useRouteContext();
+  const { data } = useSuspenseQuery(withdrawalHistoryQueryOptions(organization?.id ?? ""));
 
   if (!organization) {
     return null;
   }
 
-  const { data } = useSuspenseQuery(withdrawalHistoryQueryOptions(organization.id));
-
-  return (
-    <WithdrawalHistoryComponent
-      withdrawals={data.withdrawals}
-      organizationSlug={organization.slug}
-    />
-  );
+  return <WithdrawalHistoryComponent withdrawals={data.withdrawals} />;
 }

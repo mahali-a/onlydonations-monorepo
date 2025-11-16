@@ -3,14 +3,14 @@ import { getAuth } from "@repo/core/auth/server";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { nanoid } from "nanoid";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
 import { emailSchema, nameSchema } from "./account-schemas";
-import { userModel } from "./models/user-model";
+import { updateUserInDatabase } from "./account-models";
 
-const accountLogger = logger.child("account-actions");
+const accountLogger = logger.createChildLogger("account-actions");
 
-export const updateName = createServerFn({ method: "POST" })
+export const updateUserNameOnServer = createServerFn({ method: "POST" })
   .inputValidator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error("Expected FormData");
@@ -34,7 +34,7 @@ export const updateName = createServerFn({ method: "POST" })
     }
 
     try {
-      await userModel.update(user.id, {
+      await updateUserInDatabase(user.id, {
         name: result.data.name,
       });
 
@@ -50,7 +50,7 @@ export const updateName = createServerFn({ method: "POST" })
     }
   });
 
-export const updateEmail = createServerFn({ method: "POST" })
+export const updateUserEmailOnServer = createServerFn({ method: "POST" })
   .inputValidator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error("Expected FormData");
@@ -95,7 +95,7 @@ export const updateEmail = createServerFn({ method: "POST" })
     }
   });
 
-export const updateAvatar = createServerFn({ method: "POST" })
+export const updateUserAvatarOnServer = createServerFn({ method: "POST" })
   .inputValidator((data) => {
     if (!(data instanceof FormData)) {
       throw new Error("Expected FormData");
@@ -140,7 +140,7 @@ export const updateAvatar = createServerFn({ method: "POST" })
       const avatarUrl = `${env.R2_PUBLIC_URL}/${key}`;
       const oldImageUrl = user.image;
 
-      await userModel.update(user.id, {
+      await updateUserInDatabase(user.id, {
         image: avatarUrl,
       });
 

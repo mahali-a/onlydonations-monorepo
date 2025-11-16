@@ -22,7 +22,7 @@ type FinancialMetricsProps = {
 
 export function FinancialMetrics({ metrics }: FinancialMetricsProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs lg:grid-cols-4 dark:*:data-[slot=card]:bg-card">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs dark:*:data-[slot=card]:bg-card">
       {metrics.map((metric) => (
         <Card className="@container/card" key={metric.title}>
           <CardHeader>

@@ -1,46 +1,60 @@
 import { createServerFn } from "@tanstack/react-start";
 import dayjs from "dayjs";
 import { z } from "zod";
-import { authMiddleware } from "@/core/middleware";
-import { financialInsightsModel } from "../models/financial-insights-model";
-import { paymentTransactionModel } from "../models/payment-transaction-model";
+import { authMiddleware } from "@/server/middleware";
+import {
+  retrieveTotalRaisedFromDatabaseByOrganization,
+  retrieveTotalRaisedFromDatabaseByOrganizationAndPeriod,
+  retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus,
+} from "../payments-models";
+import { promiseHash } from "@/utils/promise-hash";
 
-export const getPaymentLayoutMetrics = createServerFn({ method: "GET" })
+export const retrievePaymentLayoutMetricsFromServer = createServerFn({ method: "GET" })
   .inputValidator(z.object({ organizationId: z.string() }))
   .middleware([authMiddleware])
   .handler(async ({ data }) => {
     const thirtyDaysAgo = dayjs().subtract(30, "days").toDate();
     const sixtyDaysAgo = dayjs().subtract(60, "days").toDate();
 
-    // Get raw data from models
-    const [
+    const {
       allTimeDonations,
       allTimeCompletedWithdrawals,
       allTimePendingWithdrawals,
       periodDonations,
       periodCompletedWithdrawals,
       periodPendingWithdrawals,
-    ] = await Promise.all([
-      financialInsightsModel.getTotalRaisedByOrganization(data.organizationId),
-      paymentTransactionModel.getTotalWithdrawalsByStatus(data.organizationId, "SUCCESS"),
-      paymentTransactionModel.getTotalWithdrawalsByStatus(data.organizationId, "PENDING"),
-      financialInsightsModel.getTotalRaisedByOrganizationForPeriod(
+    } = await promiseHash({
+      allTimeDonations: retrieveTotalRaisedFromDatabaseByOrganization(data.organizationId),
+      allTimeCompletedWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+        data.organizationId,
+        "SUCCESS",
+      ),
+      allTimePendingWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+        data.organizationId,
+        "PENDING",
+      ),
+      periodDonations: retrieveTotalRaisedFromDatabaseByOrganizationAndPeriod(
         data.organizationId,
         sixtyDaysAgo,
         thirtyDaysAgo,
       ),
-      paymentTransactionModel.getTotalWithdrawalsByStatus(data.organizationId, "SUCCESS"),
-      paymentTransactionModel.getTotalWithdrawalsByStatus(data.organizationId, "PENDING"),
-    ]);
+      periodCompletedWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+        data.organizationId,
+        "SUCCESS",
+      ),
+      periodPendingWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+        data.organizationId,
+        "PENDING",
+      ),
+    });
 
-    // Business logic calculations in application
     const allTimeStats = {
       totalRaised: Number(allTimeDonations.totalRaised) || 0,
-      totalWithdrawals: allTimeCompletedWithdrawals, // Business decision: only confirmed
+      totalWithdrawals: allTimeCompletedWithdrawals,
       availableBalance: Math.max(
         0,
         allTimeDonations.totalRaised - allTimeCompletedWithdrawals - allTimePendingWithdrawals,
-      ), // Business calculation
+      ),
       currency: allTimeDonations.currency || "GHS",
     };
 

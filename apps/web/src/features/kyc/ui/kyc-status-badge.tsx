@@ -1,22 +1,40 @@
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import type { KycStatus } from "../kyc-types";
 
 interface KycStatusBadgeProps {
   status: KycStatus;
+  className?: string;
 }
 
-export function KycStatusBadge({ status }: KycStatusBadgeProps) {
-  const variants: Record<
-    KycStatus,
-    { variant: "default" | "secondary" | "destructive" | "outline"; label: string }
-  > = {
-    PENDING: { variant: "secondary", label: "Pending" },
-    VERIFIED: { variant: "default", label: "Verified" },
-    REJECTED: { variant: "destructive", label: "Rejected" },
-    REQUIRES_INPUT: { variant: "outline", label: "Action Required" },
-  };
+const STATUS_STYLES: Record<KycStatus, string> = {
+  PENDING: "border-amber-200 bg-amber-50 text-amber-700",
+  VERIFIED: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  REJECTED: "border-rose-200 bg-rose-50 text-rose-700",
+  REQUIRES_INPUT: "border-blue-200 bg-blue-50 text-blue-700",
+};
 
-  const config = variants[status];
+const STATUS_LABELS: Record<KycStatus, string> = {
+  PENDING: "Pending",
+  VERIFIED: "Verified",
+  REJECTED: "Rejected",
+  REQUIRES_INPUT: "Action Required",
+};
 
-  return <Badge variant={config.variant}>{config.label}</Badge>;
+export function KycStatusBadge({ status, className }: KycStatusBadgeProps) {
+  const badgeStyles = STATUS_STYLES[status] ?? STATUS_STYLES.PENDING;
+  const label = STATUS_LABELS[status] ?? status;
+
+  return (
+    <Badge
+      className={cn(
+        "h-6 rounded-lg px-2 text-xs font-medium capitalize border",
+        badgeStyles,
+        className,
+      )}
+      variant="outline"
+    >
+      {label}
+    </Badge>
+  );
 }

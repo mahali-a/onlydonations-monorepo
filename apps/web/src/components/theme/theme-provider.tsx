@@ -1,7 +1,7 @@
 import * as React from "react";
 import { logger } from "@/lib/logger";
 
-const themeLogger = logger.child("theme-provider");
+const themeLogger = logger.createChildLogger("theme-provider");
 
 type Theme = "dark" | "light" | "system";
 
@@ -40,12 +40,10 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(() => {
-    // During SSR, always return the default theme to avoid hydration mismatch
     if (typeof window === "undefined") {
       return defaultTheme;
     }
 
-    // Client-side: try to get theme from localStorage
     try {
       const stored = localStorage.getItem(storageKey) as Theme;
       return stored || defaultTheme;
@@ -56,12 +54,10 @@ export function ThemeProvider({
   });
 
   const [systemTheme, setSystemTheme] = React.useState<"light" | "dark" | undefined>(() => {
-    // During SSR, return undefined
     if (typeof window === "undefined") {
       return undefined;
     }
 
-    // Client-side: detect system theme
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
@@ -96,7 +92,6 @@ export function ThemeProvider({
         );
         document.head.appendChild(css);
 
-        // Force reflow
         (() => window.getComputedStyle(document.body))();
 
         setTimeout(() => {
@@ -114,14 +109,12 @@ export function ThemeProvider({
     [attribute, disableTransitionOnChange],
   );
 
-  // Apply theme on mount and when resolvedTheme changes
   React.useEffect(() => {
     if (isMounted) {
       applyTheme(resolvedTheme);
     }
   }, [resolvedTheme, applyTheme, isMounted]);
 
-  // Handle system theme changes
   React.useEffect(() => {
     if (!enableSystem || typeof window === "undefined") return;
 

@@ -3,7 +3,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { z } from "zod";
-import { getFinancialInsights } from "@/features/payments/insights/server";
+import { retrieveFinancialInsightsFromServer } from "@/features/payments/insights/server";
 import { CampaignTable, FinancialMetrics, FundsChart } from "@/features/payments/insights/ui";
 
 const financeSearchSchema = z.object({
@@ -11,11 +11,13 @@ const financeSearchSchema = z.object({
   limit: z.number().int().positive().default(10).catch(10),
 });
 
-const financialInsightsQueryOptions = (orgId: string, page: number, limit: number) => queryOptions({
-  queryKey: ['financial-insights', orgId, page, limit],
-  queryFn: () => getFinancialInsights({ data: { organizationId: orgId, page, limit } }),
-  staleTime: ms('5 minutes'),
-});
+const financialInsightsQueryOptions = (orgId: string, page: number, limit: number) =>
+  queryOptions({
+    queryKey: ["financial-insights", orgId, page, limit],
+    queryFn: () =>
+      retrieveFinancialInsightsFromServer({ data: { organizationId: orgId, page, limit } }),
+    staleTime: ms("5 minutes"),
+  });
 
 export const Route = createFileRoute("/o/$orgId/finance")({
   component: FinancialInsights,
@@ -46,18 +48,15 @@ function FinancialInsights() {
     throw new Error("Organization context is required");
   }
 
-  const { data } = useSuspenseQuery(
-    financialInsightsQueryOptions(organization.id, page, limit),
-  );
+  const { data } = useSuspenseQuery(financialInsightsQueryOptions(organization.id, page, limit));
   const { metrics, chartData, campaigns, currency, pagination } = data;
 
   const handlePageChange = (newPage: number) => {
-    navigate({ search: { page: newPage } });
+    navigate({ search: { page: newPage, limit } as any });
   };
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 pt-6 w-full space-y-6 bg-background pb-8 overflow-x-hidden">
-      {/* Header */}
+    <div className="container mx-auto px-4 lg:px-8 pt-6 w-full space-y-6 bg-background pb-8 overflow-x-auto">
       <div className="w-full flex flex-col md:flex-row items-start md:items-center gap-4 md:justify-between">
         <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
           <h1 className="text-2xl font-bold tracking-tight">Financial Insights</h1>
@@ -67,13 +66,10 @@ function FinancialInsights() {
         </div>
       </div>
 
-      {/* Financial Metrics */}
       <FinancialMetrics metrics={metrics} />
 
-      {/* Funds Raised Chart */}
       <FundsChart data={chartData} currency={currency} />
 
-      {/* Campaign Performance Table */}
       <div className="space-y-4">
         <div className="space-y-1">
           <h2 className="text-xl font-semibold">Campaign Financial Performance</h2>
@@ -83,7 +79,6 @@ function FinancialInsights() {
         </div>
         <CampaignTable
           campaigns={campaigns}
-          organizationSlug={organization.slug}
           pagination={pagination}
           onPageChange={handlePageChange}
         />

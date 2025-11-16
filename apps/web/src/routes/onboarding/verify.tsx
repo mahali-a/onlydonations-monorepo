@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { OnboardingLayout, VerifyForm } from "@/features/onboarding";
-import { createDefaultOrganization } from "@/features/onboarding/server";
+import { createDefaultOrganizationOnServer } from "@/features/onboarding/server";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/onboarding/verify")({
@@ -26,14 +26,11 @@ function VerifyPage() {
       return { error: error.message || "Invalid verification code. Please try again." };
     }
 
-    // Create default organization after successful verification
-    const orgResult = await createDefaultOrganization();
+    const orgResult = await createDefaultOrganizationOnServer();
 
     if (orgResult.success && orgResult.organizationId) {
-      // Redirect to new organization
       navigate({ to: `/o/${orgResult.organizationId}` });
     } else {
-      // Fallback to /app if organization creation fails
       navigate({ to: "/app" });
     }
 
@@ -49,7 +46,7 @@ function VerifyPage() {
   return (
     <OnboardingLayout step="verify">
       <a
-        className="text-sm text-orange-600 underline hover:text-orange-800"
+        className="text-sm text-primary underline hover:text-primary/80"
         href={`/onboarding?step=phone&change=phone&next=${encodeURIComponent(next)}`}
       >
         Not the right number? Change number

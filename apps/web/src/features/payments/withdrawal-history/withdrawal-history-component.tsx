@@ -3,7 +3,6 @@ import { WithdrawalHistoryTable } from "./ui";
 
 type WithdrawalHistoryComponentProps = {
   withdrawals: SelectPaymentTransaction[];
-  organizationSlug: string;
 };
 
 export function WithdrawalHistoryComponent({ withdrawals }: WithdrawalHistoryComponentProps) {

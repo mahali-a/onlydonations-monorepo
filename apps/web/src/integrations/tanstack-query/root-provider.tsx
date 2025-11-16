@@ -5,8 +5,7 @@ export function getContext() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // Disable automatic refetching to prevent issues during SSR
-        staleTime: ms('1 minute'),
+        staleTime: ms("1 minute"),
       },
     },
   });

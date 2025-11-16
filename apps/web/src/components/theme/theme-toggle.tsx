@@ -24,7 +24,6 @@ export function ThemeToggle({
 }: ThemeToggleProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
-  // Animation variants for icons
   const iconVariants = {
     sun: "transition-all duration-500 ease-in-out",
     moon: "transition-all duration-500 ease-in-out",
@@ -160,7 +159,7 @@ export function ThemeToggle({
               <div
                 className={`
                 w-2 h-2 rounded-full transition-colors duration-200
-                ${resolvedTheme === "dark" ? "bg-blue-500" : "bg-amber-500"}
+                ${resolvedTheme === "dark" ? "bg-primary" : "bg-primary"}
               `}
               />
               Currently using {resolvedTheme} theme
@@ -172,7 +171,6 @@ export function ThemeToggle({
   );
 }
 
-// Simplified version for minimal use cases
 export function ThemeToggleSimple() {
   const { theme, setTheme, resolvedTheme } = useTheme();
 

@@ -1,4 +1,3 @@
-import { sendEmail } from "@repo/email/email/setup";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import {
   anonymous,
@@ -9,11 +8,43 @@ import {
 } from "better-auth/plugins";
 import { reactStartCookies } from "better-auth/react-start";
 
-export const createBetterAuth = (config: {
+/**
+ * Email handler callback type for auth-related emails
+ */
+export type AuthEmailHandler = (
+  type: "otp" | "change-email",
+  data: Record<string, unknown>,
+) => Promise<void>;
+
+/**
+ * Configuration for creating Better Auth instance
+ */
+export interface CreateAuthConfig {
+  /** Database adapter (usually Drizzle) */
   database: BetterAuthOptions["database"];
-  secret?: BetterAuthOptions["secret"];
+  /** Secret key for session encryption */
+  secret?: string;
+  /** Social authentication providers (Google, GitHub, etc.) */
   socialProviders?: BetterAuthOptions["socialProviders"];
-}): ReturnType<typeof betterAuth> => {
+  /** Handler for sending authentication emails (OTP, email change, etc.) */
+  emailHandler?: AuthEmailHandler;
+}
+
+/**
+ * Creates a Better Auth instance with opinionated defaults for the SaaS kit.
+ *
+ * Features enabled:
+ * - Email OTP authentication
+ * - Phone number authentication (NOOP - needs implementation)
+ * - Anonymous users
+ * - Organizations & team management
+ * - Email change verification
+ * - Last login method tracking
+ *
+ * @param config - Auth configuration
+ * @returns Configured Better Auth instance
+ */
+export function createBetterAuth(config: CreateAuthConfig): ReturnType<typeof betterAuth> {
   return betterAuth({
     database: config.database,
     secret: config.secret,
@@ -26,11 +57,14 @@ export const createBetterAuth = (config: {
       changeEmail: {
         enabled: true,
         sendChangeEmailVerification: async ({ user, newEmail, url }) => {
-          await sendEmail("change-email", {
-            email: user.email,
-            newEmail,
-            url,
-          });
+          if (config.emailHandler) {
+            await config.emailHandler("change-email", {
+              email: user.email,
+              newEmail,
+              url,
+              userId: user.id,
+            });
+          }
         },
       },
     },
@@ -49,14 +83,14 @@ export const createBetterAuth = (config: {
         otpLength: 6,
         expiresIn: 300,
         async sendVerificationOTP({ email, otp, type }) {
-          console.log("otp", otp);
-
-          await sendEmail("email-otp", {
-            email,
-            otp,
-            type: type as "sign-in" | "email-verification" | "forget-password",
-            expiresIn: "5 minutes",
-          });
+          if (config.emailHandler) {
+            await config.emailHandler("otp", {
+              email,
+              otp,
+              type: type as "sign-in" | "email-verification" | "forget-password",
+              expiresIn: "5 minutes",
+            });
+          }
         },
       }),
       phoneNumber({
@@ -80,4 +114,4 @@ export const createBetterAuth = (config: {
       reactStartCookies(),
     ],
   });
-};
+}

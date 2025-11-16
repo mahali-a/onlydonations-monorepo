@@ -1,5 +1,3 @@
-/// <reference types="vite/client" />
-
 import type { SelectMember, SelectOrganization, SelectUser } from "@repo/core/database/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -14,7 +12,7 @@ import { logger } from "@/lib/logger";
 import appCss from "@/styles.css?url";
 import { seo } from "@/utils/seo";
 
-const rootLogger = logger.child("root");
+const rootLogger = logger.createChildLogger("root");
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -93,9 +91,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
-        {/* Prevent theme flash by applying theme before React hydrates */}
         <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe hardcoded script to prevent theme flash on page load
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Critical theme initialization script that must run before render
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -105,7 +102,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   var theme = localStorage.getItem(storageKey) || defaultTheme;
                   var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                   var resolvedTheme = theme === 'system' ? systemTheme : theme;
-                  
+
                   if (resolvedTheme === 'dark') {
                     document.documentElement.classList.add('dark');
                     document.documentElement.classList.remove('light');

@@ -1,46 +1,48 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { logger } from "@/lib/logger";
-import { financialInsightsModel } from "../models/financial-insights-model";
-import { paymentTransactionModel } from "../models/payment-transaction-model";
-import { withdrawalAccountModel } from "../models/withdrawal-account-model";
+import {
+  retrieveTotalRaisedFromDatabaseByOrganization,
+  retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus,
+  retrieveWithdrawalAccountsFromDatabaseByOrganization,
+} from "../payments-models";
+import { promiseHash } from "@/utils/promise-hash";
 
-const makeWithdrawalLogger = logger.child("make-withdrawal-loaders");
+const makeWithdrawalLogger = logger.createChildLogger("make-withdrawal-loaders");
 
-export const getMakeWithdrawalData = createServerFn({ method: "GET" })
+export const retrieveMakeWithdrawalDataFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .inputValidator(z.object({ orgId: z.string() }))
-  .handler(async ({ context }) => {
-    // @ts-expect-error - Type not inferred
-    const organizationId = context.session?.session?.activeOrganizationId;
-    if (!organizationId) {
-      throw new Error("No active organization");
-    }
+  .handler(async ({ data, context }) => {
+    const { orgId } = data;
 
-    makeWithdrawalLogger.info("loader.start", { organizationId });
+    await requireOrganizationAccess(orgId, context.user.id);
+
+    const organizationId = orgId;
+
+    makeWithdrawalLogger.error("loader.start", { organizationId });
 
     try {
-      // Get raw data from models
-      const [withdrawalAccounts, donations, completedWithdrawals, pendingWithdrawals] =
-        await Promise.all([
-          withdrawalAccountModel.findByOrganizationId(organizationId),
-          financialInsightsModel.getTotalRaisedByOrganization(organizationId),
-          paymentTransactionModel.getTotalWithdrawalsByStatus(organizationId, "SUCCESS"),
-          paymentTransactionModel.getTotalWithdrawalsByStatus(organizationId, "PENDING"),
-        ]);
+      const { withdrawalAccounts, donations, completedWithdrawals, pendingWithdrawals } =
+        await promiseHash({
+          withdrawalAccounts: retrieveWithdrawalAccountsFromDatabaseByOrganization(organizationId),
+          donations: retrieveTotalRaisedFromDatabaseByOrganization(organizationId),
+          completedWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+            organizationId,
+            "SUCCESS",
+          ),
+          pendingWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+            organizationId,
+            "PENDING",
+          ),
+        });
 
-      // Business logic calculation in application
       const availableBalance = Math.max(
         0,
         donations.totalRaised - completedWithdrawals - pendingWithdrawals,
       );
-
-      makeWithdrawalLogger.info("loader.success", {
-        organizationId,
-        withdrawalAccountsCount: withdrawalAccounts.length,
-        availableBalance,
-      });
 
       return {
         withdrawalAccounts,

@@ -1,14 +1,15 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import { authMiddleware } from "@/core/middleware/auth";
-import { kycModel } from "./models/kyc-model";
+import { authMiddleware } from "@/server/middleware/auth";
+import { kycModel } from "./kyc-models";
+import type { SelectVerificationJob } from "@repo/core/database/types";
 
-export const getKycStatus = createServerFn({ method: "GET" })
+export const retrieveKycStatusFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const user = context.user;
 
-    const status = await kycModel.getUserKycStatus(user.id);
+    const status = await kycModel.retrieveUserKycStatusFromDatabaseByUser(user.id);
 
     if (!status) {
       return {
@@ -24,18 +25,22 @@ export const getKycStatus = createServerFn({ method: "GET" })
     return status;
   });
 
-export const getVerificationJobs = createServerFn({ method: "GET" })
+export const retrieveVerificationJobsFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
     const user = context.user;
 
-    const jobs = await kycModel.getUserVerificationJobs(user.id);
+    const jobs = await kycModel.retrieveVerificationJobsFromDatabaseByUser(user.id);
 
-    // Filter out pending jobs to avoid showing incomplete/abandoned verifications
-    return jobs.filter((job) => job.status !== "pending") as any;
+    return jobs
+      .filter((job: SelectVerificationJob) => job.status !== "pending")
+      .map((job: SelectVerificationJob) => {
+        const { rawResult: _rawResult, ...rest } = job;
+        return rest;
+      });
   });
 
-export const getSmileConfig = createServerFn({ method: "GET" })
+export const retrieveSmileConfigFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async () => {
     return {

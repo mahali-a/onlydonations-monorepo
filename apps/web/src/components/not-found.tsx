@@ -2,19 +2,18 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft, FileQuestion, Home, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import type { ReactNode } from "react";
 
-export function NotFound({ children }: { children?: any }) {
+export function NotFound({ children }: { children?: ReactNode }) {
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardContent className="pt-6">
           <div className="flex flex-col items-center text-center space-y-6">
-            {/* Icon */}
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
               <FileQuestion className="h-10 w-10 text-muted-foreground" />
             </div>
 
-            {/* Heading */}
             <div className="space-y-2">
               <h1 className="text-2xl font-semibold tracking-tight">Page Not Found</h1>
               <div className="text-muted-foreground">
@@ -22,7 +21,6 @@ export function NotFound({ children }: { children?: any }) {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Button
                 variant="default"
@@ -40,7 +38,6 @@ export function NotFound({ children }: { children?: any }) {
               </Button>
             </div>
 
-            {/* Help text */}
             <div className="pt-4 border-t w-full">
               <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
                 <Search className="h-4 w-4" />

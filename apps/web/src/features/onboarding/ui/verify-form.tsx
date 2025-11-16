@@ -21,7 +21,7 @@ interface VerifyFormProps {
 }
 
 export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps) {
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+  const [timeLeft, setTimeLeft] = useState(600);
   const [isResending, setIsResending] = useState(false);
 
   const form = useForm({
@@ -43,7 +43,6 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
     },
   });
 
-  // Timer countdown
   useEffect(() => {
     if (timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -60,7 +59,7 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
   const handleResend = async () => {
     setIsResending(true);
     await onResend();
-    setTimeLeft(600); // Reset timer
+    setTimeLeft(600);
     setIsResending(false);
   };
 
@@ -68,7 +67,7 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
 
   return (
     <div className="space-y-6 text-left">
-      <p className="text-sm leading-relaxed text-gray-600">
+      <p className="text-sm leading-relaxed text-muted-foreground">
         Please enter the code we sent to your phone number {maskedPhone}.
       </p>
 
@@ -89,7 +88,7 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
                 value={field.state.value}
                 onChange={(value) => {
                   field.handleChange(value);
-                  // Auto-submit when 6 digits entered
+
                   if (value.length === 6) {
                     form.handleSubmit();
                   }
@@ -106,16 +105,16 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
                 </InputOTPGroup>
               </InputOTP>
 
-              <p className="text-left text-sm text-gray-600">
+              <p className="text-left text-sm text-muted-foreground">
                 {timeLeft > 0 ? (
                   <span>The code will expire in {formatTime(timeLeft)}</span>
                 ) : (
-                  <span className="text-red-600">Code expired. Please request a new one.</span>
+                  <span className="text-destructive">Code expired. Please request a new one.</span>
                 )}
               </p>
 
               {field.state.meta.errors.length > 0 && (
-                <p className="text-left text-sm text-red-500">{field.state.meta.errors[0]}</p>
+                <p className="text-left text-sm text-destructive">{field.state.meta.errors[0]}</p>
               )}
             </div>
           )}
@@ -125,7 +124,7 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
           type="button"
           onClick={handleResend}
           disabled={isResending || timeLeft > 0}
-          className="mx-auto block text-sm text-orange-600 underline hover:text-orange-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mx-auto block text-sm text-primary underline hover:text-primary/80 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isResending ? "Sending..." : "Resend code"}
         </button>

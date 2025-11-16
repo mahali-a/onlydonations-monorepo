@@ -76,5 +76,3 @@ export const ChangeEmailTemplate = ({ newEmail, url }: Omit<ChangeEmailData, "em
     </Html>
   );
 };
-
-export default ChangeEmailTemplate;

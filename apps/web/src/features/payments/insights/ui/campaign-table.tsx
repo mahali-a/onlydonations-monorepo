@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,6 @@ type Campaign = {
 
 type CampaignTableProps = {
   campaigns: Campaign[];
-  organizationSlug: string;
   pagination: {
     page: number;
     limit: number;
@@ -34,12 +33,8 @@ type CampaignTableProps = {
   onPageChange: (page: number) => void;
 };
 
-export function CampaignTable({
-  campaigns,
-  organizationSlug,
-  pagination,
-  onPageChange,
-}: CampaignTableProps) {
+export function CampaignTable({ campaigns, pagination, onPageChange }: CampaignTableProps) {
+  const { orgId } = useParams({ from: "/o/$orgId/finance" });
   const columns: ColumnDef<Campaign>[] = [
     {
       accessorKey: "title",
@@ -47,14 +42,14 @@ export function CampaignTable({
       cell: ({ row }) => (
         <Link
           to="/o/$orgId/campaigns/$campaignId"
-          params={{ orgId: organizationSlug, campaignId: row.original.id }}
+          params={{ orgId, campaignId: row.original.id }}
           className="font-medium hover:underline"
         >
           {row.getValue("title")}
         </Link>
       ),
       meta: {
-        className: "min-w-[250px]",
+        className: "min-w-[180px] sm:min-w-[250px]",
       },
     },
     {
@@ -74,7 +69,7 @@ export function CampaignTable({
         </div>
       ),
       meta: {
-        className: "min-w-[120px]",
+        className: "hidden sm:table-cell min-w-[120px]",
       },
     },
     {
@@ -86,7 +81,7 @@ export function CampaignTable({
         </div>
       ),
       meta: {
-        className: "min-w-[120px]",
+        className: "hidden md:table-cell min-w-[120px]",
       },
     },
     {
@@ -110,7 +105,7 @@ export function CampaignTable({
         </div>
       ),
       meta: {
-        className: "min-w-[120px]",
+        className: "hidden lg:table-cell min-w-[120px]",
       },
     },
     {
@@ -138,9 +133,10 @@ export function CampaignTable({
 
   return (
     <div className="space-y-4">
-      <DataTable columns={columns} data={campaigns} emptyMessage="No campaigns found" />
+      <div className="overflow-x-auto rounded-md border">
+        <DataTable columns={columns} data={campaigns} emptyMessage="No campaigns found" />
+      </div>
 
-      {/* Pagination */}
       <div className="flex flex-col gap-4 px-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="text-center text-sm text-muted-foreground lg:flex-1 lg:text-left">
           Showing {startIndex} – {endIndex} of {pagination.total} campaigns

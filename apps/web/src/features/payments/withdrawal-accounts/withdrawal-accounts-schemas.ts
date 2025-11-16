@@ -15,5 +15,3 @@ export const withdrawalAccountsActionSchema = z.discriminatedUnion("intent", [
     accountId: z.string().min(1, "Account ID is required"),
   }),
 ]);
-
-export type WithdrawalAccountsActionInput = z.infer<typeof withdrawalAccountsActionSchema>;

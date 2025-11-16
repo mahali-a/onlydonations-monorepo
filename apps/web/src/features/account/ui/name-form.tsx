@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { nameSchema } from "../account-schemas";
-import { updateName } from "../server";
+import { updateUserNameOnServer } from "../server";
 
 interface NameFormProps {
   defaultName?: string;
@@ -23,7 +23,7 @@ export function NameForm({ defaultName = "" }: NameFormProps) {
         const formData = new FormData();
         formData.append("name", value.name);
 
-        const result = await updateName({ data: formData });
+        const result = await updateUserNameOnServer({ data: formData });
 
         if (result?.error) {
           return {

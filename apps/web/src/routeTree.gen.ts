@@ -10,14 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteRouteImport } from './routes/onboarding/route'
-import { Route as UnauthenticatedRouteRouteImport } from './routes/_unauthenticated/route'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as R2SplatRouteImport } from './routes/r2.$'
 import { Route as OnboardingVerifyRouteImport } from './routes/onboarding/verify'
-import { Route as UnauthenticatedMagicCodeRouteImport } from './routes/_unauthenticated/magic-code'
-import { Route as UnauthenticatedLoginRouteImport } from './routes/_unauthenticated/login'
+import { Route as FSlugRouteImport } from './routes/f.$slug'
+import { Route as PublicMagicCodeRouteImport } from './routes/_public/magic-code'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as OOrgIdRouteRouteImport } from './routes/o.$orgId/route'
 import { Route as OOrgIdIndexRouteImport } from './routes/o.$orgId/index'
 import { Route as OOrgIdPaymentsRouteImport } from './routes/o.$orgId/payments'
@@ -33,6 +34,7 @@ import { Route as OOrgIdAccountIndexRouteImport } from './routes/o.$orgId/accoun
 import { Route as OOrgIdPaymentsWithdrawalHistoryRouteImport } from './routes/o.$orgId/payments/withdrawal-history'
 import { Route as OOrgIdPaymentsWithdrawalAccountsRouteImport } from './routes/o.$orgId/payments/withdrawal-accounts'
 import { Route as OOrgIdCampaignsCampaignIdRouteImport } from './routes/o.$orgId/campaigns.$campaignId'
+import { Route as OOrgIdCampaignPreviewsCampaignIdRouteImport } from './routes/o.$orgId/campaign-previews.$campaignId'
 import { Route as OOrgIdAccountSecurityRouteImport } from './routes/o.$orgId/account/security'
 import { Route as OOrgIdAccountKycRouteImport } from './routes/o.$orgId/account/kyc'
 import { Route as OOrgIdCampaignsCampaignIdIndexRouteImport } from './routes/o.$orgId/campaigns.$campaignId/index'
@@ -44,8 +46,8 @@ const OnboardingRouteRoute = OnboardingRouteRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UnauthenticatedRouteRoute = UnauthenticatedRouteRouteImport.update({
-  id: '/_unauthenticated',
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -73,16 +75,20 @@ const OnboardingVerifyRoute = OnboardingVerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => OnboardingRouteRoute,
 } as any)
-const UnauthenticatedMagicCodeRoute =
-  UnauthenticatedMagicCodeRouteImport.update({
-    id: '/magic-code',
-    path: '/magic-code',
-    getParentRoute: () => UnauthenticatedRouteRoute,
-  } as any)
-const UnauthenticatedLoginRoute = UnauthenticatedLoginRouteImport.update({
+const FSlugRoute = FSlugRouteImport.update({
+  id: '/f/$slug',
+  path: '/f/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PublicMagicCodeRoute = PublicMagicCodeRouteImport.update({
+  id: '/magic-code',
+  path: '/magic-code',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => UnauthenticatedRouteRoute,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const OOrgIdRouteRoute = OOrgIdRouteRouteImport.update({
   id: '/o/$orgId',
@@ -162,6 +168,12 @@ const OOrgIdCampaignsCampaignIdRoute =
     path: '/$campaignId',
     getParentRoute: () => OOrgIdCampaignsRoute,
   } as any)
+const OOrgIdCampaignPreviewsCampaignIdRoute =
+  OOrgIdCampaignPreviewsCampaignIdRouteImport.update({
+    id: '/campaign-previews/$campaignId',
+    path: '/campaign-previews/$campaignId',
+    getParentRoute: () => OOrgIdRouteRoute,
+  } as any)
 const OOrgIdAccountSecurityRoute = OOrgIdAccountSecurityRouteImport.update({
   id: '/security',
   path: '/security',
@@ -195,8 +207,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRouteRouteWithChildren
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
-  '/login': typeof UnauthenticatedLoginRoute
-  '/magic-code': typeof UnauthenticatedMagicCodeRoute
+  '/login': typeof PublicLoginRoute
+  '/magic-code': typeof PublicMagicCodeRoute
+  '/f/$slug': typeof FSlugRoute
   '/onboarding/verify': typeof OnboardingVerifyRoute
   '/r2/$': typeof R2SplatRoute
   '/app': typeof AppIndexRoute
@@ -211,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/o/$orgId/': typeof OOrgIdIndexRoute
   '/o/$orgId/account/kyc': typeof OOrgIdAccountKycRoute
   '/o/$orgId/account/security': typeof OOrgIdAccountSecurityRoute
+  '/o/$orgId/campaign-previews/$campaignId': typeof OOrgIdCampaignPreviewsCampaignIdRoute
   '/o/$orgId/campaigns/$campaignId': typeof OOrgIdCampaignsCampaignIdRouteWithChildren
   '/o/$orgId/payments/withdrawal-accounts': typeof OOrgIdPaymentsWithdrawalAccountsRoute
   '/o/$orgId/payments/withdrawal-history': typeof OOrgIdPaymentsWithdrawalHistoryRoute
@@ -223,8 +237,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/login': typeof UnauthenticatedLoginRoute
-  '/magic-code': typeof UnauthenticatedMagicCodeRoute
+  '/login': typeof PublicLoginRoute
+  '/magic-code': typeof PublicMagicCodeRoute
+  '/f/$slug': typeof FSlugRoute
   '/onboarding/verify': typeof OnboardingVerifyRoute
   '/r2/$': typeof R2SplatRoute
   '/app': typeof AppIndexRoute
@@ -236,6 +251,7 @@ export interface FileRoutesByTo {
   '/o/$orgId': typeof OOrgIdIndexRoute
   '/o/$orgId/account/kyc': typeof OOrgIdAccountKycRoute
   '/o/$orgId/account/security': typeof OOrgIdAccountSecurityRoute
+  '/o/$orgId/campaign-previews/$campaignId': typeof OOrgIdCampaignPreviewsCampaignIdRoute
   '/o/$orgId/payments/withdrawal-accounts': typeof OOrgIdPaymentsWithdrawalAccountsRoute
   '/o/$orgId/payments/withdrawal-history': typeof OOrgIdPaymentsWithdrawalHistoryRoute
   '/o/$orgId/account': typeof OOrgIdAccountIndexRoute
@@ -248,11 +264,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_unauthenticated': typeof UnauthenticatedRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
   '/onboarding': typeof OnboardingRouteRouteWithChildren
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
-  '/_unauthenticated/login': typeof UnauthenticatedLoginRoute
-  '/_unauthenticated/magic-code': typeof UnauthenticatedMagicCodeRoute
+  '/_public/login': typeof PublicLoginRoute
+  '/_public/magic-code': typeof PublicMagicCodeRoute
+  '/f/$slug': typeof FSlugRoute
   '/onboarding/verify': typeof OnboardingVerifyRoute
   '/r2/$': typeof R2SplatRoute
   '/app/': typeof AppIndexRoute
@@ -267,6 +284,7 @@ export interface FileRoutesById {
   '/o/$orgId/': typeof OOrgIdIndexRoute
   '/o/$orgId/account/kyc': typeof OOrgIdAccountKycRoute
   '/o/$orgId/account/security': typeof OOrgIdAccountSecurityRoute
+  '/o/$orgId/campaign-previews/$campaignId': typeof OOrgIdCampaignPreviewsCampaignIdRoute
   '/o/$orgId/campaigns/$campaignId': typeof OOrgIdCampaignsCampaignIdRouteWithChildren
   '/o/$orgId/payments/withdrawal-accounts': typeof OOrgIdPaymentsWithdrawalAccountsRoute
   '/o/$orgId/payments/withdrawal-history': typeof OOrgIdPaymentsWithdrawalHistoryRoute
@@ -285,6 +303,7 @@ export interface FileRouteTypes {
     | '/o/$orgId'
     | '/login'
     | '/magic-code'
+    | '/f/$slug'
     | '/onboarding/verify'
     | '/r2/$'
     | '/app'
@@ -299,6 +318,7 @@ export interface FileRouteTypes {
     | '/o/$orgId/'
     | '/o/$orgId/account/kyc'
     | '/o/$orgId/account/security'
+    | '/o/$orgId/campaign-previews/$campaignId'
     | '/o/$orgId/campaigns/$campaignId'
     | '/o/$orgId/payments/withdrawal-accounts'
     | '/o/$orgId/payments/withdrawal-history'
@@ -313,6 +333,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/magic-code'
+    | '/f/$slug'
     | '/onboarding/verify'
     | '/r2/$'
     | '/app'
@@ -324,6 +345,7 @@ export interface FileRouteTypes {
     | '/o/$orgId'
     | '/o/$orgId/account/kyc'
     | '/o/$orgId/account/security'
+    | '/o/$orgId/campaign-previews/$campaignId'
     | '/o/$orgId/payments/withdrawal-accounts'
     | '/o/$orgId/payments/withdrawal-history'
     | '/o/$orgId/account'
@@ -335,11 +357,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/_unauthenticated'
+    | '/_public'
     | '/onboarding'
     | '/o/$orgId'
-    | '/_unauthenticated/login'
-    | '/_unauthenticated/magic-code'
+    | '/_public/login'
+    | '/_public/magic-code'
+    | '/f/$slug'
     | '/onboarding/verify'
     | '/r2/$'
     | '/app/'
@@ -354,6 +377,7 @@ export interface FileRouteTypes {
     | '/o/$orgId/'
     | '/o/$orgId/account/kyc'
     | '/o/$orgId/account/security'
+    | '/o/$orgId/campaign-previews/$campaignId'
     | '/o/$orgId/campaigns/$campaignId'
     | '/o/$orgId/payments/withdrawal-accounts'
     | '/o/$orgId/payments/withdrawal-history'
@@ -367,9 +391,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  UnauthenticatedRouteRoute: typeof UnauthenticatedRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
   OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
   OOrgIdRouteRoute: typeof OOrgIdRouteRouteWithChildren
+  FSlugRoute: typeof FSlugRoute
   R2SplatRoute: typeof R2SplatRoute
   AppIndexRoute: typeof AppIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -385,11 +410,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_unauthenticated': {
-      id: '/_unauthenticated'
+    '/_public': {
+      id: '/_public'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof UnauthenticatedRouteRouteImport
+      preLoaderRoute: typeof PublicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -427,19 +452,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingVerifyRouteImport
       parentRoute: typeof OnboardingRouteRoute
     }
-    '/_unauthenticated/magic-code': {
-      id: '/_unauthenticated/magic-code'
+    '/f/$slug': {
+      id: '/f/$slug'
+      path: '/f/$slug'
+      fullPath: '/f/$slug'
+      preLoaderRoute: typeof FSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_public/magic-code': {
+      id: '/_public/magic-code'
       path: '/magic-code'
       fullPath: '/magic-code'
-      preLoaderRoute: typeof UnauthenticatedMagicCodeRouteImport
-      parentRoute: typeof UnauthenticatedRouteRoute
+      preLoaderRoute: typeof PublicMagicCodeRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/_unauthenticated/login': {
-      id: '/_unauthenticated/login'
+    '/_public/login': {
+      id: '/_public/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof UnauthenticatedLoginRouteImport
-      parentRoute: typeof UnauthenticatedRouteRoute
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
     '/o/$orgId': {
       id: '/o/$orgId'
@@ -546,6 +578,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OOrgIdCampaignsCampaignIdRouteImport
       parentRoute: typeof OOrgIdCampaignsRoute
     }
+    '/o/$orgId/campaign-previews/$campaignId': {
+      id: '/o/$orgId/campaign-previews/$campaignId'
+      path: '/campaign-previews/$campaignId'
+      fullPath: '/o/$orgId/campaign-previews/$campaignId'
+      preLoaderRoute: typeof OOrgIdCampaignPreviewsCampaignIdRouteImport
+      parentRoute: typeof OOrgIdRouteRoute
+    }
     '/o/$orgId/account/security': {
       id: '/o/$orgId/account/security'
       path: '/security'
@@ -584,18 +623,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface UnauthenticatedRouteRouteChildren {
-  UnauthenticatedLoginRoute: typeof UnauthenticatedLoginRoute
-  UnauthenticatedMagicCodeRoute: typeof UnauthenticatedMagicCodeRoute
+interface PublicRouteRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute
+  PublicMagicCodeRoute: typeof PublicMagicCodeRoute
 }
 
-const UnauthenticatedRouteRouteChildren: UnauthenticatedRouteRouteChildren = {
-  UnauthenticatedLoginRoute: UnauthenticatedLoginRoute,
-  UnauthenticatedMagicCodeRoute: UnauthenticatedMagicCodeRoute,
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+  PublicMagicCodeRoute: PublicMagicCodeRoute,
 }
 
-const UnauthenticatedRouteRouteWithChildren =
-  UnauthenticatedRouteRoute._addFileChildren(UnauthenticatedRouteRouteChildren)
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
 
 interface OnboardingRouteRouteChildren {
   OnboardingVerifyRoute: typeof OnboardingVerifyRoute
@@ -684,6 +724,7 @@ interface OOrgIdRouteRouteChildren {
   OOrgIdFinanceRoute: typeof OOrgIdFinanceRoute
   OOrgIdPaymentsRoute: typeof OOrgIdPaymentsRouteWithChildren
   OOrgIdIndexRoute: typeof OOrgIdIndexRoute
+  OOrgIdCampaignPreviewsCampaignIdRoute: typeof OOrgIdCampaignPreviewsCampaignIdRoute
 }
 
 const OOrgIdRouteRouteChildren: OOrgIdRouteRouteChildren = {
@@ -693,6 +734,7 @@ const OOrgIdRouteRouteChildren: OOrgIdRouteRouteChildren = {
   OOrgIdFinanceRoute: OOrgIdFinanceRoute,
   OOrgIdPaymentsRoute: OOrgIdPaymentsRouteWithChildren,
   OOrgIdIndexRoute: OOrgIdIndexRoute,
+  OOrgIdCampaignPreviewsCampaignIdRoute: OOrgIdCampaignPreviewsCampaignIdRoute,
 }
 
 const OOrgIdRouteRouteWithChildren = OOrgIdRouteRoute._addFileChildren(
@@ -701,9 +743,10 @@ const OOrgIdRouteRouteWithChildren = OOrgIdRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  UnauthenticatedRouteRoute: UnauthenticatedRouteRouteWithChildren,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
   OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
   OOrgIdRouteRoute: OOrgIdRouteRouteWithChildren,
+  FSlugRoute: FSlugRoute,
   R2SplatRoute: R2SplatRoute,
   AppIndexRoute: AppIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

@@ -1,14 +1,15 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { authMiddleware } from "@/core/middleware/auth";
+import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
 import { paystackService } from "@/lib/paystack";
-import { withdrawalAccountModel } from "../models/withdrawal-account-model";
+import { retrieveWithdrawalAccountsFromDatabaseByOrganization } from "../payments-models";
+import { promiseHash } from "@/utils/promise-hash";
 
-const withdrawalAccountsLogger = logger.child("withdrawal-accounts-loaders");
+const withdrawalAccountsLogger = logger.createChildLogger("withdrawal-accounts-loaders");
 
-export const getWithdrawalAccountsData = createServerFn({ method: "GET" })
+export const retrieveWithdrawalAccountsFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .inputValidator(z.object({ orgId: z.string() }))
   .handler(async ({ data }) => {
@@ -17,11 +18,11 @@ export const getWithdrawalAccountsData = createServerFn({ method: "GET" })
 
     try {
       const paystack = paystackService(env);
-      const [withdrawalAccounts, mobileMoneyBanks, ghipssBanks] = await Promise.all([
-        withdrawalAccountModel.findByOrganizationId(organizationId),
-        paystack.listBanks({ currency: "GHS", type: "mobile_money" }),
-        paystack.listBanks({ currency: "GHS", type: "ghipss" }),
-      ]);
+      const { withdrawalAccounts, mobileMoneyBanks, ghipssBanks } = await promiseHash({
+        withdrawalAccounts: retrieveWithdrawalAccountsFromDatabaseByOrganization(organizationId),
+        mobileMoneyBanks: paystack.listBanks({ currency: "GHS", type: "mobile_money" }),
+        ghipssBanks: paystack.listBanks({ currency: "GHS", type: "ghipss" }),
+      });
       withdrawalAccountsLogger.info("loader.success", {
         organizationId,
         withdrawalAccountsCount: withdrawalAccounts.length,

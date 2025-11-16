@@ -1,13 +1,12 @@
+import { useParams } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-type PayoutAccountRequiredProps = {
-  organizationSlug: string;
-};
+export function PayoutAccountRequired() {
+  const { orgId } = useParams({ from: "/o/$orgId/payments/" });
 
-export function PayoutAccountRequired({ organizationSlug }: PayoutAccountRequiredProps) {
   return (
     <div className="rounded-xl border border-border bg-card shadow-sm flex flex-col gap-4 px-5 py-4">
       <p className="font-medium">Your Payout account is missing information.</p>
@@ -28,7 +27,7 @@ export function PayoutAccountRequired({ organizationSlug }: PayoutAccountRequire
         </div>
 
         <Button asChild className="whitespace-nowrap">
-          <Link to="/o/$orgId/payments/withdrawal-accounts" params={{ orgId: organizationSlug }}>
+          <Link to="/o/$orgId/payments/withdrawal-accounts" params={{ orgId }}>
             Add Payout Method
           </Link>
         </Button>

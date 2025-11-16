@@ -1,1 +1,1 @@
-export { getWithdrawalHistory } from "./withdrawal-history-loaders";
+export { retrieveWithdrawalHistoryFromServer } from "./withdrawal-history-loaders";

@@ -13,7 +13,7 @@ const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 function setSidebarCookie(value: boolean): void {
   if (typeof document !== "undefined" && document.cookie !== undefined) {
     try {
-      // biome-ignore lint/suspicious/noDocumentCookie: Cookie Store API not widely supported
+      // biome-ignore lint/suspicious/noDocumentCookie: required for sidebar state persistence
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${value}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}; SameSite=Lax`;
     } catch {}
   }

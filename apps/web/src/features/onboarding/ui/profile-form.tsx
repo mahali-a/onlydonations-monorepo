@@ -51,7 +51,9 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
       <form.Subscribe selector={(state) => [state.errorMap]}>
         {([errorMap]) =>
           errorMap?.onSubmit ? (
-            <div className="text-left text-sm text-red-500">{errorMap?.onSubmit.toString()}</div>
+            <div className="text-left text-sm text-destructive">
+              {errorMap?.onSubmit.toString()}
+            </div>
           ) : null
         }
       </form.Subscribe>
@@ -68,7 +70,7 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
       >
         {(field) => (
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700" htmlFor="firstName">
+            <Label className="text-sm font-medium text-foreground" htmlFor="firstName">
               First Name
             </Label>
             <Input
@@ -80,13 +82,13 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
               className={cn(
                 "h-12 text-base",
                 field.state.meta.errors.length > 0
-                  ? "border-red-500 focus-visible:ring-red-500"
-                  : "border-gray-300",
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : "border-input",
               )}
               placeholder="John"
             />
             {field.state.meta.errors.length > 0 && (
-              <p className="text-left text-sm text-red-500">{field.state.meta.errors[0]}</p>
+              <p className="text-left text-sm text-destructive">{field.state.meta.errors[0]}</p>
             )}
           </div>
         )}
@@ -104,7 +106,7 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
       >
         {(field) => (
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700" htmlFor="lastName">
+            <Label className="text-sm font-medium text-foreground" htmlFor="lastName">
               Last Name
             </Label>
             <Input
@@ -116,13 +118,13 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
               className={cn(
                 "h-12 text-base",
                 field.state.meta.errors.length > 0
-                  ? "border-red-500 focus-visible:ring-red-500"
-                  : "border-gray-300",
+                  ? "border-destructive focus-visible:ring-destructive"
+                  : "border-input",
               )}
               placeholder="Doe"
             />
             {field.state.meta.errors.length > 0 && (
-              <p className="text-left text-sm text-red-500">{field.state.meta.errors[0]}</p>
+              <p className="text-left text-sm text-destructive">{field.state.meta.errors[0]}</p>
             )}
           </div>
         )}
@@ -130,7 +132,7 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
 
       <form.Field name="subscribeToUpdates">
         {(field) => (
-          <Label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-left has-[input:checked]:border-orange-600 has-[input:checked]:bg-orange-50 hover:bg-accent/50">
+          <Label className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-left has-[input:checked]:border-primary has-[input:checked]:bg-primary/10 hover:bg-accent/50">
             <input
               type="checkbox"
               checked={field.state.value}
@@ -139,7 +141,7 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
             />
             <Checkbox
               checked={field.state.value}
-              className="data-[state=checked]:border-orange-600 data-[state=checked]:bg-orange-600 data-[state=checked]:text-white"
+              className="data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
               aria-hidden="true"
             />
             <div className="grid gap-1.5 font-normal">
@@ -161,13 +163,13 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
           )}
         </form.Subscribe>
 
-        <div className="text-left text-xs leading-relaxed text-gray-500">
+        <div className="text-left text-xs leading-relaxed text-muted-foreground">
           By clicking the Sign Up button below, you agree to the{" "}
-          <a className="underline hover:text-gray-700" href="/terms">
+          <a className="underline hover:text-foreground" href="/terms">
             Terms of Service
           </a>{" "}
           and acknowledge the{" "}
-          <a className="underline hover:text-gray-700" href="/privacy">
+          <a className="underline hover:text-foreground" href="/privacy">
             Privacy Notice
           </a>
           .

@@ -2,11 +2,11 @@ import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import type { SmileWebhookPayload } from "@/features/kyc/kyc-types";
-import { kycModel } from "@/features/kyc/models/kyc-model";
+import { kycModel } from "@/features/kyc/kyc-models";
 import { verifyWebhookSignature } from "@/features/kyc/smile-api";
 import { logger } from "@/lib/logger";
 
-const webhookLogger = logger.child("smile-webhook");
+const webhookLogger = logger.createChildLogger("smile-webhook");
 
 export const Route = createFileRoute("/api/webhooks/smile")({
   server: {
@@ -17,61 +17,58 @@ export const Route = createFileRoute("/api/webhooks/smile")({
           const signature = request.headers.get("x-signature");
 
           if (!signature) {
-            webhookLogger.warn("Missing signature in webhook");
+            webhookLogger.error("Missing signature in webhook");
             return json({ error: "Missing signature" }, { status: 400 });
           }
 
-          // Verify webhook signature
           const isValid = await verifyWebhookSignature(rawBody, signature, env.SMILE_API_KEY);
 
           if (!isValid) {
-            webhookLogger.warn("Invalid webhook signature");
+            webhookLogger.error("Invalid webhook signature");
             return json({ error: "Invalid signature" }, { status: 401 });
           }
 
           const payload: SmileWebhookPayload = JSON.parse(rawBody);
 
-          // Check for duplicate webhook (idempotency)
-          const existingEvent = await kycModel.getWebhookEventByJobId(payload.job_id);
+          const existingEvent = await kycModel.retrieveSmileWebhookEventFromDatabaseByJobId(
+            payload.job_id,
+          );
           if (existingEvent) {
             return json({ success: true, message: "Event already processed" }, { status: 200 });
           }
 
-          // Create webhook event record for idempotency
-          const webhookEvent = await kycModel.createWebhookEvent({
+          const webhookEvent = await kycModel.saveSmileWebhookEventToDatabase({
             jobId: payload.job_id,
             signature: signature,
             rawPayload: payload as unknown as Record<string, unknown>,
           });
 
-          // Get verification job from database
-          const job = await kycModel.getVerificationJobBySmileId(payload.job_id);
+          const job = await kycModel.retrieveVerificationJobFromDatabaseBySmileId(payload.job_id);
 
           if (!job) {
             if (webhookEvent) {
-              await kycModel.updateWebhookEvent(webhookEvent.id, {
+              await kycModel.updateSmileWebhookEventInDatabase(webhookEvent.id, {
                 status: "failed",
                 errorMessage: "Verification job not found",
               });
             }
-            webhookLogger.warn("Verification job not found", { jobId: payload.job_id });
+            webhookLogger.error("Verification job not found", undefined, { jobId: payload.job_id });
             return json({ error: "Job not found" }, { status: 404 });
           }
 
-          // Update verification job status
-          await kycModel.updateVerificationJob(payload.job_id, {
+          await kycModel.updateVerificationJobInDatabase(payload.job_id, {
             status: "completed",
             resultCode: payload.result.ResultCode,
             resultText: payload.result.ResultText,
             rawResult: payload as unknown as Record<string, unknown>,
           });
 
-          // Update user KYC status based on result
           const isVerified = payload.result.ResultCode === "1";
           const isRejected = payload.result.ResultCode === "0";
 
-          // Get existing KYC status to determine if we need to create or update
-          const existingKycStatus = await kycModel.getUserKycStatus(job.userId);
+          const existingKycStatus = await kycModel.retrieveUserKycStatusFromDatabaseByUser(
+            job.userId,
+          );
 
           if (isVerified) {
             const kycData = {
@@ -81,15 +78,10 @@ export const Route = createFileRoute("/api/webhooks/smile")({
             };
 
             if (existingKycStatus) {
-              await kycModel.updateKycStatus(job.userId, kycData);
+              await kycModel.updateUserKycStatusInDatabase(job.userId, kycData);
             } else {
-              await kycModel.createKycStatus(job.userId, kycData);
+              await kycModel.saveUserKycStatusToDatabase(job.userId, kycData);
             }
-
-            webhookLogger.info("KYC verified", {
-              userId: job.userId,
-              jobId: payload.job_id,
-            });
           } else if (isRejected) {
             const kycData = {
               kycStatus: "REJECTED" as const,
@@ -97,15 +89,10 @@ export const Route = createFileRoute("/api/webhooks/smile")({
             };
 
             if (existingKycStatus) {
-              await kycModel.updateKycStatus(job.userId, kycData);
+              await kycModel.updateUserKycStatusInDatabase(job.userId, kycData);
             } else {
-              await kycModel.createKycStatus(job.userId, kycData);
+              await kycModel.saveUserKycStatusToDatabase(job.userId, kycData);
             }
-
-            webhookLogger.warn("KYC rejected", {
-              userId: job.userId,
-              jobId: payload.job_id,
-            });
           } else {
             const kycData = {
               kycStatus: "REQUIRES_INPUT" as const,
@@ -113,21 +100,14 @@ export const Route = createFileRoute("/api/webhooks/smile")({
             };
 
             if (existingKycStatus) {
-              await kycModel.updateKycStatus(job.userId, kycData);
+              await kycModel.updateUserKycStatusInDatabase(job.userId, kycData);
             } else {
-              await kycModel.createKycStatus(job.userId, kycData);
+              await kycModel.saveUserKycStatusToDatabase(job.userId, kycData);
             }
-
-            webhookLogger.warn("KYC requires input", {
-              userId: job.userId,
-              jobId: payload.job_id,
-              resultCode: payload.result.ResultCode,
-            });
           }
 
-          // Mark webhook as processed
           if (webhookEvent) {
-            await kycModel.updateWebhookEvent(webhookEvent.id, {
+            await kycModel.updateSmileWebhookEventInDatabase(webhookEvent.id, {
               status: "processed",
               processedAt: new Date(),
             });

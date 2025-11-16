@@ -3,7 +3,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { avatarSchema } from "../account-schemas";
-import { updateAvatar } from "../server";
+import { updateUserAvatarOnServer } from "../server";
 
 interface AvatarFormProps {
   currentAvatar?: string;
@@ -31,7 +31,7 @@ export function AvatarForm({ currentAvatar, userName = "User" }: AvatarFormProps
         const formData = new FormData();
         formData.append("avatar", value.avatar);
 
-        const result = await updateAvatar({ data: formData });
+        const result = await updateUserAvatarOnServer({ data: formData });
 
         if (result?.error) {
           return {

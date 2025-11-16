@@ -1,2 +1,2 @@
-export { insightsLoader } from "./server";
+export { retrieveFinancialInsightsFromServer } from "./server";
 export * from "./ui";
