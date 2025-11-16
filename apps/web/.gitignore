@@ -1,2 +1,5 @@
 # TanStack temporary files
 .tanstack/tmp/
+
+# Environment variables
+.dev.vars

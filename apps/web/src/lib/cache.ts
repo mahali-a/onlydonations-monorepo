@@ -10,7 +10,7 @@ import { env } from "cloudflare:workers";
  */
 export function getCacheAdapter(): Cache {
   return cloudflareKvCacheAdapter({
-    // @ts-ignore
+    // @ts-expect-error
     kv: env.KV_CACHE,
     keyPrefix: "cache",
     name: "KV_CACHE",
