@@ -50,7 +50,8 @@
       "!**/coverage",
       "!**/.wrangler",
       "!**/*.d.ts",
-      "!**/routeTree.gen.ts"
+      "!**/routeTree.gen.ts",
+      "!**/payload-types.ts"
     ]
   }
 }

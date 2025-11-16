@@ -1,17 +1,19 @@
 // storage-adapter-import-placeholder
+
+import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite' // database-adapter-import
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { importExportPlugin } from '@payloadcms/plugin-import-export'
+import { seoPlugin } from '@payloadcms/plugin-seo'
+import { r2Storage } from '@payloadcms/storage-r2'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
-import { GetPlatformProxyOptions } from 'wrangler'
-import { r2Storage } from '@payloadcms/storage-r2'
-
-import { Users } from './collections/Users'
+import type { GetPlatformProxyOptions } from 'wrangler'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Settings } from './collections/Settings'
+import { Users } from './collections/Users'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -34,7 +36,8 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    outputFile: path.resolve(dirname, '../../../packages/types/src/payload-types.ts'),
+    declare: false, // Disable declare statement since types are used in other repos
   },
   // database-adapter-config-start
   db: sqliteD1Adapter({ binding: cloudflare.env.D1 }),
@@ -44,6 +47,18 @@ export default buildConfig({
     r2Storage({
       bucket: cloudflare.env.R2,
       collections: { media: true },
+    }),
+    importExportPlugin({
+      collections: ['users', 'pages', 'media'],
+    }),
+    seoPlugin({
+      collections: ['pages'],
+      globals: ['settings'],
+      uploadsCollection: 'media',
+      generateTitle: ({ doc }) => `${doc?.title || 'Page'}`,
+      generateDescription: ({ doc }) => doc?.description || '',
+      generateImage: ({ doc }) => doc?.seo?.ogImage,
+      generateURL: ({ doc, collectionSlug }) => `https://yoursite.com/${doc?.slug}`,
     }),
   ],
 })

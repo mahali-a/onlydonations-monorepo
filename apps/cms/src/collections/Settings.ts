@@ -301,5 +301,14 @@ export const Settings: GlobalConfig = {
         },
       ],
     },
+    // SEO Configuration
+    {
+      name: 'siteUrl',
+      type: 'text',
+      label: 'Site URL',
+      admin: {
+        description: 'e.g., https://yoursite.com',
+      },
+    },
   ],
 }

@@ -27,6 +27,7 @@
   "dependencies": {
     "@repo/core": "workspace:*",
     "@repo/email": "workspace:*",
+    "@repo/types": "workspace:*",
     "hono": "^4.10.6"
   }
 }
