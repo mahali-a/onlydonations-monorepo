@@ -1410,6 +1410,9 @@ export interface Setting {
      * Optional cut you take on each transaction (currently 0%)
      */
     donorContributionPercentage?: number | null;
+    /**
+     * Fees charged when fundraiser withdraws funds (payment processor fees only)
+     */
     withdrawalFees?:
       | {
           method: 'mobile_money' | 'bank_account';
@@ -1424,6 +1427,9 @@ export interface Setting {
       | null;
   };
   navigation?: {
+    /**
+     * Items will display left/right based on position setting
+     */
     mainNav?:
       | {
           label: string;

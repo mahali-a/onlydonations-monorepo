@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "echo 'No build needed for API'",
+    "build": "turbo build --filter=@repo/core",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint --write .",
     "lint:check": "biome lint .",

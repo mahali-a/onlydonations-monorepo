@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
-    "build": "vite build",
+    "build": "turbo build --filter=@repo/core && vite build",
     "deploy": "pnpm run build && wrangler deploy",
     "typecheck": "pnpm run cf-typegen && tsc --noEmit",
     "lint": "biome lint --write .",

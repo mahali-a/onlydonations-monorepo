@@ -71,7 +71,9 @@ export const Settings: GlobalConfig = {
           name: 'withdrawalFees',
           type: 'array',
           label: 'Withdrawal/Transfer Fees',
-          description: 'Fees charged when fundraiser withdraws funds (payment processor fees only)',
+          admin: {
+            description: 'Fees charged when fundraiser withdraws funds (payment processor fees only)',
+          },
           dbName: 'withdrawal_fees',
           fields: [
             {
@@ -124,7 +126,9 @@ export const Settings: GlobalConfig = {
           name: 'mainNav',
           type: 'array',
           label: 'Main Navigation (Left + Right)',
-          description: 'Items will display left/right based on position setting',
+          admin: {
+            description: 'Items will display left/right based on position setting',
+          },
           fields: [
             {
               name: 'label',
