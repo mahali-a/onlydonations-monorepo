@@ -200,18 +200,6 @@ export interface Page {
     | GalleryBlock
     | ContactFormBlock
   )[];
-  seo?: {
-    /**
-     * Recommended: 50-60 characters
-     */
-    title?: string | null;
-    /**
-     * Recommended: 150-160 characters
-     */
-    description?: string | null;
-    keywords?: string | null;
-    ogImage?: (number | null) | Media;
-  };
   published?: boolean | null;
   /**
    * When this page was published
@@ -1106,14 +1094,6 @@ export interface PagesSelect<T extends boolean = true> {
         'two-column'?: T | TwoColumnBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
         'contact-form'?: T | ContactFormBlockSelect<T>;
-      };
-  seo?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        keywords?: T;
-        ogImage?: T;
       };
   published?: T;
   publishedAt?: T;

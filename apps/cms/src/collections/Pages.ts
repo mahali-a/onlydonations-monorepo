@@ -76,41 +76,6 @@ export const Pages: CollectionConfig = {
         ContactFormBlock,
       ],
     },
-    // SEO Fields
-    {
-      name: 'seo',
-      type: 'group',
-      label: 'SEO',
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-          label: 'Meta Title',
-          admin: {
-            description: 'Recommended: 50-60 characters',
-          },
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-          label: 'Meta Description',
-          admin: {
-            description: 'Recommended: 150-160 characters',
-          },
-        },
-        {
-          name: 'keywords',
-          type: 'text',
-          label: 'Keywords (comma-separated)',
-        },
-        {
-          name: 'ogImage',
-          type: 'upload',
-          relationTo: 'media',
-          label: 'Open Graph Image',
-        },
-      ],
-    },
     {
       name: 'published',
       type: 'checkbox',
