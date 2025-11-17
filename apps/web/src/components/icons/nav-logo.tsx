@@ -41,12 +41,7 @@ export function Navlogo({ className }: NavlogoProps) {
       </g>
       <defs>
         <clipPath id={clipId}>
-          <rect
-            fill="white"
-            height="28.4"
-            transform="translate(0 0.799988)"
-            width="142"
-          />
+          <rect fill="white" height="28.4" transform="translate(0 0.799988)" width="142" />
         </clipPath>
       </defs>
     </svg>

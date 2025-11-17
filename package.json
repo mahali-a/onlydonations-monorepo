@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "_comment:setup": "# Initial setup and monorepo installation",
+    "postinstall": "husky install",
     "setup": "pnpm i && pnpm build",
     "setup:clean": "rm -rf node_modules pnpm-lock.yaml && pnpm setup",
     "_comment:build": "# Building - build all or specific apps/packages",
@@ -59,6 +60,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
     "@types/node": "^22.19.1",
+    "husky": "^9.1.7",
     "knip": "^5.69.1",
     "turbo": "^2.6.1",
     "typescript": "^5.9.3"

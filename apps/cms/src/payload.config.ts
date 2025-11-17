@@ -1,20 +1,20 @@
-import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { seoPlugin } from '@payloadcms/plugin-seo'
-import { importExportPlugin } from '@payloadcms/plugin-import-export'
-import { s3Storage } from '@payloadcms/storage-s3'
-import path from 'path'
-import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
-import sharp from 'sharp'
+import { vercelPostgresAdapter } from "@payloadcms/db-vercel-postgres";
+import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { seoPlugin } from "@payloadcms/plugin-seo";
+import { importExportPlugin } from "@payloadcms/plugin-import-export";
+import { s3Storage } from "@payloadcms/storage-s3";
+import path from "node:path";
+import { buildConfig } from "payload";
+import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
-import { Pages } from './collections/Pages'
-import { Settings } from './collections/Settings'
+import { Users } from "./collections/Users";
+import { Media } from "./collections/Media";
+import { Pages } from "./collections/Pages";
+import { Settings } from "./collections/Settings";
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 export default buildConfig({
   admin: {
@@ -26,14 +26,14 @@ export default buildConfig({
   collections: [Users, Media, Pages],
   globals: [Settings],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
-    outputFile: path.resolve(dirname, '../../../packages/types/src/payload-types.ts'),
+    outputFile: path.resolve(dirname, "../../../packages/types/src/payload-types.ts"),
     declare: false, // Disable declare statement since types are used in other repos
   },
   db: vercelPostgresAdapter({
     pool: {
-      connectionString: process.env.POSTGRES_URL || '',
+      connectionString: process.env.POSTGRES_URL || "",
     },
   }),
   sharp,
@@ -43,27 +43,27 @@ export default buildConfig({
       collections: {
         media: true,
       },
-      bucket: process.env.R2_BUCKET_NAME || '',
+      bucket: process.env.R2_BUCKET_NAME || "",
       config: {
         credentials: {
-          accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+          accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
         },
-        region: 'auto', // R2 uses 'auto' region
+        region: "auto", // R2 uses 'auto' region
         endpoint: process.env.R2_ENDPOINT, // e.g., https://<account-id>.r2.cloudflarestorage.com
       },
     }),
     seoPlugin({
-      collections: ['pages'],
-      globals: ['settings'],
-      uploadsCollection: 'media',
-      generateTitle: ({ doc }) => `${doc?.title || 'Page'}`,
-      generateDescription: ({ doc }) => doc?.description || '',
+      collections: ["pages"],
+      globals: ["settings"],
+      uploadsCollection: "media",
+      generateTitle: ({ doc }) => `${doc?.title || "Page"}`,
+      generateDescription: ({ doc }) => doc?.description || "",
       generateImage: ({ doc }) => doc?.seo?.ogImage,
-      generateURL: ({ doc }) => `https://onlydonations.com/${doc?.slug ?? ''}`,
+      generateURL: ({ doc }) => `https://onlydonations.com/${doc?.slug ?? ""}`,
     }),
     importExportPlugin({
-      collections: ['users', 'pages', 'media'],
+      collections: ["users", "pages", "media"],
     }),
   ],
-})
+});

@@ -1,17 +1,8 @@
-import type {
-  SelectMember,
-  SelectOrganization,
-  SelectUser,
-} from "@repo/core/database/types";
+import type { SelectMember, SelectOrganization, SelectUser } from "@repo/core/database/types";
 import type { Setting } from "@repo/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {
-  createRootRouteWithContext,
-  HeadContent,
-  Outlet,
-  Scripts,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
 import { Toaster } from "sonner";

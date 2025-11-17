@@ -1,38 +1,38 @@
 import { decrypt, encrypt, randomString } from "./crypto";
 
 export type HoneypotInputProps = {
-	/**
-	 * The name expected to be used by the honeypot input field.
-	 */
-	nameFieldName: string;
-	/**
-	 * The name expected to be used by the honeypot valid from input field.
-	 */
-	validFromFieldName: string | null;
-	/**
-	 * The encrypted value of the current timestamp.
-	 */
-	encryptedValidFrom: string;
+  /**
+   * The name expected to be used by the honeypot input field.
+   */
+  nameFieldName: string;
+  /**
+   * The name expected to be used by the honeypot valid from input field.
+   */
+  validFromFieldName: string | null;
+  /**
+   * The encrypted value of the current timestamp.
+   */
+  encryptedValidFrom: string;
 };
 
 export type HoneypotConfig = {
-	/**
-	 * Enable randomization of the name field name, this way the honeypot field
-	 * name will be different for each request.
-	 */
-	randomizeNameFieldName?: boolean;
-	/**
-	 * The name of the field that will be used for the honeypot input.
-	 */
-	nameFieldName?: string;
-	/**
-	 * The name of the field that will be used for the honeypot valid from input.
-	 */
-	validFromFieldName?: string | null;
-	/**
-	 * The seed used for the encryption of the valid from timestamp.
-	 */
-	encryptionSeed?: string;
+  /**
+   * Enable randomization of the name field name, this way the honeypot field
+   * name will be different for each request.
+   */
+  randomizeNameFieldName?: boolean;
+  /**
+   * The name of the field that will be used for the honeypot input.
+   */
+  nameFieldName?: string;
+  /**
+   * The name of the field that will be used for the honeypot valid from input.
+   */
+  validFromFieldName?: string | null;
+  /**
+   * The seed used for the encryption of the valid from timestamp.
+   */
+  encryptionSeed?: string;
 };
 
 /**
@@ -40,7 +40,7 @@ export type HoneypotConfig = {
  * the form and the request is probably spam.
  */
 export class SpamError extends Error {
-	override readonly name = "SpamError";
+  override readonly name = "SpamError";
 }
 
 const DEFAULT_NAME_FIELD_NAME = "name__confirm";
@@ -53,120 +53,117 @@ const DEFAULT_VALID_FROM_FIELD_NAME = "from__confirm";
  * bots will fill it falling in the honeypot trap.
  */
 export class Honeypot {
-	private generatedEncryptionSeed = this.randomValue();
+  private generatedEncryptionSeed = this.randomValue();
 
-	protected config: HoneypotConfig;
+  protected config: HoneypotConfig;
 
-	constructor(config: HoneypotConfig = {}) {
-		this.config = config;
-	}
+  constructor(config: HoneypotConfig = {}) {
+    this.config = config;
+  }
 
-	/**
-	 * Get the HoneypotInputProps to be used in your forms.
-	 * @param options The options for the input props.
-	 * @param options.validFromTimestamp Since when the timestamp is valid.
-	 * @returns The props to be used in the form.
-	 */
-	public async getInputProps({
-		validFromTimestamp = Date.now(),
-	} = {}): Promise<HoneypotInputProps> {
-		return {
-			nameFieldName: this.nameFieldName,
-			validFromFieldName: this.validFromFieldName,
-			encryptedValidFrom: await this.encrypt(validFromTimestamp.toString()),
-		};
-	}
+  /**
+   * Get the HoneypotInputProps to be used in your forms.
+   * @param options The options for the input props.
+   * @param options.validFromTimestamp Since when the timestamp is valid.
+   * @returns The props to be used in the form.
+   */
+  public async getInputProps({
+    validFromTimestamp = Date.now(),
+  } = {}): Promise<HoneypotInputProps> {
+    return {
+      nameFieldName: this.nameFieldName,
+      validFromFieldName: this.validFromFieldName,
+      encryptedValidFrom: await this.encrypt(validFromTimestamp.toString()),
+    };
+  }
 
-	public async check(formData: FormData) {
-		let nameFieldName = this.config.nameFieldName ?? DEFAULT_NAME_FIELD_NAME;
-		if (this.config.randomizeNameFieldName) {
-			const actualName = this.getRandomizedNameFieldName(nameFieldName, formData);
-			if (actualName) nameFieldName = actualName;
-		}
+  public async check(formData: FormData) {
+    let nameFieldName = this.config.nameFieldName ?? DEFAULT_NAME_FIELD_NAME;
+    if (this.config.randomizeNameFieldName) {
+      const actualName = this.getRandomizedNameFieldName(nameFieldName, formData);
+      if (actualName) nameFieldName = actualName;
+    }
 
-		if (!this.shouldCheckHoneypot(formData, nameFieldName)) return;
+    if (!this.shouldCheckHoneypot(formData, nameFieldName)) return;
 
-		if (!formData.has(nameFieldName)) {
-			throw new SpamError("Missing honeypot input");
-		}
+    if (!formData.has(nameFieldName)) {
+      throw new SpamError("Missing honeypot input");
+    }
 
-		const honeypotValue = formData.get(nameFieldName);
+    const honeypotValue = formData.get(nameFieldName);
 
-		if (honeypotValue !== "") throw new SpamError("Honeypot input not empty");
-		if (!this.validFromFieldName) return;
+    if (honeypotValue !== "") throw new SpamError("Honeypot input not empty");
+    if (!this.validFromFieldName) return;
 
-		const validFrom = formData.get(this.validFromFieldName);
+    const validFrom = formData.get(this.validFromFieldName);
 
-		if (!validFrom) throw new SpamError("Missing honeypot valid from input");
+    if (!validFrom) throw new SpamError("Missing honeypot valid from input");
 
-		const time = await this.decrypt(validFrom as string);
-		if (!time) throw new SpamError("Invalid honeypot valid from input");
-		if (!this.isValidTimeStamp(Number(time))) {
-			throw new SpamError("Invalid honeypot valid from input");
-		}
+    const time = await this.decrypt(validFrom as string);
+    if (!time) throw new SpamError("Invalid honeypot valid from input");
+    if (!this.isValidTimeStamp(Number(time))) {
+      throw new SpamError("Invalid honeypot valid from input");
+    }
 
-		if (this.isFuture(Number(time))) {
-			throw new SpamError("Honeypot valid from is in future");
-		}
-	}
+    if (this.isFuture(Number(time))) {
+      throw new SpamError("Honeypot valid from is in future");
+    }
+  }
 
-	protected get nameFieldName() {
-		const fieldName = this.config.nameFieldName ?? DEFAULT_NAME_FIELD_NAME;
-		if (!this.config.randomizeNameFieldName) return fieldName;
-		return `${fieldName}_${this.randomValue()}`;
-	}
+  protected get nameFieldName() {
+    const fieldName = this.config.nameFieldName ?? DEFAULT_NAME_FIELD_NAME;
+    if (!this.config.randomizeNameFieldName) return fieldName;
+    return `${fieldName}_${this.randomValue()}`;
+  }
 
-	protected get validFromFieldName() {
-		if (this.config.validFromFieldName === undefined) {
-			return DEFAULT_VALID_FROM_FIELD_NAME;
-		}
-		return this.config.validFromFieldName;
-	}
+  protected get validFromFieldName() {
+    if (this.config.validFromFieldName === undefined) {
+      return DEFAULT_VALID_FROM_FIELD_NAME;
+    }
+    return this.config.validFromFieldName;
+  }
 
-	protected get encryptionSeed() {
-		return this.config.encryptionSeed ?? this.generatedEncryptionSeed;
-	}
+  protected get encryptionSeed() {
+    return this.config.encryptionSeed ?? this.generatedEncryptionSeed;
+  }
 
-	protected getRandomizedNameFieldName(
-		nameFieldName: string,
-		formData: FormData,
-	): string | undefined {
-		for (const key of formData.keys()) {
-			if (!key.startsWith(nameFieldName)) continue;
-			return key;
-		}
-	}
+  protected getRandomizedNameFieldName(
+    nameFieldName: string,
+    formData: FormData,
+  ): string | undefined {
+    for (const key of formData.keys()) {
+      if (!key.startsWith(nameFieldName)) continue;
+      return key;
+    }
+  }
 
-	protected shouldCheckHoneypot(
-		formData: FormData,
-		nameFieldName: string,
-	): boolean {
-		return (
-			formData.has(nameFieldName) ||
-			Boolean(this.validFromFieldName && formData.has(this.validFromFieldName))
-		);
-	}
+  protected shouldCheckHoneypot(formData: FormData, nameFieldName: string): boolean {
+    return (
+      formData.has(nameFieldName) ||
+      Boolean(this.validFromFieldName && formData.has(this.validFromFieldName))
+    );
+  }
 
-	protected randomValue() {
-		return randomString();
-	}
+  protected randomValue() {
+    return randomString();
+  }
 
-	protected encrypt(value: string) {
-		return encrypt(value, this.encryptionSeed);
-	}
+  protected encrypt(value: string) {
+    return encrypt(value, this.encryptionSeed);
+  }
 
-	protected decrypt(value: string) {
-		return decrypt(value, this.encryptionSeed);
-	}
+  protected decrypt(value: string) {
+    return decrypt(value, this.encryptionSeed);
+  }
 
-	protected isFuture(timestamp: number) {
-		return timestamp > Date.now();
-	}
+  protected isFuture(timestamp: number) {
+    return timestamp > Date.now();
+  }
 
-	protected isValidTimeStamp(timestamp: number) {
-		if (Number.isNaN(timestamp)) return false;
-		if (timestamp <= 0) return false;
-		if (timestamp >= Number.MAX_SAFE_INTEGER) return false;
-		return true;
-	}
+  protected isValidTimeStamp(timestamp: number) {
+    if (Number.isNaN(timestamp)) return false;
+    if (timestamp <= 0) return false;
+    if (timestamp >= Number.MAX_SAFE_INTEGER) return false;
+    return true;
+  }
 }

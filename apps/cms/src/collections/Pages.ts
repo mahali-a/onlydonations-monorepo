@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from "payload";
 import {
   HeroBlock,
   DividerBlock,
@@ -14,50 +14,50 @@ import {
   GalleryBlock,
   ContactFormBlock,
   AccordionBlock,
-} from '../blocks'
+} from "../blocks";
 
 export const Pages: CollectionConfig = {
-  slug: 'pages',
+  slug: "pages",
   admin: {
-    useAsTitle: 'title',
+    useAsTitle: "title",
   },
   access: {
     read: ({ req: { user } }) => {
       if (user) {
-        return true
+        return true;
       }
       return {
         published: {
           equals: true,
         },
-      }
+      };
     },
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
+      name: "title",
+      type: "text",
       required: true,
-      label: 'Page Title',
+      label: "Page Title",
     },
     {
-      name: 'slug',
-      type: 'text',
+      name: "slug",
+      type: "text",
       required: true,
       unique: true,
-      label: 'Page Slug',
+      label: "Page Slug",
       admin: {
-        description: 'Used for page routing (e.g., /pricing, /about, /how-it-works)',
+        description: "Used for page routing (e.g., /pricing, /about, /how-it-works)",
       },
     },
     {
-      name: 'description',
-      type: 'textarea',
-      label: 'Page Description',
+      name: "description",
+      type: "textarea",
+      label: "Page Description",
     },
     {
-      name: 'blocks',
-      type: 'blocks',
+      name: "blocks",
+      type: "blocks",
       required: true,
       blocks: [
         HeroBlock,
@@ -77,19 +77,19 @@ export const Pages: CollectionConfig = {
       ],
     },
     {
-      name: 'published',
-      type: 'checkbox',
+      name: "published",
+      type: "checkbox",
       defaultValue: false,
-      label: 'Published',
+      label: "Published",
     },
     {
-      name: 'publishedAt',
-      type: 'date',
-      label: 'Published At',
+      name: "publishedAt",
+      type: "date",
+      label: "Published At",
       admin: {
-        description: 'When this page was published',
+        description: "When this page was published",
       },
     },
   ],
   timestamps: true,
-}
+};
