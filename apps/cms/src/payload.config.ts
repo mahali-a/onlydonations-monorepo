@@ -1,28 +1,20 @@
-// storage-adapter-import-placeholder
-
-import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
-import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite' // database-adapter-import
+import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { seoPlugin } from '@payloadcms/plugin-seo'
-import { r2Storage } from '@payloadcms/storage-r2'
+import { importExportPlugin } from '@payloadcms/plugin-import-export'
+import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import type { GetPlatformProxyOptions } from 'wrangler'
+import sharp from 'sharp'
+
+import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Settings } from './collections/Settings'
-import { Users } from './collections/Users'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-
-const cloudflareRemoteBindings = process.env.NODE_ENV === 'production'
-const cloudflare =
-  process.argv.find((value) => value.match(/^(generate|migrate):?/)) || !cloudflareRemoteBindings
-    ? await getCloudflareContextFromWrangler()
-    : await getCloudflareContext({ async: true })
 
 export default buildConfig({
   admin: {
@@ -39,17 +31,27 @@ export default buildConfig({
     outputFile: path.resolve(dirname, '../../../packages/types/src/payload-types.ts'),
     declare: false, // Disable declare statement since types are used in other repos
   },
-  // database-adapter-config-start
-  db: sqliteD1Adapter({ binding: cloudflare.env.D1 }),
-  // database-adapter-config-end
+  db: vercelPostgresAdapter({
+    pool: {
+      connectionString: process.env.POSTGRES_URL || '',
+    },
+  }),
+  sharp,
   plugins: [
-    // storage-adapter-placeholder
-    r2Storage({
-      bucket: cloudflare.env.R2,
-      collections: { media: true },
-    }),
-    importExportPlugin({
-      collections: ['users', 'pages', 'media'],
+    // Cloudflare R2 via S3 API
+    s3Storage({
+      collections: {
+        media: true,
+      },
+      bucket: process.env.R2_BUCKET_NAME || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
+        },
+        region: 'auto', // R2 uses 'auto' region
+        endpoint: process.env.R2_ENDPOINT, // e.g., https://<account-id>.r2.cloudflarestorage.com
+      },
     }),
     seoPlugin({
       collections: ['pages'],
@@ -60,16 +62,8 @@ export default buildConfig({
       generateImage: ({ doc }) => doc?.seo?.ogImage,
       generateURL: ({ doc }) => `https://onlydonations.com/${doc?.slug ?? ''}`,
     }),
+    importExportPlugin({
+      collections: ['users', 'pages', 'media'],
+    }),
   ],
 })
-
-// Adapted from https://github.com/opennextjs/opennextjs-cloudflare/blob/d00b3a13e42e65aad76fba41774815726422cc39/packages/cloudflare/src/api/cloudflare-context.ts#L328C36-L328C46
-function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
-  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
-    ({ getPlatformProxy }) =>
-      getPlatformProxy({
-        environment: process.env.CLOUDFLARE_ENV,
-        experimental: { remoteBindings: cloudflareRemoteBindings },
-      } satisfies GetPlatformProxyOptions),
-  )
-}

@@ -48,7 +48,3 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-
-# OpenNext
-.open-next
-.wrangler
