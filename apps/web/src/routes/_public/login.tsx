@@ -1,21 +1,38 @@
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { z } from "zod";
 import { HoneypotInputs, HoneypotProvider } from "@/components/honeypot-client";
-import { generateLoginHoneypotFromServer, sendLoginOtpOnServer } from "@/features/login";
+import {
+  generateLoginHoneypotFromServer,
+  sendLoginOtpOnServer,
+} from "@/features/login";
 import { GoogleIcon } from "@/components/icons/google";
 import { WordmarkIcon } from "@/components/icons/wordmark";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_public/login")({
   validateSearch: z.object({ next: z.string().optional().default("/app") }),
-  loader: async () => {
+  loader: async ({ context }) => {
+    if (context.user) {
+      throw redirect({ to: "/app" });
+    }
+
     const honeypotProps = await generateLoginHoneypotFromServer();
     return { honeypotProps };
   },
@@ -51,8 +68,12 @@ function LoginPage() {
         if (honeypotProps.nameFieldName) {
           honeypotData[honeypotProps.nameFieldName] = "";
         }
-        if (honeypotProps.validFromFieldName && honeypotProps.encryptedValidFrom) {
-          honeypotData[honeypotProps.validFromFieldName] = honeypotProps.encryptedValidFrom;
+        if (
+          honeypotProps.validFromFieldName &&
+          honeypotProps.encryptedValidFrom
+        ) {
+          honeypotData[honeypotProps.validFromFieldName] =
+            honeypotProps.encryptedValidFrom;
         }
 
         const result = await sendLoginOtpOnServer({
@@ -87,9 +108,12 @@ function LoginPage() {
               <WordmarkIcon className="h-10" />
             </Link>
             <div className="space-y-2 text-left">
-              <h3 className="text-2xl font-bold text-card-foreground">Welcome</h3>
+              <h3 className="text-2xl font-bold text-card-foreground">
+                Welcome
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Enter your email address and we'll send you a one-time code to sign in securely.
+                Enter your email address and we'll send you a one-time code to
+                sign in securely.
               </p>
             </div>
           </div>
@@ -156,7 +180,8 @@ function LoginPage() {
                   }}
                 >
                   {(field) => {
-                    const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                    const isInvalid =
+                      field.state.meta.isTouched && !field.state.meta.isValid;
 
                     return (
                       <Field>
@@ -171,7 +196,8 @@ function LoginPage() {
                           aria-invalid={isInvalid}
                           className={cn(
                             "h-10",
-                            isInvalid && "border-destructive focus-visible:ring-destructive",
+                            isInvalid &&
+                              "border-destructive focus-visible:ring-destructive",
                           )}
                         />
                         {field.state.meta.errors.length > 0 && (
@@ -186,11 +212,15 @@ function LoginPage() {
 
                 <HoneypotInputs />
 
-                <emailForm.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                <emailForm.Subscribe
+                  selector={(state) => [state.canSubmit, state.isSubmitting]}
+                >
                   {([canSubmit, isSubmitting]) => (
                     <Button
                       type="submit"
-                      variant={lastMethod === "email-otp" ? "default" : "outline"}
+                      variant={
+                        lastMethod === "email-otp" ? "default" : "outline"
+                      }
                       className="relative w-full"
                       disabled={!canSubmit || isSubmitting}
                     >

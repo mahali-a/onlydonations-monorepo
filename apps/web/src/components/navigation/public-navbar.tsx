@@ -1,7 +1,8 @@
 import type { Setting } from "@repo/types";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, Menu } from "lucide-react";
-import * as React from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import { Navlogo } from "@/components/icons/nav-logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,19 +12,49 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { authClient } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
 
 interface PublicNavbarProps {
   settings: Setting | null;
 }
 
 export function PublicNavbar({ settings }: PublicNavbarProps) {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const { data: session } = authClient.useSession();
+
+  const { data: orgId } = useQuery({
+    queryFn: () => authClient.organization.list(),
+    queryKey: ["user-organization", session?.user.id],
+    enabled: !!session?.user?.id,
+    select: ({ data }) => data?.[0]?.id || null,
+  });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const user = session?.user;
+  const fallbackText = user?.name
+    ? user.name.charAt(0).toUpperCase()
+    : user?.email?.charAt(0).toUpperCase() || "U";
 
   const navigationLinks = settings?.navigation?.mainNav || [];
 
-  const leftNavItems = navigationLinks.filter((link) => link.position === "left");
-  const rightNavItems = navigationLinks.filter((link) => link.position === "right");
+  const leftNavItems = navigationLinks.filter(
+    (link) => link.position === "left",
+  );
+  const rightNavItems = navigationLinks.filter(
+    (link) => link.position === "right",
+  );
 
   const renderNavItem = (link: (typeof navigationLinks)[0]) => {
     if (link.hasDropdown && link.dropdownItems) {
@@ -36,11 +67,16 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
           <DropdownMenuContent align="start" className="w-56">
             {link.dropdownItems.map((item) => (
               <DropdownMenuItem key={item.id} asChild>
-                <Link to={item.url || "/"} className="w-full cursor-pointer no-underline">
+                <Link
+                  to={item.url || "/"}
+                  className="w-full cursor-pointer no-underline"
+                >
                   <div className="flex flex-col gap-1">
                     <span className="font-medium">{item.label}</span>
                     {item.description && (
-                      <span className="text-xs text-muted-foreground">{item.description}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {item.description}
+                      </span>
                     )}
                   </div>
                 </Link>
@@ -63,7 +99,14 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
+        isScrolled
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-primary/5"
+          : "bg-transparent",
+      )}
+    >
       <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
         {/* Mobile menu trigger - shown on mobile */}
         <div className="md:hidden">
@@ -132,7 +175,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                     className="w-full"
                     onClick={() => {
                       setMobileOpen(false);
-                      window.location.href = "/onboarding";
+                      navigate({ to: "/onboarding", search: {} });
                     }}
                   >
                     Get Started
@@ -162,14 +205,93 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
           <div className="flex items-center gap-6 justify-end">
             {/* Right navigation */}
             {rightNavItems.length > 0 && (
-              <nav className="flex items-center gap-6">{rightNavItems.map(renderNavItem)}</nav>
+              <nav className="flex items-center gap-6">
+                {rightNavItems.map(renderNavItem)}
+              </nav>
             )}
 
             {/* Auth buttons */}
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/login" })}>
-                Sign In
-              </Button>
+              {session && orgId ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center gap-1 px-1 py-1 rounded-lg hover:bg-accent/30"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={user?.image || undefined}
+                          alt={user?.name || "User"}
+                        />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                          {fallbackText}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 text-left">
+                        <p className="text-sm font-medium">
+                          {user?.name || "User"}
+                        </p>
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to={`/o/$orgId/campaigns`}
+                        params={{
+                          orgId,
+                        }}
+                        search={{}}
+                        className="cursor-pointer"
+                      >
+                        Campaigns
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to={`/o/$orgId/donations`}
+                        params={{
+                          orgId,
+                        }}
+                        search={{}}
+                        className="cursor-pointer"
+                      >
+                        Donations
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        to={`/o/$orgId/account`}
+                        params={{
+                          orgId,
+                        }}
+                        className="cursor-pointer"
+                      >
+                        Account Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={async () => {
+                        await authClient.signOut();
+                        navigate({ to: "/" });
+                      }}
+                      className="text-destructive focus:text-destructive cursor-pointer"
+                    >
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate({ to: "/login" })}
+                >
+                  Sign In
+                </Button>
+              )}
               <Button asChild size="sm">
                 <Link to="/login">Start fundraider</Link>
               </Button>

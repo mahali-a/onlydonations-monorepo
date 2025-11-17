@@ -23,7 +23,8 @@ const onboardingUserQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/onboarding/")({
-  validateSearch: (search) => onboardingSearchSchema.parse(search),
+  validateSearch: (search): Partial<z.infer<typeof onboardingSearchSchema>> =>
+    onboardingSearchSchema.parse(search ?? {}),
   loaderDeps: ({ search }) => ({
     next: search.next,
     step: search.step,
@@ -61,7 +62,8 @@ export const Route = createFileRoute("/onboarding/")({
 });
 
 function OnboardingPage() {
-  const { step } = Route.useSearch();
+  const search = Route.useSearch();
+  const { step = "name" } = search;
   const navigate = useNavigate();
 
   const handleProfileSubmit = async (values: {

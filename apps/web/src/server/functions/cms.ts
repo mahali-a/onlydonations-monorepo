@@ -24,34 +24,41 @@ export const retrievePageFromServerBySlug = createServerFn({ method: "GET" })
     }
   });
 
-export const retrieveSettingsFromServer = createServerFn({ method: "GET" }).handler(
-  async (): Promise<Setting | null> => {
-    try {
-      const cache = getCacheAdapter();
+export const retrieveSettingsFromServer = createServerFn({
+  method: "GET",
+}).handler(async (): Promise<Setting | null> => {
+  try {
+    const cache = getCacheAdapter();
 
-      const settings = await cachified({
-        key: CACHE_KEYS.SETTINGS,
-        cache,
-        ttl: ms("1h"),
-        async getFreshValue(): Promise<Setting | null> {
-          try {
-            const result = await cmsClient.findGlobal({
-              slug: "settings",
-              depth: 2,
-            });
+    const settings = await cachified({
+      key: CACHE_KEYS.SETTINGS,
+      cache,
+      ttl: ms("1h"),
+      async getFreshValue(context): Promise<Setting | null> {
+        try {
+          const result = await cmsClient.findGlobal({
+            slug: "settings",
+            depth: 2,
+          });
 
-            return result || null;
-          } catch (error) {
-            logger.error("Failed to fetch settings from CMS:", error);
-            return null;
+          // Skip caching if the result is null to allow retries on failure
+          if (!result) {
+            context.metadata.ttl = -1;
           }
-        },
-      });
 
-      return settings;
-    } catch (error) {
-      logger.error("Failed to get settings:", error);
-      return null;
-    }
-  },
-);
+          return result || null;
+        } catch (error) {
+          logger.error("Failed to fetch settings from CMS:", error);
+          // Skip caching on error to allow retries
+          context.metadata.ttl = -1;
+          return null;
+        }
+      },
+    });
+
+    return settings;
+  } catch (error) {
+    logger.error("Failed to get settings:", error);
+    return null;
+  }
+});

@@ -14,7 +14,8 @@ const campaignsQueryOptions = (orgId: string, filters: CampaignFilters) =>
 
 export const Route = createFileRoute("/o/$orgId/campaigns/")({
   component: CampaignsList,
-  validateSearch: (search) => campaignFiltersSchema.parse(search),
+  validateSearch: (search): Partial<CampaignFilters> =>
+    campaignFiltersSchema.parse(search ?? {}),
   loaderDeps: ({ search }) => search,
   loader: ({ deps, context }) => {
     const orgId = context.organization?.id;
@@ -23,18 +24,20 @@ export const Route = createFileRoute("/o/$orgId/campaigns/")({
       throw new Error("Organization context is required");
     }
 
-    return context.queryClient.ensureQueryData(campaignsQueryOptions(orgId, deps));
+    const filters = campaignFiltersSchema.parse(deps ?? {});
+    return context.queryClient.ensureQueryData(campaignsQueryOptions(orgId, filters));
   },
 });
 
 function CampaignsList() {
   const { organization } = Route.useRouteContext();
-  const filters = Route.useSearch();
+  const search = Route.useSearch();
 
   if (!organization) {
     throw new Error("Organization context is required");
   }
 
+  const filters = campaignFiltersSchema.parse(search ?? {});
   const { data } = useSuspenseQuery(campaignsQueryOptions(organization.id, filters));
 
   return (

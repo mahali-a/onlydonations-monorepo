@@ -32,14 +32,20 @@ export type CampaignFilters = z.infer<typeof campaignFiltersSchema>;
 
 export const createCampaignSchema = z.object({
   organizationId: z.string().min(1, "Organization ID is required"),
-  title: z.string().min(1, "Title is required").max(50, "Title must be 50 characters or less"),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(50, "Title must be 50 characters or less"),
   categoryId: z.string().min(1, "Category is required"),
 });
 
 export const updateCampaignDetailsSchema = z.object({
   organizationId: z.string().min(1, "Organization ID is required"),
   campaignId: z.string().min(1, "Campaign ID is required"),
-  title: z.string().min(1, "Title is required").max(50, "Title must be 50 characters or less"),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(50, "Title must be 50 characters or less"),
   beneficiaryName: z.string().min(1, "Beneficiary name is required").max(255),
   categoryId: z.string().min(1, "Category is required"),
   amount: z.number().int().positive("Goal amount must be positive"),
@@ -54,9 +60,18 @@ export const updateCampaignSharingSchema = z.object({
     .string()
     .min(3, "Slug must be at least 3 characters")
     .max(50, "Slug must be 50 characters or less")
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase alphanumeric with hyphens"),
-  seoTitle: z.string().max(60, "SEO title must be 60 characters or less").optional(),
-  seoDescription: z.string().max(160, "SEO description must be 160 characters or less").optional(),
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      "Slug must be lowercase alphanumeric with hyphens",
+    ),
+  seoTitle: z
+    .string()
+    .max(60, "SEO title must be 60 characters or less")
+    .optional(),
+  seoDescription: z
+    .string()
+    .max(160, "SEO description must be 160 characters or less")
+    .optional(),
   seoImageFileKey: z.string().optional(),
 });
 
@@ -65,7 +80,10 @@ export const updateCampaignSettingsSchema = z.object({
   campaignId: z.string().min(1, "Campaign ID is required"),
   publishCampaign: z.boolean().optional(),
   endDate: z.date().optional().nullable(),
-  donateButtonText: z.string().max(50, "Button text must be 50 characters or less").optional(),
+  donateButtonText: z
+    .string()
+    .max(50, "Button text must be 50 characters or less")
+    .optional(),
   feeHandling: feeHandlingEnum,
   thankYouMessage: z.string().optional(),
 });

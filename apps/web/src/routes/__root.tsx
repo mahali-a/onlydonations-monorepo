@@ -1,8 +1,17 @@
-import type { SelectMember, SelectOrganization, SelectUser } from "@repo/core/database/types";
+import type {
+  SelectMember,
+  SelectOrganization,
+  SelectUser,
+} from "@repo/core/database/types";
 import type { Setting } from "@repo/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
 import { Toaster } from "sonner";
@@ -10,7 +19,6 @@ import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme";
 import { logger } from "@/lib/logger";
-import { retrieveSettingsFromServer } from "@/server/functions/cms";
 import appCss from "@/styles.css?url";
 import { seo } from "@/utils/seo";
 
@@ -24,12 +32,6 @@ type RouterContext = {
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async () => {
-    const settings = await retrieveSettingsFromServer();
-    return {
-      settings,
-    };
-  },
   loader: async ({ context }) => {
     return {
       settings: context.settings,
