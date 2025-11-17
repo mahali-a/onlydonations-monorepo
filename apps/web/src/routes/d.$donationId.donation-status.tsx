@@ -1,40 +1,40 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { CampaignDetailPage } from "@/features/campaigns/public/campaign-detail-page";
-import { retrievePublicCampaignFromServerBySlug } from "@/features/campaigns/public/server";
+import { DonationStatus } from "@/features/donations/public/donation-status";
+import { retrieveDonationStatusDataFromServer } from "@/features/donations/public/donation-status/server";
 
-const publicCampaignQueryOptions = (slug: string) =>
+const donationStatusQueryOptions = (donationId: string) =>
   queryOptions({
-    queryKey: ["public-campaign", slug],
-    queryFn: () => retrievePublicCampaignFromServerBySlug({ data: { slug } }),
-    staleTime: ms("2 minutes"),
+    queryKey: ["donation-status", donationId],
+    queryFn: () => retrieveDonationStatusDataFromServer({ data: { donationId } }),
+    staleTime: ms("30 seconds"),
   });
 
-export const Route = createFileRoute("/f/$slug")({
+export const Route = createFileRoute("/d/$donationId/donation-status")({
   loader: async ({ params, context }) => {
-    const { slug } = params;
+    const { donationId } = params;
 
-    if (!slug) {
-      throw new Response("Campaign slug is required", { status: 400 });
+    if (!donationId) {
+      throw new Response("Donation ID is required", { status: 400 });
     }
 
-    const data = await context.queryClient.ensureQueryData(publicCampaignQueryOptions(slug));
+    const data = await context.queryClient.ensureQueryData(donationStatusQueryOptions(donationId));
 
     if (!data) {
       throw notFound();
     }
   },
 
-  component: CampaignDetailRoute,
+  component: DonationStatusRoute,
 
   notFoundComponent: () => {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Campaign Not Found</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Donation Not Found</h1>
           <p className="text-muted-foreground mb-6">
-            The campaign you're looking for doesn't exist or is no longer available.
+            The donation you're looking for doesn't exist or is no longer available.
           </p>
           <a
             href="/"
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/f/$slug")({
         <div className="text-center">
           <h1 className="text-4xl font-bold text-foreground mb-2">Something went wrong</h1>
           <p className="text-muted-foreground mb-6">
-            We encountered an error loading this campaign.
+            We encountered an error loading this donation status.
           </p>
           <a
             href="/"
@@ -67,13 +67,13 @@ export const Route = createFileRoute("/f/$slug")({
   },
 });
 
-function CampaignDetailRoute() {
-  const { slug } = Route.useParams();
-  const { data } = useSuspenseQuery(publicCampaignQueryOptions(slug));
+function DonationStatusRoute() {
+  const { donationId } = Route.useParams();
+  const { data } = useSuspenseQuery(donationStatusQueryOptions(donationId));
 
   if (!data) {
-    return <div>Campaign not found</div>;
+    return <div>Donation not found</div>;
   }
 
-  return <CampaignDetailPage data={data} />;
+  return <DonationStatus data={data} />;
 }

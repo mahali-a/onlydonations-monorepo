@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/server/middleware/auth";
@@ -32,7 +31,7 @@ export const createWithdrawalAccountOnServer = createServerFn({ method: "POST" }
     await requireOrganizationAccess(organizationId, context.user.id);
 
     try {
-      const paystack = paystackService(env);
+      const paystack = paystackService();
       let recipientCode: string;
       let resolvedAccountName: string | undefined;
 
@@ -173,7 +172,7 @@ export const resolvePaystackAccountNumberOnServer = createServerFn({ method: "PO
     }
 
     try {
-      const paystack = paystackService(env);
+      const paystack = paystackService();
       const result = await paystack.resolveAccount({
         account_number: accountNumber,
         bank_code: bankCode,

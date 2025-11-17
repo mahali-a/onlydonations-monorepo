@@ -275,6 +275,52 @@ export async function updatePaymentTransactionInDatabase(
 }
 
 /**
+ * Update payment transaction status in database by ID.
+ * Marks payment transaction as completed, failed, or other status.
+ *
+ * @param id - Payment transaction ID
+ * @param status - New status (SUCCESS, FAILED, PENDING, etc.)
+ * @param additionalData - Optional completed timestamp, status message, and processor transaction ID
+ * @returns The updated payment transaction record
+ */
+export async function updatePaymentTransactionStatusInDatabaseById(
+  id: string,
+  status: string,
+  additionalData?: {
+    completedAt?: Date;
+    statusMessage?: string;
+    processorTransactionId?: string;
+  },
+) {
+  const db = getDb();
+  const updateData: Record<string, unknown> = {
+    status,
+    updatedAt: new Date(),
+  };
+
+  if (additionalData?.completedAt) {
+    updateData.completedAt = additionalData.completedAt;
+  }
+  if (additionalData?.statusMessage) {
+    updateData.statusMessage = additionalData.statusMessage;
+  }
+  if (additionalData?.processorTransactionId) {
+    updateData.processorTransactionId = additionalData.processorTransactionId;
+  }
+
+  const [updated] = await db
+    .update(paymentTransaction)
+    .set(updateData)
+    .where(eq(paymentTransaction.id, id))
+    .returning({
+      id: paymentTransaction.id,
+      status: paymentTransaction.status,
+    });
+
+  return updated || null;
+}
+
+/**
  * Retrieve payment transaction withdrawals by organization
  */
 export async function retrievePaymentTransactionWithdrawalsFromDatabaseByOrganization(

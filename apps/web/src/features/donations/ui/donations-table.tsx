@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/ui/data-table";
 import type { DonorRow } from "../donations-models";
-import { formatCurrency } from "@/lib/money";
+import { Money } from "@/lib/money";
 
 type DonationsTableProps = {
   donations: DonorRow[];
@@ -67,7 +67,7 @@ export function DonationsTable({ donations }: DonationsTableProps) {
       header: "Amount",
       cell: ({ row }) => (
         <span className="text-sm font-semibold">
-          {formatCurrency(row.getValue("amount"), row.original.currency)}
+          {Money.fromMinor(row.getValue("amount"), row.original.currency).format()}
         </span>
       ),
     },

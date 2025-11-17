@@ -6,5 +6,5 @@ type CampaignDetailPageProps = {
 };
 
 export function CampaignDetailPage({ data }: CampaignDetailPageProps) {
-  return <CampaignDetailContent data={data} isDonateEnabled={false} />;
+  return <CampaignDetailContent data={data} isDonateEnabled={true} />;
 }

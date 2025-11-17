@@ -18,6 +18,7 @@ export const donation = sqliteTable(
       .notNull()
       .references(() => campaign.id, { onDelete: "restrict" }),
 
+    // Amount in minor units (pesewas for GHS, kobo for NGN, cents for USD)
     amount: integer("amount").notNull(),
     currency: text("currency")
       .notNull()
@@ -37,6 +38,7 @@ export const donation = sqliteTable(
     showMessage: integer("show_message", { mode: "boolean" }).notNull().default(true),
 
     status: text("status").notNull().default("PENDING"),
+    coverFees: integer("cover_fees", { mode: "boolean" }).notNull().default(false),
 
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" })
@@ -44,6 +46,8 @@ export const donation = sqliteTable(
       .default(sql`(unixepoch())`)
       .$onUpdate(() => new Date()),
     completedAt: integer("completed_at", { mode: "timestamp" }),
+    failedAt: integer("failed_at", { mode: "timestamp" }),
+    failureReason: text("failure_reason"),
   },
   (table) => ({
     campaignIdIndex: index("donation_campaign_id_idx").on(table.campaignId),

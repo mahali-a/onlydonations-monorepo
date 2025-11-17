@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { authMiddleware } from "@/server/middleware/auth";
@@ -17,7 +16,7 @@ export const retrieveWithdrawalAccountsFromServer = createServerFn({ method: "GE
     withdrawalAccountsLogger.info("loader.start", { organizationId });
 
     try {
-      const paystack = paystackService(env);
+      const paystack = paystackService();
       const { withdrawalAccounts, mobileMoneyBanks, ghipssBanks } = await promiseHash({
         withdrawalAccounts: retrieveWithdrawalAccountsFromDatabaseByOrganization(organizationId),
         mobileMoneyBanks: paystack.listBanks({ currency: "GHS", type: "mobile_money" }),

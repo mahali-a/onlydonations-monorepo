@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import { authMiddleware } from "@/server/middleware/auth";
@@ -98,7 +97,7 @@ export const createWithdrawalRequestOnServer = createServerFn({ method: "POST" }
         throw new Error("Failed to create transaction record");
       }
 
-      const paystack = paystackService(env);
+      const paystack = paystackService();
       const transferResult = await paystack.initiateTransfer({
         source: "balance",
         amount: amountInMinorUnits,

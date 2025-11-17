@@ -14,12 +14,13 @@ import type {
   ValidateAccountParams,
   ValidatedAccountData,
 } from "./types";
+import { env } from "cloudflare:workers";
 
 export class PaystackService {
   private readonly secretKey: string;
   private readonly baseUrl = "https://api.paystack.co";
 
-  constructor(env: Env) {
+  constructor() {
     this.secretKey = env.PAYSTACK_SECRET_KEY;
   }
 
@@ -81,16 +82,21 @@ export class PaystackService {
     callback_url?: string;
     metadata?: Record<string, any>;
   }) {
-    const result = await this.makeRequest<InitializeTransactionData>("/transaction/initialize", {
-      method: "POST",
-      body: JSON.stringify(params),
-    });
+    const result = await this.makeRequest<InitializeTransactionData>(
+      "/transaction/initialize",
+      {
+        method: "POST",
+        body: JSON.stringify(params),
+      },
+    );
 
     return result;
   }
 
   async verifyTransaction(reference: string) {
-    const result = await this.makeRequest<PaystackChargeData>(`/transaction/verify/${reference}`);
+    const result = await this.makeRequest<PaystackChargeData>(
+      `/transaction/verify/${reference}`,
+    );
 
     return result;
   }
@@ -112,7 +118,9 @@ export class PaystackService {
     }
 
     const query = searchParams.toString();
-    return this.makeRequest<ListTransactionsData>(`/transaction${query ? `?${query}` : ""}`);
+    return this.makeRequest<ListTransactionsData>(
+      `/transaction${query ? `?${query}` : ""}`,
+    );
   }
 
   async createRefund(params: {
@@ -132,7 +140,13 @@ export class PaystackService {
 
   async listBanks(params?: {
     currency?: "NGN" | "GHS" | "KES" | "ZAR";
-    type?: "nuban" | "mobile_money" | "ghipss" | "kepss" | "basa" | "mobile_money_business";
+    type?:
+      | "nuban"
+      | "mobile_money"
+      | "ghipss"
+      | "kepss"
+      | "basa"
+      | "mobile_money_business";
     enabled_for_verification?: boolean;
   }) {
     const searchParams = new URLSearchParams();
@@ -145,7 +159,9 @@ export class PaystackService {
     }
 
     const query = searchParams.toString();
-    const result = await this.makeRequest<PaystackBank[]>(`/bank${query ? `?${query}` : ""}`);
+    const result = await this.makeRequest<PaystackBank[]>(
+      `/bank${query ? `?${query}` : ""}`,
+    );
 
     return result;
   }
@@ -160,10 +176,13 @@ export class PaystackService {
   }
 
   async validateAccount(params: ValidateAccountParams) {
-    const result = await this.makeRequest<ValidatedAccountData>("/bank/validate", {
-      method: "POST",
-      body: JSON.stringify(params),
-    });
+    const result = await this.makeRequest<ValidatedAccountData>(
+      "/bank/validate",
+      {
+        method: "POST",
+        body: JSON.stringify(params),
+      },
+    );
 
     return result;
   }
@@ -186,10 +205,13 @@ export class PaystackService {
     authorization_code?: string;
     metadata?: Record<string, any>;
   }) {
-    const result = await this.makeRequest<TransferRecipientData>("/transferrecipient", {
-      method: "POST",
-      body: JSON.stringify(params),
-    });
+    const result = await this.makeRequest<TransferRecipientData>(
+      "/transferrecipient",
+      {
+        method: "POST",
+        body: JSON.stringify(params),
+      },
+    );
 
     return result;
   }
@@ -204,14 +226,12 @@ export class PaystackService {
   }
 
   async verifyTransfer(reference: string) {
-    const result = await this.makeRequest<TransferData>(`/transfer/verify/${reference}`);
+    const result = await this.makeRequest<TransferData>(
+      `/transfer/verify/${reference}`,
+    );
 
     return result;
   }
 }
 
-export function createPaystackService(env: Env): PaystackService {
-  return new PaystackService(env);
-}
-
-export const paystackService = (env: Env) => createPaystackService(env);
+export const paystackService = () => new PaystackService();

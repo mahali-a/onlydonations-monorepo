@@ -21,6 +21,7 @@ import { ThemeProvider } from "@/components/theme";
 import { logger } from "@/lib/logger";
 import appCss from "@/styles.css?url";
 import { seo } from "@/utils/seo";
+import { retrieveSettingsFromServer } from "@/server/functions/cms";
 
 const rootLogger = logger.createChildLogger("root");
 
@@ -35,6 +36,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   loader: async ({ context }) => {
     return {
       settings: context.settings,
+    };
+  },
+  beforeLoad: async () => {
+    const settings = await retrieveSettingsFromServer();
+
+    return {
+      settings,
     };
   },
   head: ({ loaderData }) => ({

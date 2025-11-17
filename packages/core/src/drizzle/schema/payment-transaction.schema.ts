@@ -19,7 +19,9 @@ export const paymentTransaction = sqliteTable("payment_transaction", {
   processorRef: text("processor_ref").unique().notNull(),
   processorTransactionId: text("processor_transaction_id"),
 
+  // Amount in minor units (pesewas for GHS, kobo for NGN, cents for USD)
   amount: integer("amount").notNull(),
+  // Fees in minor units (pesewas for GHS, kobo for NGN, cents for USD)
   fees: integer("fees").notNull().default(0),
   currency: text("currency")
     .notNull()

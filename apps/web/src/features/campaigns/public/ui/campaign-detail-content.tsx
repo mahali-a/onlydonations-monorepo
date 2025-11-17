@@ -1,4 +1,5 @@
 import { Gift, Share2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { CampaignDetailData } from "../types";
@@ -86,23 +87,26 @@ export function CampaignDetailContent({
             />
 
             <div className="flex flex-col gap-3">
-              <Button
-                size="lg"
-                className="w-full"
-                disabled={!isDonateEnabled}
-                title={
-                  !isDonateEnabled && showPreviewBanner
-                    ? "Donate button disabled in preview mode"
-                    : undefined
-                }
-              >
-                <Gift className="mr-2 h-5 w-5" />
-                {isDonateEnabled
-                  ? campaign.donateButtonText || "Donate Now"
-                  : showPreviewBanner
-                    ? "(Disabled in Preview)"
-                    : campaign.donateButtonText || "Donate Now"}
-              </Button>
+              {isDonateEnabled ? (
+                <Link to="/f/$slug/donate" params={{ slug: campaign.slug }}>
+                  <Button size="lg" className="w-full">
+                    <Gift className="mr-2 h-5 w-5" />
+                    {campaign.donateButtonText || "Donate Now"}
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  size="lg"
+                  className="w-full"
+                  disabled={true}
+                  title={
+                    showPreviewBanner ? "Donate button disabled in preview mode" : undefined
+                  }
+                >
+                  <Gift className="mr-2 h-5 w-5" />
+                  {showPreviewBanner ? "(Disabled in Preview)" : campaign.donateButtonText || "Donate Now"}
+                </Button>
+              )}
 
               <Button variant="outline" size="lg" className="w-full" onClick={() => handleShare()}>
                 <Share2 className="mr-2 h-5 w-5" />

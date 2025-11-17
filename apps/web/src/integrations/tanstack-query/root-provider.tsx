@@ -1,9 +1,7 @@
-import { retrieveSettingsFromServer } from "@/server/functions/cms";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ms from "ms";
 
-export async function getContext() {
-  const settings = await retrieveSettingsFromServer();
+export function getContext() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -12,7 +10,6 @@ export async function getContext() {
     },
   });
   return {
-    settings,
     queryClient,
   };
 }
