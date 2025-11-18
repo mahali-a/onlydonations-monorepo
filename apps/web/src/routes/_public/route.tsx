@@ -5,5 +5,9 @@ export const Route = createFileRoute("/_public")({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <div className="light">
+      <Outlet />
+    </div>
+  );
 }

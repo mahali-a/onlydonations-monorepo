@@ -71,15 +71,15 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
             {link.label}
             <ChevronDown className="h-4 w-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56">
+          <DropdownMenuContent align="start" className="min-w-[14rem] w-max p-4 rounded-2xl shadow-[0_6px_14px_rgba(0,0,0,0.1)]">
             {link.dropdownItems.map((item) => (
-              <DropdownMenuItem key={item.id} asChild>
+              <DropdownMenuItem key={item.id} asChild className="rounded-xl px-2 py-4">
                 <Link
                   to={item.url || "/"}
                   className="w-full cursor-pointer no-underline"
                 >
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium">{item.label}</span>
+                    <span className="font-medium text-base">{item.label}</span>
                     {item.description && (
                       <span className="text-xs text-muted-foreground">
                         {item.description}
@@ -214,23 +214,23 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
           </Sheet>
         </div>
 
-        {/* Desktop layout: 3-column grid */}
-        <div className="hidden md:grid md:grid-cols-3 md:gap-4 md:items-center md:flex-1">
-          {/* Left column: Left navigation */}
-          <nav className="flex items-center gap-6 justify-start">
+        {/* Desktop layout: Logo absolutely centered */}
+        <div className="hidden md:flex md:items-center md:flex-1 relative">
+          {/* Left navigation */}
+          <nav className="flex items-center gap-6">
             {leftNavItems.map(renderNavItem)}
           </nav>
 
-          {/* Center column: Logo */}
+          {/* Logo - absolutely centered */}
           <Link
             to="/"
-            className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors no-underline justify-center"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors no-underline"
           >
             <Navlogo className="h-8 w-auto" />
           </Link>
 
-          {/* Right column: Right nav + Auth buttons */}
-          <div className="flex items-center gap-6 justify-end">
+          {/* Right side: Right nav + Auth buttons */}
+          <div className="flex items-center gap-6 ml-auto">
             {/* Right navigation */}
             {rightNavItems.length > 0 && (
               <nav className="flex items-center gap-6">
@@ -271,40 +271,40 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                         </div>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuContent align="end" className="min-w-[14rem] w-max p-4 rounded-2xl shadow-[0_6px_14px_rgba(0,0,0,0.1)]">
                       {orgId && (
                         <>
-                          <DropdownMenuItem asChild>
+                          <DropdownMenuItem asChild className="rounded-xl px-2 py-4">
                             <Link
                               to={`/o/$orgId/campaigns`}
                               params={{
                                 orgId,
                               }}
                               search={{}}
-                              className="cursor-pointer"
+                              className="cursor-pointer text-base"
                             >
                               Campaigns
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
+                          <DropdownMenuItem asChild className="rounded-xl px-2 py-4">
                             <Link
                               to={`/o/$orgId/donations`}
                               params={{
                                 orgId,
                               }}
                               search={{}}
-                              className="cursor-pointer"
+                              className="cursor-pointer text-base"
                             >
                               Donations
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
+                          <DropdownMenuItem asChild className="rounded-xl px-2 py-4">
                             <Link
                               to={`/o/$orgId/account`}
                               params={{
                                 orgId,
                               }}
-                              className="cursor-pointer"
+                              className="cursor-pointer text-base"
                             >
                               Account Settings
                             </Link>
@@ -316,7 +316,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                           await authClient.signOut();
                           navigate({ to: "/" });
                         }}
-                        className="text-destructive focus:text-destructive cursor-pointer"
+                        className="rounded-xl px-2 py-4 text-base text-destructive focus:text-destructive cursor-pointer"
                       >
                         Sign Out
                       </DropdownMenuItem>
