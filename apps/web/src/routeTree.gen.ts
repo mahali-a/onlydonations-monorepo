@@ -17,24 +17,28 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as PublicIndexRouteImport } from './routes/_public/index'
 import { Route as R2SplatRouteImport } from './routes/r2.$'
 import { Route as OnboardingVerifyRouteImport } from './routes/onboarding/verify'
+import { Route as LiveSlugRouteImport } from './routes/live.$slug'
 import { Route as PublicSupportRouteImport } from './routes/_public/support'
+import { Route as PublicSRouteImport } from './routes/_public/s'
 import { Route as PublicPricingRouteImport } from './routes/_public/pricing'
-import { Route as PublicDiscoverRouteImport } from './routes/_public/discover'
 import { Route as PublicAboutUsRouteImport } from './routes/_public/about-us'
 import { Route as PublicSplatRouteImport } from './routes/_public/$'
 import { Route as AuthMagicCodeRouteImport } from './routes/_auth/magic-code'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as OOrgIdRouteRouteImport } from './routes/o.$orgId/route'
 import { Route as OOrgIdIndexRouteImport } from './routes/o.$orgId/index'
+import { Route as PublicDiscoverIndexRouteImport } from './routes/_public/discover/index'
 import { Route as OOrgIdPaymentsRouteImport } from './routes/o.$orgId/payments'
 import { Route as OOrgIdFinanceRouteImport } from './routes/o.$orgId/finance'
 import { Route as OOrgIdDonationsRouteImport } from './routes/o.$orgId/donations'
 import { Route as OOrgIdCampaignsRouteImport } from './routes/o.$orgId/campaigns'
 import { Route as OOrgIdAccountRouteImport } from './routes/o.$orgId/account'
+import { Route as FSlugDonateRouteImport } from './routes/f.$slug.donate'
 import { Route as DDonationIdDonationStatusRouteImport } from './routes/d.$donationId.donation-status'
 import { Route as ApiWebhooksSmileRouteImport } from './routes/api/webhooks/smile'
 import { Route as ApiWebhooksPaystackRouteImport } from './routes/api/webhooks/paystack'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as PublicDiscoverCategoryRouteImport } from './routes/_public/discover/$category'
 import { Route as OOrgIdPaymentsIndexRouteImport } from './routes/o.$orgId/payments/index'
 import { Route as OOrgIdCampaignsIndexRouteImport } from './routes/o.$orgId/campaigns/index'
 import { Route as OOrgIdAccountIndexRouteImport } from './routes/o.$orgId/account/index'
@@ -45,7 +49,6 @@ import { Route as OOrgIdCampaignsCampaignIdRouteImport } from './routes/o.$orgId
 import { Route as OOrgIdCampaignPreviewsCampaignIdRouteImport } from './routes/o.$orgId/campaign-previews.$campaignId'
 import { Route as OOrgIdAccountSecurityRouteImport } from './routes/o.$orgId/account/security'
 import { Route as OOrgIdAccountKycRouteImport } from './routes/o.$orgId/account/kyc'
-import { Route as PublicFSlugDonateRouteImport } from './routes/_public/f.$slug/donate'
 import { Route as OOrgIdCampaignsCampaignIdIndexRouteImport } from './routes/o.$orgId/campaigns.$campaignId/index'
 import { Route as OOrgIdCampaignsCampaignIdSharingRouteImport } from './routes/o.$orgId/campaigns.$campaignId/sharing'
 import { Route as OOrgIdCampaignsCampaignIdSettingsRouteImport } from './routes/o.$orgId/campaigns.$campaignId/settings'
@@ -88,19 +91,24 @@ const OnboardingVerifyRoute = OnboardingVerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => OnboardingRouteRoute,
 } as any)
+const LiveSlugRoute = LiveSlugRouteImport.update({
+  id: '/live/$slug',
+  path: '/live/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PublicSupportRoute = PublicSupportRouteImport.update({
   id: '/support',
   path: '/support',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const PublicSRoute = PublicSRouteImport.update({
+  id: '/s',
+  path: '/s',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const PublicPricingRoute = PublicPricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
-  getParentRoute: () => PublicRouteRoute,
-} as any)
-const PublicDiscoverRoute = PublicDiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const PublicAboutUsRoute = PublicAboutUsRouteImport.update({
@@ -133,6 +141,11 @@ const OOrgIdIndexRoute = OOrgIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => OOrgIdRouteRoute,
 } as any)
+const PublicDiscoverIndexRoute = PublicDiscoverIndexRouteImport.update({
+  id: '/discover/',
+  path: '/discover/',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const OOrgIdPaymentsRoute = OOrgIdPaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
@@ -158,6 +171,11 @@ const OOrgIdAccountRoute = OOrgIdAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => OOrgIdRouteRoute,
 } as any)
+const FSlugDonateRoute = FSlugDonateRouteImport.update({
+  id: '/f/$slug/donate',
+  path: '/f/$slug/donate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DDonationIdDonationStatusRoute =
   DDonationIdDonationStatusRouteImport.update({
     id: '/d/$donationId/donation-status',
@@ -178,6 +196,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PublicDiscoverCategoryRoute = PublicDiscoverCategoryRouteImport.update({
+  id: '/discover/$category',
+  path: '/discover/$category',
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const OOrgIdPaymentsIndexRoute = OOrgIdPaymentsIndexRouteImport.update({
   id: '/',
@@ -233,11 +256,6 @@ const OOrgIdAccountKycRoute = OOrgIdAccountKycRouteImport.update({
   path: '/kyc',
   getParentRoute: () => OOrgIdAccountRoute,
 } as any)
-const PublicFSlugDonateRoute = PublicFSlugDonateRouteImport.update({
-  id: '/f/$slug/donate',
-  path: '/f/$slug/donate',
-  getParentRoute: () => PublicRouteRoute,
-} as any)
 const OOrgIdCampaignsCampaignIdIndexRoute =
   OOrgIdCampaignsCampaignIdIndexRouteImport.update({
     id: '/',
@@ -264,25 +282,28 @@ export interface FileRoutesByFullPath {
   '/magic-code': typeof AuthMagicCodeRoute
   '/$': typeof PublicSplatRoute
   '/about-us': typeof PublicAboutUsRoute
-  '/discover': typeof PublicDiscoverRoute
   '/pricing': typeof PublicPricingRoute
+  '/s': typeof PublicSRoute
   '/support': typeof PublicSupportRoute
+  '/live/$slug': typeof LiveSlugRoute
   '/onboarding/verify': typeof OnboardingVerifyRoute
   '/r2/$': typeof R2SplatRoute
   '/': typeof PublicIndexRoute
   '/app': typeof AppIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/webhooks/paystack': typeof ApiWebhooksPaystackRoute
   '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
   '/d/$donationId/donation-status': typeof DDonationIdDonationStatusRoute
+  '/f/$slug/donate': typeof FSlugDonateRoute
   '/o/$orgId/account': typeof OOrgIdAccountRouteWithChildren
   '/o/$orgId/campaigns': typeof OOrgIdCampaignsRouteWithChildren
   '/o/$orgId/donations': typeof OOrgIdDonationsRoute
   '/o/$orgId/finance': typeof OOrgIdFinanceRoute
   '/o/$orgId/payments': typeof OOrgIdPaymentsRouteWithChildren
+  '/discover': typeof PublicDiscoverIndexRoute
   '/o/$orgId/': typeof OOrgIdIndexRoute
-  '/f/$slug/donate': typeof PublicFSlugDonateRoute
   '/o/$orgId/account/kyc': typeof OOrgIdAccountKycRoute
   '/o/$orgId/account/security': typeof OOrgIdAccountSecurityRoute
   '/o/$orgId/campaign-previews/$campaignId': typeof OOrgIdCampaignPreviewsCampaignIdRoute
@@ -302,22 +323,25 @@ export interface FileRoutesByTo {
   '/magic-code': typeof AuthMagicCodeRoute
   '/$': typeof PublicSplatRoute
   '/about-us': typeof PublicAboutUsRoute
-  '/discover': typeof PublicDiscoverRoute
   '/pricing': typeof PublicPricingRoute
+  '/s': typeof PublicSRoute
   '/support': typeof PublicSupportRoute
+  '/live/$slug': typeof LiveSlugRoute
   '/onboarding/verify': typeof OnboardingVerifyRoute
   '/r2/$': typeof R2SplatRoute
   '/': typeof PublicIndexRoute
   '/app': typeof AppIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
+  '/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/webhooks/paystack': typeof ApiWebhooksPaystackRoute
   '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
   '/d/$donationId/donation-status': typeof DDonationIdDonationStatusRoute
+  '/f/$slug/donate': typeof FSlugDonateRoute
   '/o/$orgId/donations': typeof OOrgIdDonationsRoute
   '/o/$orgId/finance': typeof OOrgIdFinanceRoute
+  '/discover': typeof PublicDiscoverIndexRoute
   '/o/$orgId': typeof OOrgIdIndexRoute
-  '/f/$slug/donate': typeof PublicFSlugDonateRoute
   '/o/$orgId/account/kyc': typeof OOrgIdAccountKycRoute
   '/o/$orgId/account/security': typeof OOrgIdAccountSecurityRoute
   '/o/$orgId/campaign-previews/$campaignId': typeof OOrgIdCampaignPreviewsCampaignIdRoute
@@ -341,25 +365,28 @@ export interface FileRoutesById {
   '/_auth/magic-code': typeof AuthMagicCodeRoute
   '/_public/$': typeof PublicSplatRoute
   '/_public/about-us': typeof PublicAboutUsRoute
-  '/_public/discover': typeof PublicDiscoverRoute
   '/_public/pricing': typeof PublicPricingRoute
+  '/_public/s': typeof PublicSRoute
   '/_public/support': typeof PublicSupportRoute
+  '/live/$slug': typeof LiveSlugRoute
   '/onboarding/verify': typeof OnboardingVerifyRoute
   '/r2/$': typeof R2SplatRoute
   '/_public/': typeof PublicIndexRoute
   '/app/': typeof AppIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/_public/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/webhooks/paystack': typeof ApiWebhooksPaystackRoute
   '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
   '/d/$donationId/donation-status': typeof DDonationIdDonationStatusRoute
+  '/f/$slug/donate': typeof FSlugDonateRoute
   '/o/$orgId/account': typeof OOrgIdAccountRouteWithChildren
   '/o/$orgId/campaigns': typeof OOrgIdCampaignsRouteWithChildren
   '/o/$orgId/donations': typeof OOrgIdDonationsRoute
   '/o/$orgId/finance': typeof OOrgIdFinanceRoute
   '/o/$orgId/payments': typeof OOrgIdPaymentsRouteWithChildren
+  '/_public/discover/': typeof PublicDiscoverIndexRoute
   '/o/$orgId/': typeof OOrgIdIndexRoute
-  '/_public/f/$slug/donate': typeof PublicFSlugDonateRoute
   '/o/$orgId/account/kyc': typeof OOrgIdAccountKycRoute
   '/o/$orgId/account/security': typeof OOrgIdAccountSecurityRoute
   '/o/$orgId/campaign-previews/$campaignId': typeof OOrgIdCampaignPreviewsCampaignIdRoute
@@ -383,25 +410,28 @@ export interface FileRouteTypes {
     | '/magic-code'
     | '/$'
     | '/about-us'
-    | '/discover'
     | '/pricing'
+    | '/s'
     | '/support'
+    | '/live/$slug'
     | '/onboarding/verify'
     | '/r2/$'
     | '/'
     | '/app'
     | '/onboarding/'
+    | '/discover/$category'
     | '/api/auth/$'
     | '/api/webhooks/paystack'
     | '/api/webhooks/smile'
     | '/d/$donationId/donation-status'
+    | '/f/$slug/donate'
     | '/o/$orgId/account'
     | '/o/$orgId/campaigns'
     | '/o/$orgId/donations'
     | '/o/$orgId/finance'
     | '/o/$orgId/payments'
+    | '/discover'
     | '/o/$orgId/'
-    | '/f/$slug/donate'
     | '/o/$orgId/account/kyc'
     | '/o/$orgId/account/security'
     | '/o/$orgId/campaign-previews/$campaignId'
@@ -421,22 +451,25 @@ export interface FileRouteTypes {
     | '/magic-code'
     | '/$'
     | '/about-us'
-    | '/discover'
     | '/pricing'
+    | '/s'
     | '/support'
+    | '/live/$slug'
     | '/onboarding/verify'
     | '/r2/$'
     | '/'
     | '/app'
     | '/onboarding'
+    | '/discover/$category'
     | '/api/auth/$'
     | '/api/webhooks/paystack'
     | '/api/webhooks/smile'
     | '/d/$donationId/donation-status'
+    | '/f/$slug/donate'
     | '/o/$orgId/donations'
     | '/o/$orgId/finance'
+    | '/discover'
     | '/o/$orgId'
-    | '/f/$slug/donate'
     | '/o/$orgId/account/kyc'
     | '/o/$orgId/account/security'
     | '/o/$orgId/campaign-previews/$campaignId'
@@ -459,25 +492,28 @@ export interface FileRouteTypes {
     | '/_auth/magic-code'
     | '/_public/$'
     | '/_public/about-us'
-    | '/_public/discover'
     | '/_public/pricing'
+    | '/_public/s'
     | '/_public/support'
+    | '/live/$slug'
     | '/onboarding/verify'
     | '/r2/$'
     | '/_public/'
     | '/app/'
     | '/onboarding/'
+    | '/_public/discover/$category'
     | '/api/auth/$'
     | '/api/webhooks/paystack'
     | '/api/webhooks/smile'
     | '/d/$donationId/donation-status'
+    | '/f/$slug/donate'
     | '/o/$orgId/account'
     | '/o/$orgId/campaigns'
     | '/o/$orgId/donations'
     | '/o/$orgId/finance'
     | '/o/$orgId/payments'
+    | '/_public/discover/'
     | '/o/$orgId/'
-    | '/_public/f/$slug/donate'
     | '/o/$orgId/account/kyc'
     | '/o/$orgId/account/security'
     | '/o/$orgId/campaign-previews/$campaignId'
@@ -498,12 +534,14 @@ export interface RootRouteChildren {
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
   OOrgIdRouteRoute: typeof OOrgIdRouteRouteWithChildren
+  LiveSlugRoute: typeof LiveSlugRoute
   R2SplatRoute: typeof R2SplatRoute
   AppIndexRoute: typeof AppIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiWebhooksPaystackRoute: typeof ApiWebhooksPaystackRoute
   ApiWebhooksSmileRoute: typeof ApiWebhooksSmileRoute
   DDonationIdDonationStatusRoute: typeof DDonationIdDonationStatusRoute
+  FSlugDonateRoute: typeof FSlugDonateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -564,6 +602,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingVerifyRouteImport
       parentRoute: typeof OnboardingRouteRoute
     }
+    '/live/$slug': {
+      id: '/live/$slug'
+      path: '/live/$slug'
+      fullPath: '/live/$slug'
+      preLoaderRoute: typeof LiveSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_public/support': {
       id: '/_public/support'
       path: '/support'
@@ -571,18 +616,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicSupportRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_public/s': {
+      id: '/_public/s'
+      path: '/s'
+      fullPath: '/s'
+      preLoaderRoute: typeof PublicSRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/_public/pricing': {
       id: '/_public/pricing'
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PublicPricingRouteImport
-      parentRoute: typeof PublicRouteRoute
-    }
-    '/_public/discover': {
-      id: '/_public/discover'
-      path: '/discover'
-      fullPath: '/discover'
-      preLoaderRoute: typeof PublicDiscoverRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_public/about-us': {
@@ -627,6 +672,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OOrgIdIndexRouteImport
       parentRoute: typeof OOrgIdRouteRoute
     }
+    '/_public/discover/': {
+      id: '/_public/discover/'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof PublicDiscoverIndexRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/o/$orgId/payments': {
       id: '/o/$orgId/payments'
       path: '/payments'
@@ -662,6 +714,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OOrgIdAccountRouteImport
       parentRoute: typeof OOrgIdRouteRoute
     }
+    '/f/$slug/donate': {
+      id: '/f/$slug/donate'
+      path: '/f/$slug/donate'
+      fullPath: '/f/$slug/donate'
+      preLoaderRoute: typeof FSlugDonateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/d/$donationId/donation-status': {
       id: '/d/$donationId/donation-status'
       path: '/d/$donationId/donation-status'
@@ -689,6 +748,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_public/discover/$category': {
+      id: '/_public/discover/$category'
+      path: '/discover/$category'
+      fullPath: '/discover/$category'
+      preLoaderRoute: typeof PublicDiscoverCategoryRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
     '/o/$orgId/payments/': {
       id: '/o/$orgId/payments/'
@@ -760,13 +826,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OOrgIdAccountKycRouteImport
       parentRoute: typeof OOrgIdAccountRoute
     }
-    '/_public/f/$slug/donate': {
-      id: '/_public/f/$slug/donate'
-      path: '/f/$slug/donate'
-      fullPath: '/f/$slug/donate'
-      preLoaderRoute: typeof PublicFSlugDonateRouteImport
-      parentRoute: typeof PublicRouteRoute
-    }
     '/o/$orgId/campaigns/$campaignId/': {
       id: '/o/$orgId/campaigns/$campaignId/'
       path: '/'
@@ -808,22 +867,24 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface PublicRouteRouteChildren {
   PublicSplatRoute: typeof PublicSplatRoute
   PublicAboutUsRoute: typeof PublicAboutUsRoute
-  PublicDiscoverRoute: typeof PublicDiscoverRoute
   PublicPricingRoute: typeof PublicPricingRoute
+  PublicSRoute: typeof PublicSRoute
   PublicSupportRoute: typeof PublicSupportRoute
   PublicIndexRoute: typeof PublicIndexRoute
-  PublicFSlugDonateRoute: typeof PublicFSlugDonateRoute
+  PublicDiscoverCategoryRoute: typeof PublicDiscoverCategoryRoute
+  PublicDiscoverIndexRoute: typeof PublicDiscoverIndexRoute
   PublicFSlugIndexRoute: typeof PublicFSlugIndexRoute
 }
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicSplatRoute: PublicSplatRoute,
   PublicAboutUsRoute: PublicAboutUsRoute,
-  PublicDiscoverRoute: PublicDiscoverRoute,
   PublicPricingRoute: PublicPricingRoute,
+  PublicSRoute: PublicSRoute,
   PublicSupportRoute: PublicSupportRoute,
   PublicIndexRoute: PublicIndexRoute,
-  PublicFSlugDonateRoute: PublicFSlugDonateRoute,
+  PublicDiscoverCategoryRoute: PublicDiscoverCategoryRoute,
+  PublicDiscoverIndexRoute: PublicDiscoverIndexRoute,
   PublicFSlugIndexRoute: PublicFSlugIndexRoute,
 }
 
@@ -940,12 +1001,14 @@ const rootRouteChildren: RootRouteChildren = {
   PublicRouteRoute: PublicRouteRouteWithChildren,
   OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
   OOrgIdRouteRoute: OOrgIdRouteRouteWithChildren,
+  LiveSlugRoute: LiveSlugRoute,
   R2SplatRoute: R2SplatRoute,
   AppIndexRoute: AppIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiWebhooksPaystackRoute: ApiWebhooksPaystackRoute,
   ApiWebhooksSmileRoute: ApiWebhooksSmileRoute,
   DDonationIdDonationStatusRoute: DDonationIdDonationStatusRoute,
+  FSlugDonateRoute: FSlugDonateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

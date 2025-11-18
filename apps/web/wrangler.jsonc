@@ -18,10 +18,8 @@
     "ENVIRONMENT": "production",
     "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
     "SMILE_PARTNER_ID": "7634",
-    "SMILE_API_KEY": "4f59f505-a94a-4537-b0e5-deb0bccf443b",
     "SMILE_ENVIRONMENT": "sandbox",
-    "SMILE_CALLBACK_URL": "https://stg.onlydonations.com/api/smile/callback",
-    "CMS_API_URL": "https://cms.onlydonations.com/api"
+    "SMILE_CALLBACK_URL": "https://stg.onlydonations.com/api/smile/callback"
   },
   "observability": {
     "enabled": true,

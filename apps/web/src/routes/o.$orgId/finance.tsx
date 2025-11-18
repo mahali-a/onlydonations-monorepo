@@ -1,14 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { queryOptions } from "@tanstack/react-query";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import ms from "ms";
 import { z } from "zod";
-import { retrieveFinancialInsightsFromServer } from "@/features/payments/insights/server";
-import { CampaignTable, FinancialMetrics, FundsChart } from "@/features/payments/insights/ui";
+import { retrieveFinancialInsightsFromServer } from "@/features/org-payments/insights/server";
+import { CampaignTable, FinancialMetrics, FundsChart } from "@/features/org-payments/insights/ui";
 
 const financeSearchSchema = z.object({
-  page: z.number().int().positive().default(1).catch(1),
-  limit: z.number().int().positive().default(10).catch(10),
+  page: fallback(z.number().int().positive(), 1).default(1),
+  limit: fallback(z.number().int().positive(), 10).default(10),
 });
 
 const financialInsightsQueryOptions = (orgId: string, page: number, limit: number) =>
@@ -21,7 +21,7 @@ const financialInsightsQueryOptions = (orgId: string, page: number, limit: numbe
 
 export const Route = createFileRoute("/o/$orgId/finance")({
   component: FinancialInsights,
-  validateSearch: (search) => financeSearchSchema.parse(search),
+  validateSearch: zodValidator(financeSearchSchema),
   loaderDeps: ({ search }) => ({
     page: search.page,
     limit: search.limit,

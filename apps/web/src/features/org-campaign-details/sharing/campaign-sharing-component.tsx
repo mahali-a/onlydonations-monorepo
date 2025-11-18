@@ -1,0 +1,204 @@
+import { Suspense } from "react";
+import { useParams } from "@tanstack/react-router";
+import { useForm } from "@tanstack/react-form";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { campaignDetailQueryOptions } from "@/features/org-campaigns/server";
+import { updateCampaignSharingOnServer } from "./campaign-sharing-actions";
+import { CustomSlug } from "./ui/custom-slug";
+import { LiveDisplay } from "./ui/live-display";
+import { SeoSettings } from "./ui/seo-settings";
+import { campaignSharingSchema } from "./campaign-sharing-schema";
+
+const EDITABLE_STATUSES = ["DRAFT", "ACTIVE", "REJECTED"] as const;
+
+function CampaignSharingLoading() {
+  return (
+    <div className="rounded-xl p-6 border border-solid border-border bg-background space-y-8">
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-4">
+          <Skeleton className="h-6 w-1/2 mb-2" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
+        <div className="col-span-7 col-start-6">
+          <Skeleton className="h-10" />
+        </div>
+      </div>
+      <Separator />
+      <Skeleton className="h-24" />
+      <Separator />
+      <Skeleton className="h-48" />
+    </div>
+  );
+}
+
+function CampaignSharingContent() {
+  const params = useParams({ from: "/o/$orgId/campaigns/$campaignId" });
+  const queryClient = useQueryClient();
+
+  const { data } = useSuspenseQuery(
+    campaignDetailQueryOptions(params.orgId, params.campaignId)
+  );
+
+  const { campaign } = data;
+
+  const isEditable = EDITABLE_STATUSES.includes(
+    campaign?.status as (typeof EDITABLE_STATUSES)[number],
+  );
+
+  const form = useForm({
+    defaultValues: {
+      slug: campaign?.slug || "",
+      seoTitle: campaign?.seoTitle || "",
+      seoDescription: campaign?.seoDescription || "",
+      seoImageFile: null as File | null,
+      seoImageFileKey: campaign?.seoImage || "",
+      deleteSeoImage: false,
+    },
+    validators: {
+      onSubmitAsync: async ({ value }) => {
+        if (!campaign) {
+          return { form: "Campaign not found" };
+        }
+        const formData = new FormData();
+        formData.append("organizationId", params.orgId);
+        formData.append("campaignId", campaign.id);
+        formData.append("slug", value.slug);
+        if (value.seoTitle) {
+          formData.append("seoTitle", value.seoTitle);
+        }
+        if (value.seoDescription) {
+          formData.append("seoDescription", value.seoDescription);
+        }
+        if (value.seoImageFile) {
+          formData.append("seoImage", value.seoImageFile);
+        }
+        if (value.seoImageFileKey) {
+          formData.append("seoImageFileKey", value.seoImageFileKey);
+        }
+        if (value.deleteSeoImage) {
+          formData.append("deleteSeoImage", "true");
+        }
+
+        const result = await updateCampaignSharingOnServer({
+          data: formData,
+        });
+
+        if (!result.success) {
+          return {
+            form: result.error || "Failed to update sharing settings",
+          };
+        }
+
+        toast.success("Sharing settings updated successfully");
+        queryClient.invalidateQueries({
+          queryKey: ["campaign-detail", params.orgId, params.campaignId],
+        });
+        return null;
+      },
+    },
+  });
+
+  if (!campaign) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <form
+      key={campaign.id}
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+      className="rounded-xl p-6 border border-solid border-border bg-background overflow-auto space-y-8"
+    >
+      <fieldset disabled={!isEditable} className="space-y-8">
+        <form.Field
+          name="slug"
+          validators={{
+            onChange: campaignSharingSchema.shape.slug,
+          }}
+        >
+          {(field) => (
+            <CustomSlug field={field} defaultSlug={campaign.slug} campaignId={campaign.id} />
+          )}
+        </form.Field>
+
+        <Separator />
+
+        <LiveDisplay campaignId={campaign.id} />
+
+        <Separator />
+
+        <form.Field name="seoTitle">
+          {(titleField) => (
+            <form.Field name="seoDescription">
+              {(descField) => (
+                <form.Field name="seoImageFile">
+                  {(fileField) => (
+                    <form.Field name="seoImageFileKey">
+                      {(keyField) => (
+                        <form.Field name="deleteSeoImage">
+                          {(deleteField) => (
+                            <form.Subscribe selector={(state) => [state.values.deleteSeoImage]}>
+                              {([isDeleted]) => (
+                                <SeoSettings
+                                  titleField={titleField}
+                                  descriptionField={descField}
+                                  fileField={fileField}
+                                  keyField={keyField}
+                                  deleteField={deleteField}
+                                  isDeleted={!!isDeleted}
+                                  seoImage={campaign?.seoImage}
+                                />
+                              )}
+                            </form.Subscribe>
+                          )}
+                        </form.Field>
+                      )}
+                    </form.Field>
+                  )}
+                </form.Field>
+              )}
+            </form.Field>
+          )}
+        </form.Field>
+
+        <div className="flex justify-end pt-4">
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting, state.isDirty]}
+          >
+            {([canSubmit, isSubmitting, isDirty]) => (
+              <Button
+                type="submit"
+                disabled={!canSubmit || isSubmitting || !isDirty || !isEditable}
+              >
+                {isSubmitting ? "Saving..." : "Save Changes"}
+              </Button>
+            )}
+          </form.Subscribe>
+        </div>
+
+        <form.Subscribe selector={(state) => [state.errorMap]}>
+          {([errorMap]) =>
+            errorMap?.onSubmit?.form ? (
+              <p className="text-sm text-destructive text-right">{errorMap.onSubmit.form}</p>
+            ) : null
+          }
+        </form.Subscribe>
+      </fieldset>
+    </form>
+  );
+}
+
+export function CampaignSharing() {
+  return (
+    <Suspense fallback={<CampaignSharingLoading />}>
+      <CampaignSharingContent />
+    </Suspense>
+  );
+}

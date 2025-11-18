@@ -1,8 +1,7 @@
 import type { Setting } from "@repo/types";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, Menu } from "lucide-react";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { ChevronDown, Menu, Search } from "lucide-react";
+import { useState } from "react";
 import { Navlogo } from "@/components/icons/nav-logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +22,6 @@ interface PublicNavbarProps {
 
 export function PublicNavbar({ settings }: PublicNavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const {
     data: session,
@@ -39,15 +37,6 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
   });
 
   const isLoading = isSessionPending && !error && !orgError;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const user = session?.user;
   const fallbackText = user?.name
@@ -71,24 +60,35 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
             {link.label}
             <ChevronDown className="h-4 w-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-[14rem] w-max p-4 rounded-2xl shadow-[0_6px_14px_rgba(0,0,0,0.1)]">
-            {link.dropdownItems.map((item) => (
-              <DropdownMenuItem key={item.id} asChild className="rounded-xl px-2 py-4">
-                <Link
-                  to={item.url || "/"}
-                  className="w-full cursor-pointer no-underline"
+          <DropdownMenuContent
+            align="start"
+            className="w-[600px] p-6 rounded-3xl shadow-[0_6px_30px_rgba(0,0,0,0.1)] border-none"
+          >
+            <div className="grid grid-cols-2 gap-2">
+              {link.dropdownItems.map((item) => (
+                <DropdownMenuItem
+                  key={item.id}
+                  asChild
+                  className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
                 >
-                  <div className="flex flex-col gap-1">
-                    <span className="font-medium text-base">{item.label}</span>
-                    {item.description && (
-                      <span className="text-xs text-muted-foreground">
-                        {item.description}
+                  <Link
+                    to={item.url || "/"}
+                    className="w-full cursor-pointer no-underline"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium text-base">
+                        {item.label}
                       </span>
-                    )}
-                  </div>
-                </Link>
-              </DropdownMenuItem>
-            ))}
+                      {item.description && (
+                        <span className="text-xs text-muted-foreground">
+                          {item.description}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -106,14 +106,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
   };
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out",
-        isScrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-primary/5"
-          : "bg-transparent",
-      )}
-    >
+    <header className="w-full border-b bg-background">
       <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
         {/* Mobile menu trigger - shown on mobile */}
         <div className="md:hidden">
@@ -130,7 +123,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                   className="flex items-center space-x-2 no-underline"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <Navlogo className="h-6 w-auto" />
+                  <Navlogo className="h-6 w-auto text-foreground" />
                 </Link>
 
                 <nav className="flex flex-col gap-4">
@@ -218,6 +211,13 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
         <div className="hidden md:flex md:items-center md:flex-1 relative">
           {/* Left navigation */}
           <nav className="flex items-center gap-6">
+            <Link
+              to="/s"
+              className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors no-underline"
+            >
+              <Search className="h-4 w-4" />
+              Search
+            </Link>
             {leftNavItems.map(renderNavItem)}
           </nav>
 
@@ -226,7 +226,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
             to="/"
             className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors no-underline"
           >
-            <Navlogo className="h-8 w-auto" />
+            <Navlogo className="h-8 w-auto text-foreground" />
           </Link>
 
           {/* Right side: Right nav + Auth buttons */}
@@ -252,7 +252,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="flex items-center gap-1 px-1 py-1 rounded-lg hover:bg-accent/30"
+                        className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-accent/30 border border-transparent hover:border-border transition-all"
                       >
                         <Avatar className="h-8 w-8">
                           <AvatarImage
@@ -264,61 +264,93 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                             {fallbackText}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 text-left">
+                        <div className="flex-1 text-left hidden sm:block">
                           <p className="text-sm font-medium">
                             {user?.name || "User"}
                           </p>
                         </div>
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="min-w-[14rem] w-max p-4 rounded-2xl shadow-[0_6px_14px_rgba(0,0,0,0.1)]">
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-[260px] p-4 rounded-3xl shadow-[0_6px_30px_rgba(0,0,0,0.1)] border-none"
+                    >
                       {orgId && (
                         <>
-                          <DropdownMenuItem asChild className="rounded-xl px-2 py-4">
+                          <DropdownMenuItem
+                            asChild
+                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                          >
+                            <Link
+                              to={`/o/$orgId/account`}
+                              params={{
+                                orgId,
+                              }}
+                              className="w-full font-medium text-base"
+                            >
+                              Profile
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            asChild
+                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                          >
                             <Link
                               to={`/o/$orgId/campaigns`}
                               params={{
                                 orgId,
                               }}
                               search={{}}
-                              className="cursor-pointer text-base"
+                              className="w-full font-medium text-base"
                             >
-                              Campaigns
+                              Your fundraisers
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild className="rounded-xl px-2 py-4">
+                          <DropdownMenuItem
+                            asChild
+                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                          >
                             <Link
                               to={`/o/$orgId/donations`}
                               params={{
                                 orgId,
                               }}
                               search={{}}
-                              className="cursor-pointer text-base"
+                              className="w-full font-medium text-base"
                             >
-                              Donations
+                              Your impact
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild className="rounded-xl px-2 py-4">
+                          <DropdownMenuItem
+                            asChild
+                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                          >
                             <Link
                               to={`/o/$orgId/account`}
                               params={{
                                 orgId,
                               }}
-                              className="cursor-pointer text-base"
+                              className="w-full font-medium text-base"
                             >
-                              Account Settings
+                              Account settings
                             </Link>
                           </DropdownMenuItem>
                         </>
                       )}
                       <DropdownMenuItem
-                        onClick={async () => {
-                          await authClient.signOut();
-                          navigate({ to: "/" });
-                        }}
-                        className="rounded-xl px-2 py-4 text-base text-destructive focus:text-destructive cursor-pointer"
+                        asChild
+                        className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
                       >
-                        Sign Out
+                        <button
+                          className="w-full text-left font-medium text-base"
+                          onClick={async () => {
+                            await authClient.signOut();
+                            navigate({ to: "/" });
+                          }}
+                        >
+                          Sign out
+                        </button>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

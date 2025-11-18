@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions } from "@tanstack/react-query";
 import ms from "ms";
-import { Dashboard } from "@/features/dashboard/dashboard";
-import { retrieveDashboardDataFromServer } from "@/features/dashboard/server";
+import { retrieveDashboardDataFromServer } from "@/features/org-dashboard/dashboard-loaders";
+import { Dashboard } from "@/features/org-dashboard/dashboard";
 
 const dashboardQueryOptions = (orgId: string) =>
   queryOptions({

@@ -2,11 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { SecuritySection } from "@/features/security";
+import { SecuritySection } from "@/features/user-account-security";
 import {
   retrieveLoginMethodFromServer,
   retrieveSessionsFromServer,
-} from "@/features/security/server";
+} from "@/features/user-account-security/server";
 import { promiseHash } from "@/utils/promise-hash";
 
 const sessionsQueryOptions = queryOptions({

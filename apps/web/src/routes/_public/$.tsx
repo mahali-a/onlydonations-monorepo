@@ -1,9 +1,9 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { PublicNavbar } from "@/components/navigation/public-navbar";
 import { RefreshRouteOnSave } from "@/components/cms/refresh-route-on-save";
 import { RenderBlocks } from "@/components/cms/render-blocks";
+import { NotFound } from "@/components/not-found";
 import {
   retrievePageFromServerBySlugWithDraft,
   retrieveCmsApiUrlFromServer,
@@ -39,26 +39,17 @@ export const Route = createFileRoute("/_public/$")({
     const slug = params._splat || "home";
     return context.queryClient.ensureQueryData(pageQueryOptions(slug));
   },
-  errorComponent: () => (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
-        <p className="text-muted-foreground">The page you're looking for doesn't exist.</p>
-      </div>
-    </div>
-  ),
+  notFoundComponent: () => <NotFound />,
 });
 
 function CMSPage() {
-  const { settings } = Route.useRouteContext();
   const params = Route.useParams();
   const slug = params._splat || "home";
   const { data } = useSuspenseQuery(pageQueryOptions(slug));
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <RefreshRouteOnSave cmsApiUrl={data.serverApiUrl} />
-      <PublicNavbar settings={settings} />
       <main>
         <RenderBlocks blocks={data.page.blocks} cmsBaseUrl={data.cmsBaseUrl} />
       </main>

@@ -1,9 +1,9 @@
 import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
-import type { SmileWebhookPayload } from "@/features/kyc/kyc-types";
-import { kycModel } from "@/features/kyc/kyc-models";
-import { verifyWebhookSignature } from "@/features/kyc/smile-api";
+import type { SmileWebhookPayload } from "@/features/user-kyc/kyc-types";
+import { kycModel } from "@/features/user-kyc/kyc-models";
+import { verifyWebhookSignature } from "@/features/user-kyc/smile-api";
 import { logger } from "@/lib/logger";
 
 const webhookLogger = logger.createChildLogger("smile-webhook");

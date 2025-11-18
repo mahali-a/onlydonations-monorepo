@@ -14,7 +14,7 @@ import {
   retrieveOrganizationFromServerById,
   updateActiveOrganizationOnServer,
 } from "@/server/functions/organizations";
-import { retrieveAccountUserFromServer } from "@/features/account/server";
+import { retrieveAccountUserFromServer } from "@/features/user-account/server";
 import { authClient } from "@/lib/auth-client";
 import { logger } from "@/lib/logger";
 import { promiseHash } from "@/utils/promise-hash";

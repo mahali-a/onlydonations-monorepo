@@ -23,6 +23,9 @@ const config = defineConfig({
       },
     }),
   ],
+  build: {
+    sourcemap: false,
+  }
 });
 
 export default config;

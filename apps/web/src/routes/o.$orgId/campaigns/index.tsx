@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { zodValidator } from "@tanstack/zod-adapter";
 import ms from "ms";
-import type { CampaignFilters } from "@/features/campaigns/org";
-import { campaignFiltersSchema, CampaignsComponent } from "@/features/campaigns/org";
-import { retrieveCampaignsFromServer } from "@/features/campaigns/org/server";
+import type { CampaignFilters } from "@/features/org-campaigns";
+import { campaignFiltersSchema, CampaignsComponent } from "@/features/org-campaigns";
+import { retrieveCampaignsFromServer } from "@/features/org-campaigns/server";
 
 const campaignsQueryOptions = (orgId: string, filters: CampaignFilters) =>
   queryOptions({
@@ -14,8 +15,7 @@ const campaignsQueryOptions = (orgId: string, filters: CampaignFilters) =>
 
 export const Route = createFileRoute("/o/$orgId/campaigns/")({
   component: CampaignsList,
-  validateSearch: (search): Partial<CampaignFilters> =>
-    campaignFiltersSchema.parse(search ?? {}),
+  validateSearch: zodValidator(campaignFiltersSchema),
   loaderDeps: ({ search }) => search,
   loader: ({ deps, context }) => {
     const orgId = context.organization?.id;

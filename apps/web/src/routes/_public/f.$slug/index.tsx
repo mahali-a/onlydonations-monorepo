@@ -1,8 +1,12 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { CampaignDetailPage } from "@/features/campaigns/public/campaign-detail-page";
-import { retrievePublicCampaignFromServerBySlug } from "@/features/campaigns/public/server";
+import {
+  retrievePublicCampaignFromServerBySlug,
+  similarCampaignsQueryOptions,
+  donationsWithMessagesQueryOptions,
+} from "@/features/public-campaign-details/server";
+import { CampaignDetailContent } from "@/features/public-campaign-details/ui/public-campaign-details-content";
 
 const publicCampaignQueryOptions = (slug: string) =>
   queryOptions({
@@ -24,6 +28,11 @@ export const Route = createFileRoute("/_public/f/$slug/")({
     if (!data) {
       throw notFound();
     }
+
+    context.queryClient.ensureQueryData(
+      similarCampaignsQueryOptions(data.campaign.category.id, data.campaign.id),
+    );
+    context.queryClient.ensureQueryData(donationsWithMessagesQueryOptions(data.campaign.id));
   },
 
   component: CampaignDetailRoute,
@@ -75,5 +84,5 @@ function CampaignDetailRoute() {
     return <div>Campaign not found</div>;
   }
 
-  return <CampaignDetailPage data={data} />;
+  return <CampaignDetailContent data={data} isDonateEnabled={true} />;
 }

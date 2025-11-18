@@ -1,13 +1,14 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { DonationStatus } from "@/features/donations/public/donation-status";
-import { retrieveDonationStatusDataFromServer } from "@/features/donations/public/donation-status/server";
+import { DonationStatus } from "@/features/org-donations/public/donation-status";
+import { retrieveDonationStatusDataFromServer } from "@/features/org-donations/public/donation-status/donation-status-loaders";
 
 const donationStatusQueryOptions = (donationId: string) =>
   queryOptions({
     queryKey: ["donation-status", donationId],
-    queryFn: () => retrieveDonationStatusDataFromServer({ data: { donationId } }),
+    queryFn: () =>
+      retrieveDonationStatusDataFromServer({ data: { donationId } }),
     staleTime: ms("30 seconds"),
   });
 
@@ -19,7 +20,9 @@ export const Route = createFileRoute("/d/$donationId/donation-status")({
       throw new Response("Donation ID is required", { status: 400 });
     }
 
-    const data = await context.queryClient.ensureQueryData(donationStatusQueryOptions(donationId));
+    const data = await context.queryClient.ensureQueryData(
+      donationStatusQueryOptions(donationId),
+    );
 
     if (!data) {
       throw notFound();
@@ -32,9 +35,12 @@ export const Route = createFileRoute("/d/$donationId/donation-status")({
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Donation Not Found</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Donation Not Found
+          </h1>
           <p className="text-muted-foreground mb-6">
-            The donation you're looking for doesn't exist or is no longer available.
+            The donation you're looking for doesn't exist or is no longer
+            available.
           </p>
           <a
             href="/"
@@ -51,7 +57,9 @@ export const Route = createFileRoute("/d/$donationId/donation-status")({
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Something went wrong</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Something went wrong
+          </h1>
           <p className="text-muted-foreground mb-6">
             We encountered an error loading this donation status.
           </p>

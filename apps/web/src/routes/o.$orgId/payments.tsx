@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import PaymentsLayout from "@/features/payments/layout/payments-layout";
-import { retrievePaymentLayoutMetricsFromServer } from "@/features/payments/layout/server";
+import PaymentsLayout from "@/features/org-payments/layout/payments-layout";
+import { retrievePaymentLayoutMetricsFromServer } from "@/features/org-payments/layout/server";
 
 const paymentLayoutMetricsQueryOptions = (orgId: string) =>
   queryOptions({

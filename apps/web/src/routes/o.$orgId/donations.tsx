@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { DonationsComponent } from "@/features/donations/donations-component";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { DonationsComponent } from "@/features/org-donations/donations-component";
 import {
   retrieveDonationsFromServer,
   retrieveDonationStatsFromServer,
-} from "@/features/donations/server";
-import { donationFiltersSchema } from "@/features/donations/donations-schemas";
-import type { DonationFilters } from "@/features/donations/donations-schemas";
+} from "@/features/org-donations/server";
+import { donationFiltersSchema } from "@/features/org-donations/donations-schemas";
+import type { DonationFilters } from "@/features/org-donations/donations-schemas";
 
 export const donationsQueryOptions = (orgId: string, filters?: Partial<DonationFilters>) =>
   queryOptions({
@@ -23,19 +24,8 @@ export const donationStatsQueryOptions = (orgId: string) =>
     queryFn: () => retrieveDonationStatsFromServer(),
   });
 
-type DonationsSearchParams = Partial<DonationFilters>;
-
 export const Route = createFileRoute("/o/$orgId/donations")({
-  validateSearch: (search): DonationsSearchParams => {
-    return {
-      page: search.page as number | undefined,
-      limit: search.limit as number | undefined,
-      search: search.search as string | undefined,
-      status: search.status as "PENDING" | "SUCCESS" | "FAILED" | undefined,
-      sortBy: search.sortBy as DonationFilters["sortBy"] | undefined,
-      sortOrder: search.sortOrder as "asc" | "desc" | undefined,
-    };
-  },
+  validateSearch: zodValidator(donationFiltersSchema),
   beforeLoad: ({ context, params }) => {
     context.queryClient.ensureQueryData(donationsQueryOptions(params.orgId));
     context.queryClient.ensureQueryData(donationStatsQueryOptions(params.orgId));

@@ -44,5 +44,6 @@ export function RichText({ content, className }: RichTextProps) {
     converters: defaultHTMLConverters,
   });
 
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: its sanitized
   return <div className={cn("typography", className)} dangerouslySetInnerHTML={{ __html: html }} />;
 }

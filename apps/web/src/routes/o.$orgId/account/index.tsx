@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AvatarForm, EmailForm, NameForm } from "@/features/account";
+import { AvatarForm, EmailForm, NameForm } from "@/features/user-account";
 
 export const Route = createFileRoute("/o/$orgId/account/")({
   component: AccountOverview,

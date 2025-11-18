@@ -6,13 +6,13 @@ import { logger } from "@/lib/logger";
 import {
   retrieveDonationFromDatabaseByReference,
   updateDonationStatusInDatabaseById,
-} from "@/features/donations/public/donate/donate-models";
+} from "@/features/org-donations/public/donate/donate-models";
 import {
   retrieveWebhookEventFromDatabaseByProcessorEventId,
   saveWebhookEventToDatabase,
   updateWebhookEventStatusInDatabaseById,
 } from "@/features/webhooks/server";
-import { updatePaymentTransactionStatusInDatabaseById } from "@/features/payments/server";
+import { updatePaymentTransactionStatusInDatabaseById } from "@/features/org-payments/server";
 
 const webhookLogger = logger.createChildLogger("paystack-webhook");
 

@@ -1,15 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { queryOptions } from "@tanstack/react-query";
-import ms from "ms";
-import { CampaignDetailsLayout } from "@/features/campaigns/org/details/layout";
-import { retrieveCampaignDetailFromServer } from "@/features/campaigns/org/server";
-
-const campaignDetailQueryOptions = (orgId: string, campaignId: string) =>
-  queryOptions({
-    queryKey: ["campaign-detail", orgId, campaignId],
-    queryFn: () => retrieveCampaignDetailFromServer({ data: { orgId, campaignId } }),
-    staleTime: ms("5 minutes"),
-  });
+import { CampaignDetailsLayout } from "@/features/org-campaign-details/details/layout";
+import { campaignDetailQueryOptions } from "@/features/org-campaigns/server";
 
 export const Route = createFileRoute("/o/$orgId/campaigns/$campaignId")({
   component: CampaignLayout,
@@ -45,7 +36,5 @@ export const Route = createFileRoute("/o/$orgId/campaigns/$campaignId")({
 });
 
 function CampaignLayout() {
-  const data = Route.useLoaderData();
-
-  return <CampaignDetailsLayout campaign={data.campaign} />;
+  return <CampaignDetailsLayout />;
 }

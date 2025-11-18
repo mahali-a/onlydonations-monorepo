@@ -1,8 +1,12 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { CampaignPreviewPage } from "@/features/campaigns/org/preview/campaign-preview-page";
-import { retrieveCampaignPreviewFromServer } from "@/features/campaigns/org/server";
+import { CampaignPreviewPage } from "@/features/org-campaign-details/preview/campaign-preview-page";
+import { retrieveCampaignPreviewFromServer } from "@/features/org-campaigns/server";
+import {
+  similarCampaignsQueryOptions,
+  donationsWithMessagesQueryOptions,
+} from "@/features/public-campaign-details/server";
 
 const campaignPreviewQueryOptions = (campaignId: string, orgId: string) =>
   queryOptions({
@@ -27,6 +31,14 @@ export const Route = createFileRoute("/o/$orgId/campaign-previews/$campaignId")(
       if (!data) {
         throw notFound();
       }
+
+      context.queryClient.ensureQueryData(
+        similarCampaignsQueryOptions(data.campaign.category.id, data.campaign.id),
+      );
+
+      context.queryClient.ensureQueryData(
+        donationsWithMessagesQueryOptions(data.campaign.id),
+      );
     } catch (error) {
       if (error instanceof Error && error.message.includes("not found")) {
         throw notFound();
@@ -86,5 +98,5 @@ function CampaignPreviewRoute() {
     return <div>Campaign not found</div>;
   }
 
-  return <CampaignPreviewPage data={data} />;
+  return <CampaignPreviewPage data={data} orgId={orgId} campaignId={campaignId} />;
 }

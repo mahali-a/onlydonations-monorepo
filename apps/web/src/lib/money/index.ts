@@ -52,15 +52,15 @@ export class Money {
     const { withSymbol = true, withCode = false, decimals = 2 } = options;
 
     const majorAmount = this.toMajor();
-    const symbol = this.retrieveCurrencySymbol();
 
-    const formattedAmount = majorAmount.toFixed(decimals);
+    const formatter = new Intl.NumberFormat("en-GH", {
+      style: withSymbol ? "currency" : "decimal",
+      currency: this.currency,
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
 
-    let result = formattedAmount;
-
-    if (withSymbol) {
-      result = `${symbol}${result}`;
-    }
+    let result = formatter.format(majorAmount);
 
     if (withCode) {
       result = `${result} ${this.currency}`;

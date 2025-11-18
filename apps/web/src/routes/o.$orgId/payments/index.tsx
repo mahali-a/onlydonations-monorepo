@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { MakeWithdrawalComponent } from "@/features/payments/make-withdrawal";
-import { retrieveMakeWithdrawalDataFromServer } from "@/features/payments/make-withdrawal/server";
+import { MakeWithdrawalComponent } from "@/features/org-payments/make-withdrawal";
+import { retrieveMakeWithdrawalDataFromServer } from "@/features/org-payments/make-withdrawal/server";
 
 const makeWithdrawalQueryOptions = (orgId: string) =>
   queryOptions({
