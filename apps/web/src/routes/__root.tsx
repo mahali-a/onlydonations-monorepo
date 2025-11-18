@@ -61,13 +61,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       ...seo({
         title: loaderData?.settings?.siteName ?? "",
         description: loaderData?.settings?.siteDescription ?? "",
-        ...(loaderData?.settings?.meta?.image &&
-        typeof loaderData.settings.meta.image !== "number" &&
-        "url" in loaderData.settings.meta.image
-          ? {
-              image: loaderData.settings.meta.image.url ?? "",
-            }
-          : {}),
       }),
     ],
     links: [

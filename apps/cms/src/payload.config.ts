@@ -1,7 +1,5 @@
 import { vercelPostgresAdapter } from "@payloadcms/db-vercel-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
-import { seoPlugin } from "@payloadcms/plugin-seo";
-import { importExportPlugin } from "@payloadcms/plugin-import-export";
 import { s3Storage } from "@payloadcms/storage-s3";
 import path from "node:path";
 import { buildConfig } from "payload";
@@ -28,7 +26,10 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
-    outputFile: path.resolve(dirname, "../../../packages/types/src/payload-types.ts"),
+    outputFile: path.resolve(
+      dirname,
+      "../../../packages/types/src/payload-types.ts",
+    ),
     declare: false, // Disable declare statement since types are used in other repos
   },
   db: vercelPostgresAdapter({
@@ -52,18 +53,6 @@ export default buildConfig({
         region: "auto", // R2 uses 'auto' region
         endpoint: process.env.R2_ENDPOINT, // e.g., https://<account-id>.r2.cloudflarestorage.com
       },
-    }),
-    seoPlugin({
-      collections: ["pages"],
-      globals: ["settings"],
-      uploadsCollection: "media",
-      generateTitle: ({ doc }) => `${doc?.title || "Page"}`,
-      generateDescription: ({ doc }) => doc?.description || "",
-      generateImage: ({ doc }) => doc?.seo?.ogImage,
-      generateURL: ({ doc }) => `https://onlydonations.com/${doc?.slug ?? ""}`,
-    }),
-    importExportPlugin({
-      collections: ["users", "pages", "media"],
     }),
   ],
 });

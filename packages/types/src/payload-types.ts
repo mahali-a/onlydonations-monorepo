@@ -70,9 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
-    exports: Export;
     'payload-kv': PayloadKv;
-    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -82,9 +80,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
-    exports: ExportsSelect<false> | ExportsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
-    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -103,13 +99,7 @@ export interface Config {
     collection: 'users';
   };
   jobs: {
-    tasks: {
-      createCollectionExport: TaskCreateCollectionExport;
-      inline: {
-        input: unknown;
-        output: unknown;
-      };
-    };
+    tasks: unknown;
     workflows: unknown;
   };
 }
@@ -233,14 +223,6 @@ export interface Page {
    * When this page was published
    */
   publishedAt?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -850,43 +832,6 @@ export interface ContactFormBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "exports".
- */
-export interface Export {
-  id: number;
-  name?: string | null;
-  format?: ('csv' | 'json') | null;
-  limit?: number | null;
-  page?: number | null;
-  sort?: string | null;
-  sortOrder?: ('asc' | 'desc') | null;
-  drafts?: ('yes' | 'no') | null;
-  selectionToUse?: ('currentSelection' | 'currentFilters' | 'all') | null;
-  fields?: string[] | null;
-  collectionSlug: string;
-  where?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -901,98 +846,6 @@ export interface PayloadKv {
     | number
     | boolean
     | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-jobs".
- */
-export interface PayloadJob {
-  id: number;
-  /**
-   * Input data provided to the job
-   */
-  input?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  taskStatus?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  completedAt?: string | null;
-  totalTried?: number | null;
-  /**
-   * If hasError is true this job will not be retried
-   */
-  hasError?: boolean | null;
-  /**
-   * If hasError is true, this is the error that caused it
-   */
-  error?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  /**
-   * Task execution log
-   */
-  log?:
-    | {
-        executedAt: string;
-        completedAt: string;
-        taskSlug: 'inline' | 'createCollectionExport';
-        taskID: string;
-        input?:
-          | {
-              [k: string]: unknown;
-            }
-          | unknown[]
-          | string
-          | number
-          | boolean
-          | null;
-        output?:
-          | {
-              [k: string]: unknown;
-            }
-          | unknown[]
-          | string
-          | number
-          | boolean
-          | null;
-        state: 'failed' | 'succeeded';
-        error?:
-          | {
-              [k: string]: unknown;
-            }
-          | unknown[]
-          | string
-          | number
-          | boolean
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  taskSlug?: ('inline' | 'createCollectionExport') | null;
-  queue?: string | null;
-  waitUntil?: string | null;
-  processing?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1012,10 +865,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'exports';
-        value: number | Export;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1161,13 +1010,6 @@ export interface PagesSelect<T extends boolean = true> {
       };
   published?: T;
   publishedAt?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1551,70 +1393,11 @@ export interface ContactFormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "exports_select".
- */
-export interface ExportsSelect<T extends boolean = true> {
-  name?: T;
-  format?: T;
-  limit?: T;
-  page?: T;
-  sort?: T;
-  sortOrder?: T;
-  drafts?: T;
-  selectionToUse?: T;
-  fields?: T;
-  collectionSlug?: T;
-  where?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-jobs_select".
- */
-export interface PayloadJobsSelect<T extends boolean = true> {
-  input?: T;
-  taskStatus?: T;
-  completedAt?: T;
-  totalTried?: T;
-  hasError?: T;
-  error?: T;
-  log?:
-    | T
-    | {
-        executedAt?: T;
-        completedAt?: T;
-        taskSlug?: T;
-        taskID?: T;
-        input?: T;
-        output?: T;
-        state?: T;
-        error?: T;
-        id?: T;
-      };
-  taskSlug?: T;
-  queue?: T;
-  waitUntil?: T;
-  processing?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1744,14 +1527,6 @@ export interface Setting {
    * e.g., https://yoursite.com
    */
   siteUrl?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1831,47 +1606,9 @@ export interface SettingsSelect<T extends boolean = true> {
         primaryColor?: T;
       };
   siteUrl?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TaskCreateCollectionExport".
- */
-export interface TaskCreateCollectionExport {
-  input: {
-    name?: string | null;
-    format?: ('csv' | 'json') | null;
-    limit?: number | null;
-    page?: number | null;
-    sort?: string | null;
-    sortOrder?: ('asc' | 'desc') | null;
-    drafts?: ('yes' | 'no') | null;
-    selectionToUse?: ('currentSelection' | 'currentFilters' | 'all') | null;
-    fields?: string[] | null;
-    collectionSlug: string;
-    where?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-    user?: string | null;
-    userCollection?: string | null;
-    exportsCollection?: string | null;
-  };
-  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
