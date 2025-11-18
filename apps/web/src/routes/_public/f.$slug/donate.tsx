@@ -1,17 +1,17 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
-import { CampaignDetailPage } from "@/features/campaigns/public/campaign-detail-page";
-import { retrievePublicCampaignFromServerBySlug } from "@/features/campaigns/public/server";
+import { DonateComponent } from "@/features/donations/public/donate/donate-component";
+import { retrieveDonateDataFromServer } from "@/features/donations/public/donate/server";
 
-const publicCampaignQueryOptions = (slug: string) =>
+const donateQueryOptions = (slug: string) =>
   queryOptions({
-    queryKey: ["public-campaign", slug],
-    queryFn: () => retrievePublicCampaignFromServerBySlug({ data: { slug } }),
+    queryKey: ["donate", slug],
+    queryFn: () => retrieveDonateDataFromServer({ data: { slug } }),
     staleTime: ms("2 minutes"),
   });
 
-export const Route = createFileRoute("/f/$slug/")({
+export const Route = createFileRoute("/_public/f/$slug/donate")({
   loader: async ({ params, context }) => {
     const { slug } = params;
 
@@ -19,14 +19,14 @@ export const Route = createFileRoute("/f/$slug/")({
       throw new Response("Campaign slug is required", { status: 400 });
     }
 
-    const data = await context.queryClient.ensureQueryData(publicCampaignQueryOptions(slug));
+    const data = await context.queryClient.ensureQueryData(donateQueryOptions(slug));
 
     if (!data) {
       throw notFound();
     }
   },
 
-  component: CampaignDetailRoute,
+  component: DonateRoute,
 
   notFoundComponent: () => {
     return (
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/f/$slug/")({
         <div className="text-center">
           <h1 className="text-4xl font-bold text-foreground mb-2">Something went wrong</h1>
           <p className="text-muted-foreground mb-6">
-            We encountered an error loading this campaign.
+            We encountered an error loading this donation form.
           </p>
           <a
             href="/"
@@ -67,13 +67,13 @@ export const Route = createFileRoute("/f/$slug/")({
   },
 });
 
-function CampaignDetailRoute() {
+function DonateRoute() {
   const { slug } = Route.useParams();
-  const { data } = useSuspenseQuery(publicCampaignQueryOptions(slug));
+  const { data } = useSuspenseQuery(donateQueryOptions(slug));
 
   if (!data) {
     return <div>Campaign not found</div>;
   }
 
-  return <CampaignDetailPage data={data} />;
+  return <DonateComponent data={data} />;
 }

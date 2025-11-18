@@ -1,5 +1,6 @@
 import { getAuth } from "@repo/core/auth/server";
 import { createServerFn } from "@tanstack/react-start";
+import { env } from "cloudflare:workers";
 import { Honeypot, SpamError } from "@/lib/honeypot";
 import { logger } from "@/lib/logger";
 
@@ -7,7 +8,7 @@ export const generateLoginHoneypotFromServer = createServerFn({ method: "GET" })
   async () => {
     const honeypot = new Honeypot({
       randomizeNameFieldName: true,
-      encryptionSeed: process.env.HONEYPOT_SECRET,
+      encryptionSeed: env.HONEYPOT_SECRET,
     });
 
     return await honeypot.getInputProps();
@@ -24,7 +25,7 @@ export const sendLoginOtpOnServer = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const honeypot = new Honeypot({
       randomizeNameFieldName: true,
-      encryptionSeed: process.env.HONEYPOT_SECRET,
+      encryptionSeed: env.HONEYPOT_SECRET,
     });
 
     try {

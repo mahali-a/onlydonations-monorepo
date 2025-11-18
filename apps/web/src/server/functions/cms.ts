@@ -5,6 +5,7 @@ import ms from "ms";
 import { cmsClient } from "@/lib/cms-client";
 import { getCacheAdapter, CACHE_KEYS } from "@/lib/cache";
 import { logger } from "@/lib/logger";
+import { env } from "cloudflare:workers";
 
 export const retrievePageFromServerBySlug = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
@@ -48,7 +49,21 @@ export const retrieveSettingsFromServer = createServerFn({
 
           return result || null;
         } catch (error) {
-          logger.error("Failed to fetch settings from CMS:", error);
+          // Check if this is a JSON parse error indicating CMS is unreachable
+          if (
+            error instanceof SyntaxError &&
+            error.message.includes("not valid JSON")
+          ) {
+            logger.error(
+              "CMS returned non-JSON response (likely unreachable or error page):",
+              {
+                message: error.message,
+                cmsUrl: env.CMS_API_URL,
+              },
+            );
+          } else {
+            logger.error("Failed to fetch settings from CMS:", error);
+          }
           // Skip caching on error to allow retries
           context.metadata.ttl = -1;
           return null;

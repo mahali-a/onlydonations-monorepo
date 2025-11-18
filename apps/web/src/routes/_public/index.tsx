@@ -1,11 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PublicNavbar } from "@/components/navigation/public-navbar";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_public/")({
   component: HomePage,
-  loader: ({ context }) => {
-    console.log("context", context);
-  },
 });
 
 function HomePage() {

@@ -19,7 +19,6 @@ import {
 import { savePaymentTransactionToDatabase } from "@/features/payments/server";
 
 const donationsLogger = logger.createChildLogger("donations-actions");
-const honeypot = new Honeypot();
 
 function isValidationError(data: unknown): data is { error: string } {
   return (
@@ -50,7 +49,9 @@ async function validateCampaign(campaignSlug: string) {
   const campaignData = await retrieveCampaignFromDatabaseBySlug(campaignSlug);
 
   if (!campaignData) {
-    donationsLogger.error("process_donation.campaign_not_found", { campaignSlug });
+    donationsLogger.error("process_donation.campaign_not_found", {
+      campaignSlug,
+    });
     return {
       success: false as const,
       error: "Campaign not found",
@@ -139,7 +140,12 @@ type InitializePaymentParams = DonateFormData & {
 };
 
 type PaymentInitializationResult =
-  | { success: true; authorizationUrl: string; reference: string; donationId: string }
+  | {
+      success: true;
+      authorizationUrl: string;
+      reference: string;
+      donationId: string;
+    }
   | { success: false; error: string };
 
 async function initializePayment(
@@ -286,6 +292,9 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
     }
 
     try {
+      const honeypot = new Honeypot({
+        encryptionSeed: env.HONEYPOT_SECRET,
+      });
       await honeypot.check(data);
     } catch (error) {
       if (error instanceof SpamError) {

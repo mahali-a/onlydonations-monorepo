@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
@@ -24,14 +25,20 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
-  const { data: session } = authClient.useSession();
+  const {
+    data: session,
+    isPending: isSessionPending,
+    error,
+  } = authClient.useSession();
 
-  const { data: orgId } = useQuery({
+  const { data: orgId, error: orgError } = useQuery({
     queryFn: () => authClient.organization.list(),
     queryKey: ["user-organization", session?.user.id],
     enabled: !!session?.user?.id,
     select: ({ data }) => data?.[0]?.id || null,
   });
+
+  const isLoading = isSessionPending && !error && !orgError;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -161,25 +168,46 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                 </nav>
 
                 <div className="flex flex-col gap-2 pt-4 border-t">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      navigate({ to: "/login" });
-                    }}
-                  >
-                    Sign In
-                  </Button>
-                  <Button
-                    className="w-full"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      navigate({ to: "/onboarding", search: {} });
-                    }}
-                  >
-                    Get Started
-                  </Button>
+                  {isLoading ? (
+                    <>
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </>
+                  ) : session && orgId ? (
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      onClick={async () => {
+                        setMobileOpen(false);
+                        await authClient.signOut();
+                        navigate({ to: "/" });
+                      }}
+                    >
+                      Sign Out
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => {
+                          setMobileOpen(false);
+                          navigate({ to: "/login" });
+                        }}
+                      >
+                        Sign In
+                      </Button>
+                      <Button
+                        className="w-full"
+                        onClick={() => {
+                          setMobileOpen(false);
+                          navigate({ to: "/onboarding", search: {} });
+                        }}
+                      >
+                        Get Started
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
@@ -212,89 +240,106 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
 
             {/* Auth buttons */}
             <div className="flex items-center gap-3">
-              {session && orgId ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center gap-1 px-1 py-1 rounded-lg hover:bg-accent/30"
-                    >
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={user?.image || undefined}
-                          alt={user?.name || "User"}
-                        />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                          {fallbackText}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 text-left">
-                        <p className="text-sm font-medium">
-                          {user?.name || "User"}
-                        </p>
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        to={`/o/$orgId/campaigns`}
-                        params={{
-                          orgId,
-                        }}
-                        search={{}}
-                        className="cursor-pointer"
+              {isLoading ? (
+                <>
+                  <Skeleton className="h-8 w-20" />
+                  <Skeleton className="h-8 w-32" />
+                </>
+              ) : session && orgId ? (
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center gap-1 px-1 py-1 rounded-lg hover:bg-accent/30"
                       >
-                        Campaigns
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        to={`/o/$orgId/donations`}
-                        params={{
-                          orgId,
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            className="h-8 w-8"
+                            src={user?.image || undefined}
+                            alt={user?.name || "User"}
+                          />
+                          <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                            {fallbackText}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 text-left">
+                          <p className="text-sm font-medium">
+                            {user?.name || "User"}
+                          </p>
+                        </div>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      {orgId && (
+                        <>
+                          <DropdownMenuItem asChild>
+                            <Link
+                              to={`/o/$orgId/campaigns`}
+                              params={{
+                                orgId,
+                              }}
+                              search={{}}
+                              className="cursor-pointer"
+                            >
+                              Campaigns
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link
+                              to={`/o/$orgId/donations`}
+                              params={{
+                                orgId,
+                              }}
+                              search={{}}
+                              className="cursor-pointer"
+                            >
+                              Donations
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link
+                              to={`/o/$orgId/account`}
+                              params={{
+                                orgId,
+                              }}
+                              className="cursor-pointer"
+                            >
+                              Account Settings
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                      <DropdownMenuItem
+                        onClick={async () => {
+                          await authClient.signOut();
+                          navigate({ to: "/" });
                         }}
-                        search={{}}
-                        className="cursor-pointer"
+                        className="text-destructive focus:text-destructive cursor-pointer"
                       >
-                        Donations
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        to={`/o/$orgId/account`}
-                        params={{
-                          orgId,
-                        }}
-                        className="cursor-pointer"
-                      >
-                        Account Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={async () => {
-                        await authClient.signOut();
-                        navigate({ to: "/" });
-                      }}
-                      className="text-destructive focus:text-destructive cursor-pointer"
-                    >
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                        Sign Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button asChild size="sm">
+                    <Link to="/login">Start fundraider</Link>
+                  </Button>
+                </>
               ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate({ to: "/login" })}
-                >
-                  Sign In
-                </Button>
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate({ to: "/login" })}
+                  >
+                    Sign In
+                  </Button>
+                  <Button asChild size="sm">
+                    <Link to="/login">Start fundraider</Link>
+                  </Button>
+                </>
               )}
-              <Button asChild size="sm">
-                <Link to="/login">Start fundraider</Link>
-              </Button>
             </div>
           </div>
         </div>
