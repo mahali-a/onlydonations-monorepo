@@ -198,7 +198,7 @@ export interface Page {
   id: number;
   title: string;
   /**
-   * Used for page routing (e.g., /pricing, /about, /how-it-works)
+   * URL path for the page. Can be with or without leading slash (e.g., 'about', 'pricing', or '/contact'). Use 'home' for the homepage.
    */
   slug: string;
   description?: string | null;

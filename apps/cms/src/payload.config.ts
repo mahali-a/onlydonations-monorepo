@@ -20,6 +20,43 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    livePreview: {
+      url: ({ data }) => {
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+        // Build the preview URL based on the slug
+        const slug = (data as any)?.slug || "";
+
+        // For home page, return just the base URL without trailing slash
+        if (slug === "home" || slug === "") {
+          return baseUrl;
+        }
+
+        // For other pages, append the slug
+        return `${baseUrl}/${slug}`;
+      },
+      collections: ["pages"],
+      breakpoints: [
+        {
+          label: "Mobile",
+          name: "mobile",
+          width: 375,
+          height: 667,
+        },
+        {
+          label: "Tablet",
+          name: "tablet",
+          width: 768,
+          height: 1024,
+        },
+        {
+          label: "Desktop",
+          name: "desktop",
+          width: 1440,
+          height: 900,
+        },
+      ],
+    },
   },
   collections: [Users, Media, Pages],
   globals: [Settings],

@@ -20,7 +20,7 @@ import { env } from "cloudflare:workers";
  * ```
  */
 export const cmsClient = new PayloadSDK<Config>({
-  baseURL: env.CMS_API_URL || "http://localhost:3005/api",
+  baseURL: env.CMS_API_URL,
   baseInit: {
     credentials: "include",
   },

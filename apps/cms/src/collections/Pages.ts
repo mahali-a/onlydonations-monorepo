@@ -23,14 +23,7 @@ export const Pages: CollectionConfig = {
   },
   access: {
     read: ({ req: { user } }) => {
-      if (user) {
-        return true;
-      }
-      return {
-        published: {
-          equals: true,
-        },
-      };
+      return true;
     },
   },
   fields: [
@@ -47,7 +40,8 @@ export const Pages: CollectionConfig = {
       unique: true,
       label: "Page Slug",
       admin: {
-        description: "Used for page routing (e.g., /pricing, /about, /how-it-works)",
+        description:
+          "URL path for the page. Can be with or without leading slash (e.g., 'about', 'pricing', or '/contact'). Use 'home' for the homepage.",
       },
     },
     {
