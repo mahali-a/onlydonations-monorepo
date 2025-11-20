@@ -1,16 +1,29 @@
 import type { EmailQueueMessage } from "@repo/email/email/schema";
 import { emailQueueDataSchema } from "@repo/email/email/schema";
+import type { ModerationQueueMessage } from "@repo/core/queues/moderation-schema";
+import { moderationQueueDataSchema } from "@repo/core/queues/moderation-schema";
+import type { ConsumerResult } from "@repo/core/queues/types";
 import { emailConsumer } from "./consumers/email.consumer";
+import { moderationConsumer } from "./consumers/moderation.consumer";
 
-/**
- * Consumer registry - SINGLE source of truth for all queue consumers
- *
- * To add a new consumer:
- * 1. Create schema in the appropriate package (e.g., packages/email/src/email/schema.ts for email)
- * 2. Create consumer in apps/api/src/queues/consumers/
- * 3. Register here
- */
-const CONSUMER_REGISTRY = {
+type AppQueueMessage = EmailQueueMessage | ModerationQueueMessage;
+type MessageType = AppQueueMessage["type"];
+type RouteMessage<T extends MessageType> = Extract<AppQueueMessage, { type: T }>;
+
+const CONSUMER_REGISTRY: {
+  email: {
+    name: string;
+    schema: typeof emailQueueDataSchema;
+    handler: typeof emailConsumer;
+    options: { maxRetries: number; retryBackoff: (attempt: number) => number };
+  };
+  moderation: {
+    name: string;
+    schema: typeof moderationQueueDataSchema;
+    handler: typeof moderationConsumer;
+    options: { maxRetries: number; retryBackoff: (attempt: number) => number };
+  };
+} = {
   email: {
     name: "email",
     schema: emailQueueDataSchema,
@@ -20,32 +33,33 @@ const CONSUMER_REGISTRY = {
       retryBackoff: (attempt: number) => 5 ** attempt * 60,
     },
   },
+  moderation: {
+    name: "moderation",
+    schema: moderationQueueDataSchema,
+    handler: moderationConsumer,
+    options: {
+      maxRetries: 3,
+      retryBackoff: (attempt: number) => 5 ** attempt * 60,
+    },
+  },
+};
 
-  // Future consumers:
-  // webhook: { ... },
-} as const;
-
-/**
- * Generic queue handler that routes to appropriate consumer based on message type
- */
 export async function handleQueueMessage(
-  message: Message<EmailQueueMessage>,
-  env: Record<string, unknown>,
+  message: Message<AppQueueMessage>,
   ctx: ExecutionContext,
 ): Promise<void> {
-  // Type discrimination - route based on message.body.type
   const messageType = message.body.type;
 
-  if (messageType !== "email") {
+  if (messageType !== "email" && messageType !== "moderation") {
     console.error(`[QueueHandler] Unknown message type: ${messageType}`);
-    message.ack(); // Remove unknown message types
+    message.ack();
     return;
   }
 
   const consumer = CONSUMER_REGISTRY[messageType];
 
   try {
-    const result = await consumer.handler(message, env, ctx);
+    const result = await routeMessage(message, messageType, ctx);
 
     switch (result.status) {
       case "success":
@@ -68,18 +82,13 @@ export async function handleQueueMessage(
         break;
 
       case "failed":
-        message.ack(); // Remove from queue
+        message.ack();
         console.error(`[QueueHandler] Message processing failed`, {
           type: messageType,
           messageId: message.body.messageId,
           fatal: result.fatal,
           reason: result.reason,
         });
-
-        // TODO: Send to dead letter queue or alert
-        if (result.fatal) {
-          // ctx.waitUntil(sendToDLQ(message));
-        }
         break;
     }
   } catch (error) {
@@ -88,12 +97,28 @@ export async function handleQueueMessage(
       error: error instanceof Error ? error.message : String(error),
     });
 
-    // Retry with exponential backoff
     if (message.attempts < (consumer.options?.maxRetries || 3)) {
       const delaySeconds = consumer.options?.retryBackoff?.(message.attempts) || 60;
       message.retry({ delaySeconds });
     } else {
       message.ack();
+    }
+  }
+}
+
+function routeMessage(
+  message: Message<AppQueueMessage>,
+  messageType: MessageType,
+  ctx: ExecutionContext,
+): Promise<ConsumerResult> {
+  switch (messageType) {
+    case "email":
+      return emailConsumer(message as Message<RouteMessage<"email">>, ctx);
+    case "moderation":
+      return moderationConsumer(message as Message<RouteMessage<"moderation">>, ctx);
+    default: {
+      const _exhaustive: never = messageType;
+      throw new Error(`Unhandled message type: ${_exhaustive}`);
     }
   }
 }

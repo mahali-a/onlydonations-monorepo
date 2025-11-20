@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
+import { getModerationQueue } from "@repo/core/queues/setup";
 import { authMiddleware } from "@/server/middleware/auth";
 import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { logger } from "@/lib/logger";
@@ -263,10 +264,25 @@ export const publishCampaignOnServer = createServerFn({ method: "POST" })
         throw new Error("Failed to publish campaign");
       }
 
+      // Queue campaign for moderation
+      const moderationQueue = getModerationQueue();
+      await moderationQueue.moderateContent(
+        {
+          contentType: "campaign",
+          campaignId: published.id,
+          organizationId,
+        },
+        {
+          userId: context.user.id,
+          orgId: organizationId,
+        },
+      );
+
       return {
         success: true,
         campaign: published,
         isFirstCampaign,
+        message: "Campaign submitted for review. You'll receive an email once it's approved.",
       };
     } catch (error) {
       campaignsLogger.error("publish_campaign.error", error, {

@@ -42,8 +42,8 @@
   "queues": {
     "producers": [
       {
-        "binding": "EMAIL_QUEUE",
-        "queue": "email-queue"
+        "binding": "APP_QUEUE",
+        "queue": "app-queue"
       }
     ]
   },

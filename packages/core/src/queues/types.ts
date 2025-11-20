@@ -33,15 +33,18 @@ export type ConsumerResult =
 
 /**
  * Generic consumer handler
+ * @template T - Message body type
+ *
+ * Note: env is available globally via `import { env } from "cloudflare:workers"`
  */
 export type QueueConsumer<T = unknown> = (
   message: Message<T>,
-  env: Record<string, unknown>,
   ctx: ExecutionContext,
 ) => Promise<ConsumerResult>;
 
 /**
  * Consumer registry entry
+ * @template T - Message body type
  */
 export interface ConsumerRegistryEntry<T = unknown> {
   name: string;

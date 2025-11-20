@@ -5,6 +5,12 @@ import { ChangeEmailTemplate } from "@/templates/change-email/template";
 import type { EmailOtpData } from "@/templates/email-otp/schema";
 import { emailOtpSchema } from "@/templates/email-otp/schema";
 import { EmailOtpTemplate } from "@/templates/email-otp/template";
+import type { CampaignApprovedData } from "@/templates/campaign-approved/schema";
+import { campaignApprovedSchema } from "@/templates/campaign-approved/schema";
+import { CampaignApprovedTemplate } from "@/templates/campaign-approved/template";
+import type { CampaignRejectedData } from "@/templates/campaign-rejected/schema";
+import { campaignRejectedSchema } from "@/templates/campaign-rejected/schema";
+import { CampaignRejectedTemplate } from "@/templates/campaign-rejected/template";
 
 type EmailTemplate<T> = {
   subject: string;
@@ -23,4 +29,14 @@ export const EMAIL_TEMPLATES = {
     schema: changeEmailSchema,
     component: ChangeEmailTemplate,
   } satisfies EmailTemplate<ChangeEmailData>,
+  "campaign-approved": {
+    subject: "Your campaign is now live! 🎉",
+    schema: campaignApprovedSchema,
+    component: CampaignApprovedTemplate,
+  } satisfies EmailTemplate<CampaignApprovedData>,
+  "campaign-rejected": {
+    subject: "Campaign review update",
+    schema: campaignRejectedSchema,
+    component: CampaignRejectedTemplate,
+  } satisfies EmailTemplate<CampaignRejectedData>,
 } as const;

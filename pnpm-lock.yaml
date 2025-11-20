@@ -41,6 +41,9 @@ importers:
       hono:
         specifier: ^4.10.6
         version: 4.10.6
+      nanoid:
+        specifier: ^5.1.6
+        version: 5.1.6
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: ^0.8.71
