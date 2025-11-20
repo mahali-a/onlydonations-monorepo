@@ -50,21 +50,20 @@ export const retrieveSimilarCampaignsFromServer = createServerFn({
     z.object({
       categoryId: z.string().min(1),
       excludeCampaignId: z.string().min(1),
-      limit: z.number().optional().default(5),
+      limit: z.number().int().positive().max(20).optional().default(5),
     }),
   )
   .handler(async ({ data }) => {
     const { categoryId, excludeCampaignId, limit } = data;
 
-    let campaigns = await retrieveSimilarCampaignsByCategory(
-      categoryId,
-      excludeCampaignId,
-      limit,
-    );
+    let campaigns = await retrieveSimilarCampaignsByCategory(categoryId, excludeCampaignId, limit);
 
     if (campaigns.length < limit) {
       const existingIds = [excludeCampaignId, ...campaigns.map((c) => c.id)];
-      const additionalCampaigns = await retrieveOtherCampaigns(existingIds, limit - campaigns.length);
+      const additionalCampaigns = await retrieveOtherCampaigns(
+        existingIds,
+        limit - campaigns.length,
+      );
       campaigns = [...campaigns, ...additionalCampaigns];
     }
 
@@ -87,7 +86,7 @@ export const retrieveDonationsWithMessagesFromServer = createServerFn({
   .inputValidator(
     z.object({
       campaignId: z.string().min(1),
-      limit: z.number().optional().default(10),
+      limit: z.number().int().positive().max(100).optional().default(10),
     }),
   )
   .handler(async ({ data }) => {
@@ -112,8 +111,8 @@ export const retrieveDonationsInfiniteFromServer = createServerFn({
   .inputValidator(
     z.object({
       campaignId: z.string().min(1),
-      page: z.number().optional().default(1),
-      limit: z.number().optional().default(20),
+      page: z.number().int().positive().optional().default(1),
+      limit: z.number().int().positive().max(100).optional().default(20),
       sort: z.enum(["newest", "top"]).optional().default("newest"),
     }),
   )

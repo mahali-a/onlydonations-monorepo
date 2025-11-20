@@ -2,7 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
 import ms from "ms";
-import { retrieveLiveCampaignBySlug, retrieveRecentLiveDonations } from "./public-live-campaign-models";
+import {
+  retrieveLiveCampaignBySlug,
+  retrieveRecentLiveDonations,
+} from "./public-live-campaign-models";
 import { fileService } from "@/lib/file-upload";
 
 /**
@@ -55,7 +58,7 @@ export const retrieveLiveDonationsFromServer = createServerFn({
   .inputValidator(
     z.object({
       campaignId: z.string().min(1),
-      limit: z.number().optional().default(20),
+      limit: z.number().int().positive().max(100).optional().default(20),
     }),
   )
   .handler(async ({ data }) => {

@@ -1,9 +1,10 @@
 import {
   IconChartBar,
   IconCreditCard,
-  IconFolder,
+  IconGift,
   IconHome,
   IconSettings,
+  IconSpeakerphone,
 } from "@tabler/icons-react";
 import { Link, useParams } from "@tanstack/react-router";
 import type * as React from "react";
@@ -28,12 +29,12 @@ const navItems = [
   {
     title: "Campaigns",
     path: "campaigns",
-    icon: IconFolder,
+    icon: IconSpeakerphone,
   },
   {
     title: "Donations",
     path: "donations",
-    icon: IconFolder,
+    icon: IconGift,
   },
   {
     title: "Financial Insights",

@@ -59,7 +59,7 @@ export const retrieveCampaignsByCategoryFromServer = createServerFn({
   .inputValidator(
     z.object({
       categoryName: z.string().min(1),
-      limit: z.number().optional().default(20),
+      limit: z.number().int().positive().max(50).optional().default(20),
     }),
   )
   .handler(async ({ data }) => {
@@ -121,7 +121,7 @@ export const retrieveTrendingCampaignsFromServer = createServerFn({
 })
   .inputValidator(
     z.object({
-      limit: z.number().optional().default(10),
+      limit: z.number().int().positive().max(50).optional().default(10),
     }),
   )
   .handler(async ({ data }) => {

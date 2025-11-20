@@ -1,3 +1,7 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { authMiddleware } from "@/server/middleware/auth";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { formatMetricValue, getTrendMessage } from "@/lib/utils/dashboard-utils";
 import {
   retrieveDonationAggregateFromDatabaseByOrganization,
@@ -7,7 +11,24 @@ import {
 } from "../org-payments-models";
 import { promiseHash } from "@/utils/promise-hash";
 
-export async function retrieveFinancialInsightsFromServer(
+export const retrieveFinancialInsightsFromServer = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .inputValidator(
+    z.object({
+      organizationId: z.string(),
+      page: z.number().int().positive().default(1),
+      limit: z.number().int().positive().max(100).default(10),
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { organizationId, page, limit } = data;
+
+    await requireOrganizationAccess(organizationId, context.user.id);
+
+    return await retrieveFinancialInsightsUtil(organizationId, page, limit);
+  });
+
+async function retrieveFinancialInsightsUtil(
   organizationId: string,
   page: number = 1,
   limit: number = 10,
