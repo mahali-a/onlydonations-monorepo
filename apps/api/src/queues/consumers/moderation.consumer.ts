@@ -44,9 +44,9 @@ export const moderationConsumer: QueueConsumer<ModerationQueueMessage> = async (
       env.OPENAI_API_KEY,
     );
 
-    await saveModerationResultToDatabase(data, moderationResult);
-
     const decision = determineModerationDecision(moderationResult);
+
+    await saveModerationResultToDatabase(data, moderationResult, decision.reason);
 
     await updateCampaignStatusInDatabase(data.campaignId, decision.status);
 

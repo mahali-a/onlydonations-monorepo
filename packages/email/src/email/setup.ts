@@ -6,13 +6,13 @@ import type { EmailTemplateData, EmailTemplateType } from "./types";
 
 let resendInstance: Resend | null = null;
 let emailFrom: string | null = null;
-let isDev: boolean = false;
+// @ts-expect-error -  we need to add node types
+const isDev = process.env.NODE_ENV === "development";
 
-export function initEmail(apiKey: string, from: string, options?: { isDev?: boolean }): Resend {
+export function initEmail(apiKey: string, from: string): Resend {
   if (!resendInstance) {
     resendInstance = new Resend(apiKey);
     emailFrom = from;
-    isDev = options?.isDev ?? false;
   }
   return resendInstance;
 }

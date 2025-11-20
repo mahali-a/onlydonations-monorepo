@@ -30,6 +30,7 @@ export async function retrieveUserByIdFromDatabase(
 export async function saveModerationResultToDatabase(
   data: { contentType: string; campaignId: string },
   result: ModerationResult,
+  recommendation?: string | null,
 ) {
   const db = getDb();
   const moderationResult = result.results[0];
@@ -49,6 +50,7 @@ export async function saveModerationResultToDatabase(
     flagged: moderationResult.flagged,
     flaggedCategories: flaggedCategories.length > 0 ? JSON.stringify(flaggedCategories) : null,
     categoryScores: JSON.stringify(moderationResult.category_scores),
+    recommendation: recommendation || null,
     moderationProvider: "openai",
     openaiModerationId: result.id,
     requiresManualReview: moderationResult.flagged,

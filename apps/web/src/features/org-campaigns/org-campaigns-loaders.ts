@@ -10,6 +10,7 @@ import {
   retrieveCampaignWithDonationStatsFromDatabaseById,
   retrieveCampaignForPreviewFromDatabaseById,
   retrieveEnabledCategoriesFromDatabase,
+  retrieveRejectionReasonFromDatabaseByCampaignId,
 } from "./org-campaigns-models";
 import { campaignFiltersSchema } from "./org-campaigns-schemas";
 import { promiseHash } from "@/utils/promise-hash";
@@ -43,11 +44,10 @@ export const retrieveCampaignsFromServer = createServerFn({ method: "GET" })
       };
 
       const { result, categories } = await promiseHash({
-        result:
-          retrieveCampaignsWithDonationStatsFromDatabaseByOrganizationAndFilters(
-            organizationId,
-            filters,
-          ),
+        result: retrieveCampaignsWithDonationStatsFromDatabaseByOrganizationAndFilters(
+          organizationId,
+          filters,
+        ),
         categories: retrieveEnabledCategoriesFromDatabase(),
       });
 
@@ -88,11 +88,7 @@ export const retrieveCampaignDetailFromServer = createServerFn({
     });
 
     try {
-      const campaign =
-        await retrieveCampaignWithDonationStatsFromDatabaseById(
-          campaignId,
-          orgId,
-        );
+      const campaign = await retrieveCampaignWithDonationStatsFromDatabaseById(campaignId, orgId);
 
       if (!campaign) {
         campaignsLogger.warn("detail.loader.not-found", {
@@ -102,12 +98,18 @@ export const retrieveCampaignDetailFromServer = createServerFn({
         throw new Error("Campaign not found");
       }
 
-      const categories =
-        await retrieveEnabledCategoriesFromDatabase();
+      const { categories, rejectionReason } = await promiseHash({
+        categories: retrieveEnabledCategoriesFromDatabase(),
+        rejectionReason:
+          campaign.status === "REJECTED"
+            ? retrieveRejectionReasonFromDatabaseByCampaignId(campaignId)
+            : Promise.resolve(null),
+      });
 
       return {
         campaign: fileService.transformKeysToUrls(campaign),
         categories,
+        rejectionReason,
       };
     } catch (error) {
       campaignsLogger.error("detail.loader.error", {
@@ -145,10 +147,7 @@ export const retrieveCampaignPreviewFromServer = createServerFn({
     campaignsLogger.error("preview.loader.start", { campaignId, orgId });
 
     try {
-      const campaign =
-        await retrieveCampaignForPreviewFromDatabaseById(
-          campaignId,
-        );
+      const campaign = await retrieveCampaignForPreviewFromDatabaseById(campaignId);
 
       if (!campaign || campaign.organizationId !== orgId) {
         campaignsLogger.error("preview.loader.not-found", {

@@ -6,7 +6,7 @@ import type {
   SelectCategory,
   SelectDonation,
 } from "@repo/core/database/types";
-import { campaign, category, donation } from "@repo/core/drizzle/schema";
+import { campaign, category, donation, contentModeration } from "@repo/core/drizzle/schema";
 import {
   and,
   asc,
@@ -679,6 +679,33 @@ export async function retrieveCategoryFromDatabaseById(id: string): Promise<Sele
 export async function retrieveAllCategoriesFromDatabase(): Promise<SelectCategory[]> {
   const db = getDb();
   return await db.select().from(category).orderBy(asc(category.name));
+}
+
+/**
+ * Retrieves the rejection reason for a campaign from the content moderation table.
+ * @param campaignId - The campaign ID to look up
+ * @returns The recommendation/rejection reason or null if not found
+ */
+export async function retrieveRejectionReasonFromDatabaseByCampaignId(
+  campaignId: string,
+): Promise<string | null> {
+  const db = getDb();
+  const result = await db
+    .select({
+      recommendation: contentModeration.recommendation,
+    })
+    .from(contentModeration)
+    .where(
+      and(
+        eq(contentModeration.contentId, campaignId),
+        eq(contentModeration.contentType, "campaign"),
+        isNotNull(contentModeration.recommendation),
+      ),
+    )
+    .orderBy(desc(contentModeration.createdAt))
+    .limit(1);
+
+  return result[0]?.recommendation ?? null;
 }
 
 export async function retrieveDonationFromDatabaseById(id: string): Promise<SelectDonation | null> {

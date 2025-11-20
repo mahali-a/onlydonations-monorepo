@@ -105,6 +105,7 @@ export function CampaignDetailsLayout() {
 
   const { data } = useSuspenseQuery(campaignDetailQueryOptions(params.orgId, params.campaignId));
   const campaign = data.campaign;
+  const rejectionReason = data.rejectionReason;
 
   const currentTab = location.pathname.includes("/sharing")
     ? "sharing"
@@ -224,6 +225,15 @@ export function CampaignDetailsLayout() {
             {currentStatus.label.toUpperCase()}
             ).
           </p>
+        </div>
+      )}
+
+      {campaign.status === "REJECTED" && rejectionReason && (
+        <div className="rounded-lg bg-rose-50 dark:bg-rose-950 border border-rose-200 dark:border-rose-800 p-4">
+          <p className="text-sm font-semibold text-rose-900 dark:text-rose-100 mb-2">
+            Rejection Reason:
+          </p>
+          <p className="text-sm text-rose-800 dark:text-rose-200">{rejectionReason}</p>
         </div>
       )}
 
