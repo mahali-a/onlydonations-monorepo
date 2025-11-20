@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { SmileTokenRequest, SmileTokenResponse } from "./user-kyc-types";
+import type { SmileTokenRequest, SmileTokenResponse } from "./user-kyc-models";
 import { logger } from "@/lib/logger";
 
 export async function generateSmileToken(
@@ -105,7 +105,7 @@ export async function verifyWebhookSignature(
   // Convert both to Buffers for timing-safe comparison
   // We need to handle the case where signature is not a valid hex string or wrong length
   try {
-    const signatureBuffer = Buffer.from(signature, 'hex');
+    const signatureBuffer = Buffer.from(signature, "hex");
     const expectedBuffer = Buffer.from(expectedSignature);
 
     if (signatureBuffer.length !== expectedBuffer.length) {

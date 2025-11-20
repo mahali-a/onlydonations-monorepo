@@ -82,11 +82,14 @@ function CategoryPage() {
         {/* Campaigns Grid */}
         <div className="container mx-auto px-4 md:px-6 py-8">
           {campaigns.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                No fundraisers found in this category yet.
+            <div className="text-center py-16">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                No campaigns found
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                There are no campaigns in this category yet.
               </p>
-              <Button variant="outline" className="mt-4" asChild>
+              <Button variant="outline" className="rounded-full" asChild>
                 <Link to="/discover">Browse other categories</Link>
               </Button>
             </div>

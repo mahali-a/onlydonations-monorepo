@@ -16,13 +16,13 @@ export function SearchPagination({
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center mt-8">
       <Button
         variant="outline"
         size="lg"
         onClick={onLoadMore}
         disabled={isFetchingNextPage}
-        className="rounded-full px-8 font-semibold border-[#767676] text-[#333] hover:bg-secondary/50"
+        className="rounded-full px-8 font-semibold hover:bg-accent hover:border-accent-foreground/20"
       >
         {isFetchingNextPage ? "Loading..." : "Show more"}
       </Button>

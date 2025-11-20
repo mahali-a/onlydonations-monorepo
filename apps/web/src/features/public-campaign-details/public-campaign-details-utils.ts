@@ -1,5 +1,5 @@
 import { formatCurrency } from "@/lib/money";
-import type { PublicCampaign } from "./types";
+import type { PublicCampaign } from "./public-campaign-details-models";
 
 export function calculateProgress(raised: number, target: number): number {
   if (target <= 0) return 0;
@@ -22,7 +22,9 @@ export function formatCampaignForPublic(campaign: PublicCampaign) {
     ...campaign,
     progress: calculateProgress(campaign.totalRaised, campaign.amount),
     daysRemaining: calculateDaysRemaining(campaign.endDate),
-    formattedRaised: formatCurrency(campaign.totalRaised, campaign.currency, { isMinorUnits: true }),
+    formattedRaised: formatCurrency(campaign.totalRaised, campaign.currency, {
+      isMinorUnits: true,
+    }),
     formattedTarget: formatCurrency(campaign.amount, campaign.currency, { isMinorUnits: true }),
   };
 }

@@ -1,5 +1,5 @@
 import { formatCurrency } from "@/lib/money";
-import type { PublicDonation } from "../types";
+import type { PublicDonation } from "../public-campaign-details-models";
 import { Heart } from "lucide-react";
 
 type DonationListProps = {

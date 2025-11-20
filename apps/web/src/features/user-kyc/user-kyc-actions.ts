@@ -4,8 +4,8 @@ import { nanoid } from "nanoid";
 import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
 import { retry } from "@/lib/retry";
-import type { KycProduct } from "./user-kyc-types";
-import { kycModel } from "./user-kyc-models";
+import type { KycProduct } from "./user-kyc-models";
+import { saveVerificationJobToDatabase } from "./user-kyc-models";
 
 const kycLogger = logger.createChildLogger("user-kyc-actions");
 
@@ -128,7 +128,7 @@ export const generateKycVerificationTokenOnServer = createServerFn({ method: "PO
         },
       );
 
-      await kycModel.saveVerificationJobToDatabase({
+      await saveVerificationJobToDatabase({
         userId: user.id,
         smileJobId: jobId,
         product: data.product,

@@ -1,6 +1,6 @@
 import { Heart } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import type { DonationWithMessage } from "../types";
+import type { DonationWithMessage } from "../public-campaign-details-models";
 import { Money } from "@/lib/money";
 
 type DonationItemProps = {
@@ -34,7 +34,9 @@ export function DonationItem({
           {Money.fromMinor(donation.amount, donation.currency).format()}
         </div>
         {showMessage && donation.donorMessage && (
-          <p className="mt-1 text-sm text-muted-foreground">{donation.donorMessage}</p>
+          <p className="mt-1 text-sm text-muted-foreground line-clamp-3 break-words">
+            {donation.donorMessage}
+          </p>
         )}
       </div>
     </li>

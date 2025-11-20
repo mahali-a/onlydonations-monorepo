@@ -89,3 +89,12 @@ export async function retrieveRecentLiveDonations(campaignId: string, limit: num
     donorName: d.isAnonymous ? null : d.donorName,
   }));
 }
+
+export type LiveCampaign = NonNullable<Awaited<ReturnType<typeof retrieveLiveCampaignBySlug>>>;
+
+export type LiveDonation = Awaited<ReturnType<typeof retrieveRecentLiveDonations>>[number];
+
+export type LiveCampaignData = {
+  campaign: LiveCampaign;
+  donations: LiveDonation[];
+};

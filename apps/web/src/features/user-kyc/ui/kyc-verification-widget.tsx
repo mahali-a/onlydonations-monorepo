@@ -4,7 +4,7 @@ import { Loader2, ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import type { KycProduct, SmileIdentityConfig } from "../user-kyc-types";
+import type { KycProduct, SmileIdentityConfig } from "../user-kyc-models";
 import { generateKycVerificationTokenOnServer } from "../server";
 
 type KycVerificationWidgetProps = {

@@ -61,7 +61,7 @@ export function FilterBar({ categories }: FilterBarProps) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search fundraisers"
-                className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-10 pl-9 pr-4 rounded-full border-none bg-muted/70 text-sm focus:outline-none focus:ring-0 placeholder:text-muted-foreground/50"
               />
             </form>
           )}

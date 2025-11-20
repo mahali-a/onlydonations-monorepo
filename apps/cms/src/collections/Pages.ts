@@ -3,7 +3,6 @@ import {
   HeroBlock,
   DividerBlock,
   ThreeColumnCardBlock,
-  CalculatorBlock,
   FAQBlock,
   CTABlock,
   RichTextBlock,
@@ -18,6 +17,7 @@ import {
   HowItWorksBlock,
   IconCardsBlock,
   FundraiserExamplesBlock,
+  PricingBlock,
 } from "../blocks";
 
 export const Pages: CollectionConfig = {
@@ -62,7 +62,6 @@ export const Pages: CollectionConfig = {
         HeroOverlappingBlock,
         DividerBlock,
         ThreeColumnCardBlock,
-        CalculatorBlock,
         FAQBlock,
         AccordionBlock,
         CTABlock,
@@ -76,6 +75,7 @@ export const Pages: CollectionConfig = {
         HowItWorksBlock,
         IconCardsBlock,
         FundraiserExamplesBlock,
+        PricingBlock,
       ],
     },
     {

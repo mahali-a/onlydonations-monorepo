@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Flag, TrendingUp, Heart, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import type { CampaignDetailData } from "../types";
+import type { CampaignDetailData } from "../public-campaign-details-models";
 import { formatCampaignForPublic } from "../public-campaign-details-utils";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { SimilarFundraisers } from "./similar-fundraisers";
@@ -84,11 +84,16 @@ export function CampaignDetailContent({
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_350px] lg:gap-12">
             {/* Left Column */}
             <div className="space-y-6">
-              <div className="overflow-hidden rounded-xl bg-muted">
+              <div className="overflow-hidden rounded-xl bg-muted min-h-[400px] max-h-[600px] flex items-center justify-center">
                 <img
                   src={formattedCampaign.coverImage ?? ""}
                   alt={campaign.title}
-                  className="h-auto w-full object-cover"
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3C/svg%3E';
+                    e.currentTarget.style.opacity = "0";
+                  }}
                 />
               </div>
 
@@ -131,15 +136,13 @@ export function CampaignDetailContent({
               </div>
 
               {!hasDonations && (
-                <div className="rounded-xl bg-purple-100 p-6 dark:bg-purple-950">
-                  <h3 className="mb-2 text-xl font-bold text-purple-900 dark:text-purple-100">
-                    Give GHS 20 and be a founding donor
-                  </h3>
-                  <p className="mb-6 text-purple-800 dark:text-purple-200">
+                <div className="rounded-xl bg-secondary text-secondary-foreground p-6">
+                  <h3 className="mb-2 text-xl font-bold">Give GHS 20 and be a founding donor</h3>
+                  <p className="mb-6 opacity-90">
                     Your donation starts {organizer}'s journey to success by inspiring others to
                     help.
                   </p>
-                  <Button className="rounded-full bg-purple-700 hover:bg-purple-800 text-white dark:bg-purple-600 dark:hover:bg-purple-700">
+                  <Button className="rounded-full bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90">
                     Donate
                   </Button>
                 </div>

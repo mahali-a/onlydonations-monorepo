@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import confetti from "canvas-confetti";
 import { formatCurrency } from "@/lib/money";
 import { formatDistanceToNow } from "date-fns";
-import type { LiveDonation } from "../types";
+import type { LiveDonation } from "../public-live-campaign-models";
 
 type LiveDonationsFeedProps = {
   donations: LiveDonation[];

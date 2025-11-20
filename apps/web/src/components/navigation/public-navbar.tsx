@@ -106,7 +106,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
   };
 
   return (
-    <header className="w-full border-b bg-background">
+    <header className="w-full border-b border-border/30 bg-background">
       <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
         {/* Mobile menu trigger - shown on mobile */}
         <div className="md:hidden">
@@ -254,13 +254,13 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                         size="sm"
                         className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-accent/30 border border-transparent hover:border-border transition-all"
                       >
-                        <Avatar className="h-8 w-8">
+                        <Avatar className="h-6 w-6">
                           <AvatarImage
-                            className="h-8 w-8"
+                            className="h-6 w-6"
                             src={user?.image || undefined}
                             alt={user?.name || "User"}
                           />
-                          <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                          <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                             {fallbackText}
                           </AvatarFallback>
                         </Avatar>

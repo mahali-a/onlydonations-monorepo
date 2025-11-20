@@ -117,25 +117,27 @@ export function DonationsModal({
 
                         <TabsContent
                             value="newest"
-                            className="flex-1 min-h-0 overflow-y-auto px-4 pb-20 mt-0 data-[state=inactive]:hidden modal-scrollbar"
+                            className="flex-1 min-h-0 overflow-y-auto px-4 mt-0 data-[state=inactive]:hidden modal-scrollbar"
                         >
                             <Suspense fallback={<DonationsListSkeleton />}>
                                 <DonationsList campaignId={campaignId} sort="newest" />
                             </Suspense>
+                            <div className="h-24" />
                         </TabsContent>
 
                         <TabsContent
                             value="top"
-                            className="flex-1 min-h-0 overflow-y-auto px-4 pb-20 mt-0 data-[state=inactive]:hidden modal-scrollbar"
+                            className="flex-1 min-h-0 overflow-y-auto px-4 mt-0 data-[state=inactive]:hidden modal-scrollbar"
                         >
-                            <Suspense fallback={<DonationsListSkeleton />}>
+                            <Suspense fallback={<DonationsList campaignId={campaignId} sort="top" />}>
                                 <DonationsList campaignId={campaignId} sort="top" />
                             </Suspense>
+                            <div className="h-24" />
                         </TabsContent>
                     </Tabs>
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-background">
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-background rounded-b-2xl border-t">
                     <Button
                         className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12 text-lg"
                         onClick={onDonate}

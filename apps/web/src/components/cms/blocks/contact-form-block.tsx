@@ -1,161 +1,187 @@
+"use client";
+
+import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { RichText } from "../rich-text";
-import { getBgColorClass } from "../utils";
 import type { ContactFormBlock as ContactFormBlockType } from "@repo/types/payload";
+import { submitContactForm } from "./contact-form-actions";
 
-export function ContactFormBlock({ block }: { block: ContactFormBlockType }) {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+interface ContactFormBlockProps {
+  block: ContactFormBlockType;
+  contactEmail?: string;
+}
 
-    const maxWidthClass = {
-        full: "max-w-none",
-        large: "max-w-4xl",
-        medium: "max-w-2xl",
-        small: "max-w-xl",
-    }[block.maxWidth || "medium"];
+export function ContactFormBlock({ block, contactEmail }: ContactFormBlockProps) {
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsSubmitting(true);
+  const recipientEmail = block.recipientEmail || contactEmail || "";
 
-        // Simulate form submission - replace with actual API call
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            setSubmitStatus("success");
-        } catch {
-            setSubmitStatus("error");
-        } finally {
-            setIsSubmitting(false);
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
+    validators: {
+      onSubmitAsync: async ({ value }) => {
+        const result = await submitContactForm({
+          data: {
+            name: value.name,
+            email: value.email,
+            message: value.message,
+            recipientEmail,
+          },
+        });
+
+        if (!result.success) {
+          return {
+            form: result.error || "Failed to send message. Please try again.",
+          };
         }
-    };
 
-    if (submitStatus === "success") {
-        return (
-            <section className={cn("py-12 md:py-16", getBgColorClass(block.backgroundColor))}>
-                <div className="container px-4">
-                    <div className={cn(maxWidthClass, "mx-auto text-center")}>
-                        <div className="bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200 p-6 rounded-lg">
-                            {block.successMessage || "Thank you! Your message has been sent."}
-                        </div>
-                    </div>
-                </div>
-            </section>
-        );
-    }
+        setSubmitStatus("success");
+        return null;
+      },
+    },
+  });
 
+  if (submitStatus === "success") {
     return (
-        <section className={cn("py-12 md:py-16", getBgColorClass(block.backgroundColor))}>
-            <div className="container px-4">
-                <div className={cn(maxWidthClass, "mx-auto")}>
-                    {(block.title || block.description) && (
-                        <div className="text-center mb-8">
-                            {block.title && (
-                                <h2 className="text-3xl font-bold tracking-tight mb-4">{block.title}</h2>
-                            )}
-                            {block.description && (
-                                <div className="text-muted-foreground">
-                                    <RichText content={block.description} />
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {submitStatus === "error" && (
-                        <div className="bg-destructive/10 text-destructive p-4 rounded-lg mb-6">
-                            {block.errorMessage || "Something went wrong. Please try again."}
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit}>
-                        <div className={cn("grid gap-4", block.layout === "two" && "md:grid-cols-2")}>
-                            {block.formFields?.map((field) => (
-                                <div key={field.id} className={cn(field.type === "textarea" && "md:col-span-2")}>
-                                    <Label htmlFor={field.name} className="mb-2 block">
-                                        {field.label}
-                                        {field.required && <span className="text-destructive ml-1">*</span>}
-                                    </Label>
-
-                                    {field.type === "textarea" ? (
-                                        <Textarea
-                                            id={field.name}
-                                            name={field.name}
-                                            placeholder={field.placeholder || undefined}
-                                            required={field.required || false}
-                                            rows={field.rows || 4}
-                                        />
-                                    ) : field.type === "select" ? (
-                                        <Select name={field.name} required={field.required || false}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={field.placeholder || "Select..."} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {field.options?.map((option) => (
-                                                    <SelectItem key={option.id} value={option.value}>
-                                                        {option.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    ) : field.type === "checkbox" ? (
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox
-                                                id={field.name}
-                                                name={field.name}
-                                                required={field.required || false}
-                                            />
-                                            <Label htmlFor={field.name} className="text-sm font-normal">
-                                                {field.placeholder}
-                                            </Label>
-                                        </div>
-                                    ) : field.type === "radio" && field.options ? (
-                                        <RadioGroup name={field.name} required={field.required || false}>
-                                            {field.options.map((option) => (
-                                                <div key={option.id} className="flex items-center gap-2">
-                                                    <RadioGroupItem
-                                                        value={option.value}
-                                                        id={`${field.name}-${option.value}`}
-                                                    />
-                                                    <Label htmlFor={`${field.name}-${option.value}`} className="font-normal">
-                                                        {option.label}
-                                                    </Label>
-                                                </div>
-                                            ))}
-                                        </RadioGroup>
-                                    ) : (
-                                        <Input
-                                            id={field.name}
-                                            name={field.name}
-                                            type={field.type}
-                                            placeholder={field.placeholder || undefined}
-                                            required={field.required || false}
-                                        />
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="mt-6">
-                            <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
-                                {isSubmitting ? "Sending..." : block.submitButtonText || "Submit"}
-                            </Button>
-                        </div>
-                    </form>
-                </div>
+      <section className="py-12 md:py-16">
+        <div className="container px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200 p-6 rounded-lg text-center">
+              <p className="text-lg font-medium">{block.successMessage}</p>
             </div>
-        </section>
+          </div>
+        </div>
+      </section>
     );
+  }
+
+  return (
+    <section className="py-12 md:py-16">
+      <div className="container px-4">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          {(block.title || block.description) && (
+            <div className="text-center mb-8">
+              {block.title && (
+                <h2 className="text-3xl font-bold tracking-tight mb-4">{block.title}</h2>
+              )}
+              {block.description && typeof block.description === "string" && (
+                <p className="text-muted-foreground">{block.description}</p>
+              )}
+            </div>
+          )}
+
+          {/* Form */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+          >
+            <div className="space-y-6">
+              {/* Name Field */}
+              <form.Field name="name">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="contact-name">
+                      Name <span className="text-destructive">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="contact-name"
+                      name="name"
+                      type="text"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      placeholder="Your name"
+                      required
+                      aria-invalid={field.state.meta.errors.length > 0}
+                    />
+                    <FieldError errors={field.state.meta.errors} />
+                  </Field>
+                )}
+              </form.Field>
+
+              {/* Email Field */}
+              <form.Field name="email">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="contact-email">
+                      Email <span className="text-destructive">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="contact-email"
+                      name="email"
+                      type="email"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      placeholder="your@email.com"
+                      required
+                      aria-invalid={field.state.meta.errors.length > 0}
+                    />
+                    <FieldError errors={field.state.meta.errors} />
+                  </Field>
+                )}
+              </form.Field>
+
+              {/* Message Field */}
+              <form.Field name="message">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor="contact-message">
+                      Message <span className="text-destructive">*</span>
+                    </FieldLabel>
+                    <Textarea
+                      id="contact-message"
+                      name="message"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      placeholder="Tell us how we can help..."
+                      rows={6}
+                      required
+                      aria-invalid={field.state.meta.errors.length > 0}
+                    />
+                    <FieldError errors={field.state.meta.errors} />
+                  </Field>
+                )}
+              </form.Field>
+
+              {/* Form-level errors */}
+              <form.Subscribe selector={(state) => [state.errorMap]}>
+                {([errorMap]) =>
+                  errorMap?.onSubmit?.form ? (
+                    <div className="bg-destructive/10 text-destructive p-4 rounded-lg">
+                      {errorMap.onSubmit.form}
+                    </div>
+                  ) : null
+                }
+              </form.Subscribe>
+
+              {/* Submit Button */}
+              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                {([canSubmit, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting}
+                    className="w-full md:w-auto"
+                  >
+                    {isSubmitting ? "Sending..." : block.submitButtonText || "Send Message"}
+                  </Button>
+                )}
+              </form.Subscribe>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
 }

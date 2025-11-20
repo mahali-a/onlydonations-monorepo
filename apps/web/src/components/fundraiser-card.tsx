@@ -25,11 +25,15 @@ export function FundraiserCard({
     return (
         <div className="group flex flex-col overflow-hidden justify-between rounded-xl border-none transition-all cursor-pointer hover:bg-accent p-2 h-full">
             <div></div>
-            <div className="relative aspect-[16/10] w-full overflow-hidden">
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted rounded-xl">
                 <img
                     src={image}
                     alt={title}
                     className="h-full w-full rounded-xl object-cover transition-transform duration-300"
+                    onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3C/svg%3E';
+                        e.currentTarget.style.opacity = '0';
+                    }}
                 />
                 <div className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur-sm">
                     {category}
@@ -44,7 +48,7 @@ export function FundraiserCard({
                 </div>
             </div>
             <div className="mt-auto pt-4 space-y-2">
-                <Progress value={progress} className="h-1.5 bg-secondary" />
+                <Progress value={progress} className="h-1.5 bg-foreground/10" />
                 <div className="flex items-baseline gap-1">
                     <span className="text-sm font-bold text-foreground">
                         {Money.fromMinor(raised, currency).format({ decimals: 0 })}

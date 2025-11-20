@@ -12,9 +12,6 @@ interface RenderBlocksProps {
 const AccordionBlock = lazy(() =>
   import("./blocks/accordion-block").then((m) => ({ default: m.AccordionBlock })),
 );
-const CalculatorBlock = lazy(() =>
-  import("./blocks/calculator-block").then((m) => ({ default: m.CalculatorBlock })),
-);
 const ContactFormBlock = lazy(() =>
   import("./blocks/contact-form-block").then((m) => ({ default: m.ContactFormBlock })),
 );
@@ -59,6 +56,9 @@ const ThreeColumnCardBlock = lazy(() =>
 const TwoColumnBlock = lazy(() =>
   import("./blocks/two-column-block").then((m) => ({ default: m.TwoColumnBlock })),
 );
+const PricingBlock = lazy(() =>
+  import("./blocks/pricing-block").then((m) => ({ default: m.PricingBlock })),
+);
 
 export function RenderBlocks({ blocks, cmsBaseUrl = "" }: RenderBlocksProps) {
   if (!blocks || blocks.length === 0) {
@@ -90,8 +90,6 @@ function BlockRenderer({ block, cmsBaseUrl }: { block: BlockType; cmsBaseUrl: st
       return <DividerBlock block={block} />;
     case "three-column-card":
       return <ThreeColumnCardBlock block={block} />;
-    case "calculator":
-      return <CalculatorBlock block={block} />;
     case "faq":
       return <FAQBlock block={block} />;
     case "accordion":
@@ -118,6 +116,8 @@ function BlockRenderer({ block, cmsBaseUrl }: { block: BlockType; cmsBaseUrl: st
       return <IconCardsBlock block={block} />;
     case "fundraiser-examples":
       return <FundraiserExamplesBlock block={block} />;
+    case "pricing":
+      return <PricingBlock block={block} />;
     default:
       return null;
   }

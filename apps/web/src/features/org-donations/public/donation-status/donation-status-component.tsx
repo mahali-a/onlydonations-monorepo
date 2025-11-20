@@ -123,13 +123,13 @@ export function DonationStatus({ data }: DonationStatusProps) {
                       size="sm"
                       className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-accent/30 border border-transparent hover:border-border transition-all"
                     >
-                      <Avatar className="h-8 w-8">
+                      <Avatar className="h-6 w-6">
                         <AvatarImage
-                          className="h-8 w-8"
+                          className="h-6 w-6"
                           src={user?.image || undefined}
                           alt={user?.name || "User"}
                         />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           {fallbackText}
                         </AvatarFallback>
                       </Avatar>

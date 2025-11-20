@@ -207,7 +207,6 @@ export interface Page {
     | HeroOverlappingBlock
     | DividerBlock
     | ThreeColumnCardBlock
-    | CalculatorBlock
     | FAQBlock
     | AccordionBlock
     | CTABlock
@@ -221,6 +220,7 @@ export interface Page {
     | HowItWorksBlock
     | IconCardsBlock
     | FundraiserExamplesBlock
+    | PricingBlock
   )[];
   published?: boolean | null;
   /**
@@ -343,54 +343,6 @@ export interface ThreeColumnCardBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'three-column-card';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CalculatorBlock".
- */
-export interface CalculatorBlock {
-  title: string;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  examples?:
-    | {
-        totalRaised: number;
-        numberOfDonors: number;
-        averageDonationAmount?: number | null;
-        id?: string | null;
-      }[]
-    | null;
-  feeConfiguration: {
-    /**
-     * Paystack fee for all payment methods
-     */
-    transactionFeePercentage: number;
-    /**
-     * Optional percentage you take (currently 0%)
-     */
-    donorContributionPercentage?: number | null;
-  };
-  responsive?: {
-    desktopColumns?: ('2' | '3') | null;
-    tabletColumns?: ('1' | '2') | null;
-    mobileColumns?: '1' | null;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'calculator';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -905,6 +857,43 @@ export interface FundraiserExamplesBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingBlock".
+ */
+export interface PricingBlock {
+  title: string;
+  subtitle?: string | null;
+  /**
+   * Override the contact email. Leave blank to use Settings email.
+   */
+  contactEmail?: string | null;
+  donorFee: {
+    title: string;
+    description: string;
+    /**
+     * Fee percentage (e.g., 1.5 for 1.5%)
+     */
+    percentage: number;
+  };
+  fundraisingFee: {
+    title: string;
+    description: string;
+    /**
+     * Platform fee percentage (e.g., 4 for 4%)
+     */
+    percentage: number;
+    /**
+     * URL to page explaining why you charge fees
+     */
+    learnMoreLink?: string | null;
+  };
+  showCalculator?: boolean | null;
+  calculatorDefaultAmount?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pricing';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1070,7 +1059,6 @@ export interface PagesSelect<T extends boolean = true> {
         'hero-overlapping'?: T | HeroOverlappingBlockSelect<T>;
         divider?: T | DividerBlockSelect<T>;
         'three-column-card'?: T | ThreeColumnCardBlockSelect<T>;
-        calculator?: T | CalculatorBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         accordion?: T | AccordionBlockSelect<T>;
         cta?: T | CTABlockSelect<T>;
@@ -1084,6 +1072,7 @@ export interface PagesSelect<T extends boolean = true> {
         'how-it-works'?: T | HowItWorksBlockSelect<T>;
         'icon-cards'?: T | IconCardsBlockSelect<T>;
         'fundraiser-examples'?: T | FundraiserExamplesBlockSelect<T>;
+        pricing?: T | PricingBlockSelect<T>;
       };
   published?: T;
   publishedAt?: T;
@@ -1176,37 +1165,6 @@ export interface ThreeColumnCardBlockSelect<T extends boolean = true> {
         gapDesktop?: T;
         gapTablet?: T;
         gapMobile?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CalculatorBlock_select".
- */
-export interface CalculatorBlockSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  examples?:
-    | T
-    | {
-        totalRaised?: T;
-        numberOfDonors?: T;
-        averageDonationAmount?: T;
-        id?: T;
-      };
-  feeConfiguration?:
-    | T
-    | {
-        transactionFeePercentage?: T;
-        donorContributionPercentage?: T;
-      };
-  responsive?:
-    | T
-    | {
-        desktopColumns?: T;
-        tabletColumns?: T;
-        mobileColumns?: T;
       };
   id?: T;
   blockName?: T;
@@ -1527,6 +1485,34 @@ export interface FundraiserExamplesBlockSelect<T extends boolean = true> {
         campaignId?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingBlock_select".
+ */
+export interface PricingBlockSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  contactEmail?: T;
+  donorFee?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        percentage?: T;
+      };
+  fundraisingFee?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        percentage?: T;
+        learnMoreLink?: T;
+      };
+  showCalculator?: T;
+  calculatorDefaultAmount?: T;
   id?: T;
   blockName?: T;
 }

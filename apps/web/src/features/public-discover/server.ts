@@ -16,4 +16,4 @@ export type {
   CategoryWithCampaigns,
   DiscoverPageData,
   Category,
-} from "./types";
+} from "./public-discover-models";

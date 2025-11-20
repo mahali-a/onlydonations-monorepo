@@ -20,7 +20,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import type { CategoryWithCount } from "../types";
+import type { CategoryWithCount } from "../public-discover-models";
 
 const categoryIcons: Record<string, LucideIcon> = {
   Medical: Stethoscope,

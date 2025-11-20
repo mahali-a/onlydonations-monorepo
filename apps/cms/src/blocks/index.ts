@@ -1,7 +1,6 @@
 export { HeroBlock } from "./Hero";
 export { DividerBlock } from "./Divider";
 export { ThreeColumnCardBlock } from "./ThreeColumnCard";
-export { CalculatorBlock } from "./Calculator";
 export { FAQBlock } from "./FAQ";
 export { CTABlock } from "./CTA";
 export { RichTextBlock } from "./RichText";
@@ -16,3 +15,4 @@ export { HeroOverlappingBlock } from "./HeroOverlapping";
 export { HowItWorksBlock } from "./HowItWorks";
 export { IconCardsBlock } from "./IconCards";
 export { FundraiserExamplesBlock } from "./FundraiserExamples";
+export { PricingBlock } from "./Pricing";

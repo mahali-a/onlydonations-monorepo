@@ -1,5 +1,4 @@
 export * from "./accordion-block";
-export * from "./calculator-block";
 export * from "./contact-form-block";
 export * from "./cta-block";
 export * from "./divider-block";

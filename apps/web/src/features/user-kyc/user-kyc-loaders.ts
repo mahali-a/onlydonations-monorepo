@@ -3,7 +3,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import ms from "ms";
 import { authMiddleware } from "@/server/middleware/auth";
-import { kycModel } from "./user-kyc-models";
+import {
+  retrieveUserKycStatusFromDatabaseByUser,
+  retrieveVerificationJobsFromDatabaseByUser,
+} from "./user-kyc-models";
 import type { SelectVerificationJob } from "@repo/core/database/types";
 
 export const retrieveKycStatusFromServer = createServerFn({ method: "GET" })
@@ -11,7 +14,7 @@ export const retrieveKycStatusFromServer = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const user = context.user;
 
-    const status = await kycModel.retrieveUserKycStatusFromDatabaseByUser(user.id);
+    const status = await retrieveUserKycStatusFromDatabaseByUser(user.id);
 
     if (!status) {
       return {
@@ -32,7 +35,7 @@ export const retrieveVerificationJobsFromServer = createServerFn({ method: "GET"
   .handler(async ({ context }) => {
     const user = context.user;
 
-    const jobs = await kycModel.retrieveVerificationJobsFromDatabaseByUser(user.id);
+    const jobs = await retrieveVerificationJobsFromDatabaseByUser(user.id);
 
     return jobs
       .filter((job: SelectVerificationJob) => job.status !== "pending")

@@ -96,8 +96,8 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
           className={cn(
             "rounded-full h-9 px-4 text-sm font-medium gap-2 transition-colors",
             hasActiveFilters
-              ? "bg-black text-white border-black hover:bg-black/90 hover:text-white"
-              : "border-[#767676] text-[#333] hover:bg-secondary/50",
+              ? "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/90"
+              : "hover:bg-accent hover:border-accent-foreground/20",
           )}
         >
           Filters
@@ -162,7 +162,7 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
             </div>
             <Button
               variant="link"
-              className="px-0 text-sm h-auto font-medium underline decoration-1 underline-offset-4"
+              className="px-0 mt-2 text-sm h-auto font-medium underline decoration-1 underline-offset-4 hover:text-primary"
             >
               Show more
             </Button>

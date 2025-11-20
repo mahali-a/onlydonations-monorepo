@@ -182,7 +182,11 @@ export const DEMO_BLOCKS: { title: string; block: Page["blocks"][0] }[] = [
             title: "Success Stories",
             ctaText: "Start Yours",
             ctaLink: "/start",
-            campaignIds: ["1", "2", "3"],
+            campaignIds: [
+                { id: "camp-1", campaignId: "demo-campaign-1" },
+                { id: "camp-2", campaignId: "demo-campaign-2" },
+                { id: "camp-3", campaignId: "demo-campaign-3" },
+            ],
         },
     },
     {
@@ -472,6 +476,32 @@ export const DEMO_BLOCKS: { title: string; block: Page["blocks"][0] }[] = [
             id: "divider-demo",
             style: "thin",
             color: "gray-light",
+        },
+    },
+    {
+        title: "Pricing Block",
+        block: {
+            blockType: "pricing",
+            id: "pricing-demo",
+            title: "Transparent Pricing, Maximum Impact",
+            subtitle:
+                "At OnlyDonations, we believe in keeping fees low so more of your donations reach those who need it most. Our transparent pricing ensures you know exactly where every cedi goes.",
+            contactEmail: "support@onlydonations.com",
+            donorFee: {
+                title: "Donor fee",
+                description:
+                    "A small fee for donations paid are paid by the donor. This goes to our payment processor, not OnlyDonations. Think of this like the processing fees all banks charge on transfers.",
+                percentage: 1.5,
+            },
+            fundraisingFee: {
+                title: "Fundraising fee",
+                description:
+                    "Includes: operating costs, support and team until budgets operations. This helps us keep OnlyDonations running for everyone, so you can continue to make impact.",
+                percentage: 4,
+                learnMoreLink: "/about/why-we-charge-fees",
+            },
+            showCalculator: true,
+            calculatorDefaultAmount: 10000,
         },
     },
 ];

@@ -1,4 +1,4 @@
-import type { CampaignDetailData } from "../../public-campaign-details/types";
+import type { CampaignDetailData } from "../../public-campaign-details/public-campaign-details-models";
 import { CampaignPreviewContent } from "./campaign-preview-content";
 import { PreviewHeader } from "./preview-header";
 
@@ -16,10 +16,7 @@ export function CampaignPreviewPage({ data, orgId, campaignId }: CampaignPreview
   return (
     <div className="min-h-screen bg-background">
       <PreviewHeader orgId={orgId} campaignId={campaignId} />
-      <CampaignPreviewContent
-        data={data}
-        isDonateEnabled={isDonateEnabled}
-      />
+      <CampaignPreviewContent data={data} isDonateEnabled={isDonateEnabled} />
     </div>
   );
 }
