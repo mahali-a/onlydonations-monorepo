@@ -49,7 +49,7 @@ export function WithdrawalForm({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const router = useRouter();
 
-  const params = useParams({ from: "/o/$orgId/finance" });
+  const params = useParams({ from: "/o/$orgId" });
 
   const form = useForm({
     defaultValues: defaultFormValues,

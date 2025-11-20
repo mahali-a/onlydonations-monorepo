@@ -55,7 +55,7 @@ export function NewWithdrawalAccountDialog({
   const [isVerified, setIsVerified] = useState(false);
   const router = useRouter();
 
-  const params = useParams({ from: "/o/$orgId/finance" });
+  const params = useParams({ from: "/o/$orgId" });
 
   const form = useForm({
     defaultValues: defaultFormValues,

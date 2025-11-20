@@ -1,6 +1,7 @@
 import { IconDotsVertical, IconLogout, IconUserCircle } from "@tabler/icons-react";
 import * as React from "react";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { ThemeToggle } from "../theme/theme-toggle";
 
 export function NavUser({
   user,
@@ -62,6 +63,11 @@ export function NavUser({
                     <span className="truncate font-medium">{user.name}</span>
                     <span className="truncate text-muted-foreground text-xs">{user.email}</span>
                   </div>
+                </div>
+                <div className="h-px bg-border my-1" />
+                <div className="flex items-center justify-between px-3 py-2">
+                  <span className="text-sm">Theme</span>
+                  <ThemeToggle />
                 </div>
                 <div className="h-px bg-border my-1" />
                 <button

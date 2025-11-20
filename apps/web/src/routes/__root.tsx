@@ -11,6 +11,7 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useMatches,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
@@ -104,6 +105,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
+  const matches = useMatches();
+  const hasOrgId = matches.some((match) => "orgId" in match.params && !!match.params.orgId);
+
   return (
     <RootDocument>
       <ThemeProvider
@@ -111,6 +115,7 @@ function RootComponent() {
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange={false}
+        forcedTheme={hasOrgId ? undefined : "light"}
       >
         <Outlet />
       </ThemeProvider>

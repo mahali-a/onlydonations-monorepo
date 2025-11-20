@@ -12,6 +12,7 @@ type ThemeProviderProps = {
   attribute?: string;
   enableSystem?: boolean;
   disableTransitionOnChange?: boolean;
+  forcedTheme?: Theme;
 };
 
 type ThemeProviderState = {
@@ -19,6 +20,7 @@ type ThemeProviderState = {
   setTheme: (theme: Theme) => void;
   resolvedTheme?: "light" | "dark";
   systemTheme?: "light" | "dark";
+  forcedTheme?: Theme;
 };
 
 const initialState: ThemeProviderState = {
@@ -63,10 +65,16 @@ export function ThemeProvider({
 
   const [isMounted, setIsMounted] = React.useState(false);
 
-  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const resolvedTheme = React.useMemo(() => {
+    if (props.forcedTheme) {
+      return props.forcedTheme === "system" ? systemTheme : props.forcedTheme;
+    }
+    return theme === "system" ? systemTheme : theme;
+  }, [theme, props.forcedTheme, systemTheme]);
 
   const setTheme = React.useCallback(
     (newTheme: Theme) => {
+      if (props.forcedTheme) return;
       try {
         localStorage.setItem(storageKey, newTheme);
       } catch (error) {
@@ -74,7 +82,7 @@ export function ThemeProvider({
       }
       setThemeState(newTheme);
     },
-    [storageKey],
+    [storageKey, props.forcedTheme],
   );
 
   const applyTheme = React.useCallback(
@@ -111,7 +119,7 @@ export function ThemeProvider({
 
   React.useEffect(() => {
     if (isMounted) {
-      applyTheme(resolvedTheme);
+      applyTheme(resolvedTheme as "light" | "dark");
     }
   }, [resolvedTheme, applyTheme, isMounted]);
 
@@ -142,10 +150,11 @@ export function ThemeProvider({
     () => ({
       theme,
       setTheme,
-      resolvedTheme: isMounted ? resolvedTheme : undefined,
+      resolvedTheme: isMounted ? (resolvedTheme as "light" | "dark") : undefined,
       systemTheme: isMounted ? systemTheme : undefined,
+      forcedTheme: props.forcedTheme,
     }),
-    [theme, setTheme, resolvedTheme, systemTheme, isMounted],
+    [theme, setTheme, resolvedTheme, systemTheme, isMounted, props.forcedTheme],
   );
 
   return (

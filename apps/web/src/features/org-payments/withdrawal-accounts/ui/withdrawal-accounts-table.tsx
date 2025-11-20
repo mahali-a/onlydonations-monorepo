@@ -155,7 +155,7 @@ function AccountActionsDialog({ accountId, accountName }: AccountActionsDialogPr
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
-  const params = useParams({ from: "/o/$orgId/finance" });
+  const params = useParams({ from: "/o/$orgId" });
 
   const handleDelete = async () => {
     setIsDeleting(true);
