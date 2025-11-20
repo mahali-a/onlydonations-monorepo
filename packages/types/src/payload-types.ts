@@ -204,6 +204,7 @@ export interface Page {
   description?: string | null;
   blocks: (
     | HeroBlock
+    | HeroOverlappingBlock
     | DividerBlock
     | ThreeColumnCardBlock
     | CalculatorBlock
@@ -217,6 +218,9 @@ export interface Page {
     | TwoColumnBlock
     | GalleryBlock
     | ContactFormBlock
+    | HowItWorksBlock
+    | IconCardsBlock
+    | FundraiserExamplesBlock
   )[];
   published?: boolean | null;
   /**
@@ -257,6 +261,22 @@ export interface HeroBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'hero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroOverlappingBlock".
+ */
+export interface HeroOverlappingBlock {
+  title: string;
+  description: string;
+  ctaText: string;
+  ctaLink?: string | null;
+  imageUrl: string;
+  imageAlt: string;
+  backgroundColor?: ('beige' | 'white' | 'gray-light') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero-overlapping';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -832,6 +852,59 @@ export interface ContactFormBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HowItWorksBlock".
+ */
+export interface HowItWorksBlock {
+  title: string;
+  ctaText: string;
+  ctaLink?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'how-it-works';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IconCardsBlock".
+ */
+export interface IconCardsBlock {
+  title: string;
+  moreButtonText?: string | null;
+  moreButtonLink?: string | null;
+  items?:
+    | {
+        iconName: 'quote' | 'calendar' | 'heart' | 'share' | 'star' | 'check' | 'info' | 'lightbulb';
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'icon-cards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FundraiserExamplesBlock".
+ */
+export interface FundraiserExamplesBlock {
+  title: string;
+  ctaText?: string | null;
+  ctaLink?: string | null;
+  campaignIds?:
+    | {
+        /**
+         * The ID of the campaign to display
+         */
+        campaignId: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'fundraiser-examples';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -994,6 +1067,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         hero?: T | HeroBlockSelect<T>;
+        'hero-overlapping'?: T | HeroOverlappingBlockSelect<T>;
         divider?: T | DividerBlockSelect<T>;
         'three-column-card'?: T | ThreeColumnCardBlockSelect<T>;
         calculator?: T | CalculatorBlockSelect<T>;
@@ -1007,6 +1081,9 @@ export interface PagesSelect<T extends boolean = true> {
         'two-column'?: T | TwoColumnBlockSelect<T>;
         gallery?: T | GalleryBlockSelect<T>;
         'contact-form'?: T | ContactFormBlockSelect<T>;
+        'how-it-works'?: T | HowItWorksBlockSelect<T>;
+        'icon-cards'?: T | IconCardsBlockSelect<T>;
+        'fundraiser-examples'?: T | FundraiserExamplesBlockSelect<T>;
       };
   published?: T;
   publishedAt?: T;
@@ -1029,6 +1106,21 @@ export interface HeroBlockSelect<T extends boolean = true> {
         tabletSize?: T;
         mobileSize?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroOverlappingBlock_select".
+ */
+export interface HeroOverlappingBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  ctaText?: T;
+  ctaLink?: T;
+  imageUrl?: T;
+  imageAlt?: T;
+  backgroundColor?: T;
   id?: T;
   blockName?: T;
 }
@@ -1388,6 +1480,53 @@ export interface ContactFormBlockSelect<T extends boolean = true> {
   layout?: T;
   backgroundColor?: T;
   maxWidth?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HowItWorksBlock_select".
+ */
+export interface HowItWorksBlockSelect<T extends boolean = true> {
+  title?: T;
+  ctaText?: T;
+  ctaLink?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IconCardsBlock_select".
+ */
+export interface IconCardsBlockSelect<T extends boolean = true> {
+  title?: T;
+  moreButtonText?: T;
+  moreButtonLink?: T;
+  items?:
+    | T
+    | {
+        iconName?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FundraiserExamplesBlock_select".
+ */
+export interface FundraiserExamplesBlockSelect<T extends boolean = true> {
+  title?: T;
+  ctaText?: T;
+  ctaLink?: T;
+  campaignIds?:
+    | T
+    | {
+        campaignId?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

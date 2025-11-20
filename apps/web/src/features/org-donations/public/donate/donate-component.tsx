@@ -416,7 +416,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                           <input
                             type="number"
                             min="1"
-                            step="0.01"
+                            step="1"
                             placeholder="0"
                             value={pesewasToGhs(field.state.value) || ""}
                             onChange={(e) => {
@@ -640,7 +640,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                                     onCheckedChange={(checked) =>
                                       field.handleChange(checked as boolean)
                                     }
-                                    className="mt-0.5 border-gray-400 data-[state=checked]:bg-[#02a95c] data-[state=checked]:border-[#02a95c]"
+                                    className="mt-0.5 border-gray-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                   />
                                   <div className="space-y-1">
                                     <Label

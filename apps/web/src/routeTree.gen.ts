@@ -21,6 +21,8 @@ import { Route as LiveSlugRouteImport } from './routes/live.$slug'
 import { Route as PublicSupportRouteImport } from './routes/_public/support'
 import { Route as PublicSRouteImport } from './routes/_public/s'
 import { Route as PublicPricingRouteImport } from './routes/_public/pricing'
+import { Route as PublicHomeRouteImport } from './routes/_public/home'
+import { Route as PublicBlocksShowcaseRouteImport } from './routes/_public/blocks-showcase'
 import { Route as PublicAboutUsRouteImport } from './routes/_public/about-us'
 import { Route as PublicSplatRouteImport } from './routes/_public/$'
 import { Route as AuthMagicCodeRouteImport } from './routes/_auth/magic-code'
@@ -109,6 +111,16 @@ const PublicSRoute = PublicSRouteImport.update({
 const PublicPricingRoute = PublicPricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicHomeRoute = PublicHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicBlocksShowcaseRoute = PublicBlocksShowcaseRouteImport.update({
+  id: '/blocks-showcase',
+  path: '/blocks-showcase',
   getParentRoute: () => PublicRouteRoute,
 } as any)
 const PublicAboutUsRoute = PublicAboutUsRouteImport.update({
@@ -282,6 +294,8 @@ export interface FileRoutesByFullPath {
   '/magic-code': typeof AuthMagicCodeRoute
   '/$': typeof PublicSplatRoute
   '/about-us': typeof PublicAboutUsRoute
+  '/blocks-showcase': typeof PublicBlocksShowcaseRoute
+  '/home': typeof PublicHomeRoute
   '/pricing': typeof PublicPricingRoute
   '/s': typeof PublicSRoute
   '/support': typeof PublicSupportRoute
@@ -323,6 +337,8 @@ export interface FileRoutesByTo {
   '/magic-code': typeof AuthMagicCodeRoute
   '/$': typeof PublicSplatRoute
   '/about-us': typeof PublicAboutUsRoute
+  '/blocks-showcase': typeof PublicBlocksShowcaseRoute
+  '/home': typeof PublicHomeRoute
   '/pricing': typeof PublicPricingRoute
   '/s': typeof PublicSRoute
   '/support': typeof PublicSupportRoute
@@ -365,6 +381,8 @@ export interface FileRoutesById {
   '/_auth/magic-code': typeof AuthMagicCodeRoute
   '/_public/$': typeof PublicSplatRoute
   '/_public/about-us': typeof PublicAboutUsRoute
+  '/_public/blocks-showcase': typeof PublicBlocksShowcaseRoute
+  '/_public/home': typeof PublicHomeRoute
   '/_public/pricing': typeof PublicPricingRoute
   '/_public/s': typeof PublicSRoute
   '/_public/support': typeof PublicSupportRoute
@@ -410,6 +428,8 @@ export interface FileRouteTypes {
     | '/magic-code'
     | '/$'
     | '/about-us'
+    | '/blocks-showcase'
+    | '/home'
     | '/pricing'
     | '/s'
     | '/support'
@@ -451,6 +471,8 @@ export interface FileRouteTypes {
     | '/magic-code'
     | '/$'
     | '/about-us'
+    | '/blocks-showcase'
+    | '/home'
     | '/pricing'
     | '/s'
     | '/support'
@@ -492,6 +514,8 @@ export interface FileRouteTypes {
     | '/_auth/magic-code'
     | '/_public/$'
     | '/_public/about-us'
+    | '/_public/blocks-showcase'
+    | '/_public/home'
     | '/_public/pricing'
     | '/_public/s'
     | '/_public/support'
@@ -628,6 +652,20 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PublicPricingRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/home': {
+      id: '/_public/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof PublicHomeRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/blocks-showcase': {
+      id: '/_public/blocks-showcase'
+      path: '/blocks-showcase'
+      fullPath: '/blocks-showcase'
+      preLoaderRoute: typeof PublicBlocksShowcaseRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_public/about-us': {
@@ -867,6 +905,8 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface PublicRouteRouteChildren {
   PublicSplatRoute: typeof PublicSplatRoute
   PublicAboutUsRoute: typeof PublicAboutUsRoute
+  PublicBlocksShowcaseRoute: typeof PublicBlocksShowcaseRoute
+  PublicHomeRoute: typeof PublicHomeRoute
   PublicPricingRoute: typeof PublicPricingRoute
   PublicSRoute: typeof PublicSRoute
   PublicSupportRoute: typeof PublicSupportRoute
@@ -879,6 +919,8 @@ interface PublicRouteRouteChildren {
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicSplatRoute: PublicSplatRoute,
   PublicAboutUsRoute: PublicAboutUsRoute,
+  PublicBlocksShowcaseRoute: PublicBlocksShowcaseRoute,
+  PublicHomeRoute: PublicHomeRoute,
   PublicPricingRoute: PublicPricingRoute,
   PublicSRoute: PublicSRoute,
   PublicSupportRoute: PublicSupportRoute,

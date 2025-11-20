@@ -2,6 +2,36 @@
 
 @import "tw-animate-css";
 
+/* Custom Swiper pagination styles */
+.tips-swiper .swiper-pagination {
+  position: static !important;
+  margin-top: 2rem;
+  margin-left: 1.5rem;
+  text-align: left;
+}
+
+@media (min-width: 1024px) {
+  .tips-swiper .swiper-pagination {
+    margin-left: 3rem;
+  }
+}
+
+.tips-swiper .swiper-pagination-bullet {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: rgb(229 231 235);
+  opacity: 1;
+  transition: background-color 0.2s ease;
+}
+
+.tips-swiper .swiper-pagination-bullet:hover {
+  background-color: rgb(209 213 219);
+}
+
+.tips-swiper .swiper-pagination-bullet-active {
+  background-color: var(--primary);
+}
+
 :root {
   --background: oklch(1.0000 0 0);
   --foreground: oklch(0.2225 0.0161 71.1564);
@@ -624,4 +654,17 @@
 
 .modal-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }

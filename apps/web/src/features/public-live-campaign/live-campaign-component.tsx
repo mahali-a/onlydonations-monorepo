@@ -1,9 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { ShaderGradientCanvas, ShaderGradient } from "@shadergradient/react";
 import { liveCampaignQueryOptions } from "./live-campaign-loaders";
 import { LiveProgressBar, LiveDonationsFeed, LiveQrCode } from "./ui";
+
+const ShaderGradientCanvas = lazy(() =>
+  import("@shadergradient/react").then((mod) => ({
+    default: mod.ShaderGradientCanvas,
+  }))
+);
+
+const ShaderGradient = lazy(() =>
+  import("@shadergradient/react").then((mod) => ({
+    default: mod.ShaderGradient,
+  }))
+);
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -35,21 +46,23 @@ export function LiveCampaignComponent() {
       {/* Shader Gradient Background */}
       <ClientOnly>
         <div className="absolute inset-0 z-0">
-          <ShaderGradientCanvas
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              pointerEvents: "none",
-            }}
-          >
-            <ShaderGradient
-              control="query"
-              urlString="https://www.shadergradient.co/customize?animate=on&axesHelper=off&bgColor1=%23000000&bgColor2=%23000000&brightness=1.2&cAzimuthAngle=180&cDistance=3.6&cPolarAngle=90&cameraZoom=1&color1=%23FF8C1A&color2=%23F9A54B&color3=%23E67E22&destination=onCanvas&embedMode=off&envPreset=city&format=gif&fov=50&frameRate=10&gizmoHelper=hide&grain=on&lightType=3d&pixelDensity=1&positionX=-1.4&positionY=0&positionZ=0&range=enabled&rangeEnd=40&rangeStart=0&reflection=0.1&rotationX=0&rotationY=10&rotationZ=50&shader=defaults&type=plane&uAmplitude=0&uDensity=1.1&uFrequency=5.5&uSpeed=0.1&uStrength=4&uTime=0&wireframe=off&zoomOut=false"
-            />
-          </ShaderGradientCanvas>
+          <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
+            <ShaderGradientCanvas
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                pointerEvents: "none",
+              }}
+            >
+              <ShaderGradient
+                control="query"
+                urlString="https://www.shadergradient.co/customize?animate=on&axesHelper=off&bgColor1=%23000000&bgColor2=%23000000&brightness=1.2&cAzimuthAngle=180&cDistance=3.6&cPolarAngle=90&cameraZoom=1&color1=%23FF8C1A&color2=%23F9A54B&color3=%23E67E22&destination=onCanvas&embedMode=off&envPreset=city&format=gif&fov=50&frameRate=10&gizmoHelper=hide&grain=on&lightType=3d&pixelDensity=1&positionX=-1.4&positionY=0&positionZ=0&range=enabled&rangeEnd=40&rangeStart=0&reflection=0.1&rotationX=0&rotationY=10&rotationZ=50&shader=defaults&type=plane&uAmplitude=0&uDensity=1.1&uFrequency=5.5&uSpeed=0.1&uStrength=4&uTime=0&wireframe=off&zoomOut=false"
+              />
+            </ShaderGradientCanvas>
+          </Suspense>
         </div>
       </ClientOnly>
 

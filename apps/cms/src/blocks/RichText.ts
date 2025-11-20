@@ -34,7 +34,7 @@ export const RichTextBlock: Block = {
         { label: "Medium (900px)", value: "medium" },
         { label: "Small (600px)", value: "small" },
       ],
-      defaultValue: "full",
+      defaultValue: "medium",
       label: "Max Width",
     },
     {

@@ -13,7 +13,7 @@ function RouteComponent() {
   return (
     <div className="light min-h-screen flex flex-col">
       <PublicNavbar settings={settings} />
-      <main className="flex-1 pt-16">
+      <main className="flex-1">
         <Outlet />
       </main>
       <Footer />

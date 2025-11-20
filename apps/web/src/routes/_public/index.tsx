@@ -1,25 +1,30 @@
+// @ts-nocheck - Payload type definitions are complex and may not match exactly
 import { createFileRoute } from "@tanstack/react-router";
+import { RenderBlocks } from "@/components/cms/render-blocks";
+import {
+  retrieveCmsBaseUrlFromServer,
+  retrievePageFromServerBySlug,
+} from "@/server/functions/cms";
+import type { Page } from "@repo/types/payload";
 
 export const Route = createFileRoute("/_public/")({
+  loader: async (): Promise<{ page: Page | null; cmsBaseUrl: string }> => {
+    const [page, cmsBaseUrl] = await Promise.all([
+      retrievePageFromServerBySlug({ data: { slug: "home" } }),
+      retrieveCmsBaseUrlFromServer(),
+    ]);
+
+    return { page: page as Page | null, cmsBaseUrl };
+  },
   component: HomePage,
 });
 
 function HomePage() {
-  const { settings } = Route.useRouteContext();
+  const { page, cmsBaseUrl } = Route.useLoaderData();
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto px-4 py-24">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">
-            {settings?.siteName || "OnlyDonations"}
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            {settings?.siteDescription ||
-              "We are building a reliable platform to help Africans donate to worthy causes"}
-          </p>
-        </div>
-      </div>
+      <RenderBlocks blocks={page?.blocks || []} cmsBaseUrl={cmsBaseUrl} />
     </div>
   );
 }

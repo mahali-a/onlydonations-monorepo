@@ -14,6 +14,10 @@ import {
   GalleryBlock,
   ContactFormBlock,
   AccordionBlock,
+  HeroOverlappingBlock,
+  HowItWorksBlock,
+  IconCardsBlock,
+  FundraiserExamplesBlock,
 } from "../blocks";
 
 export const Pages: CollectionConfig = {
@@ -55,6 +59,7 @@ export const Pages: CollectionConfig = {
       required: true,
       blocks: [
         HeroBlock,
+        HeroOverlappingBlock,
         DividerBlock,
         ThreeColumnCardBlock,
         CalculatorBlock,
@@ -68,6 +73,9 @@ export const Pages: CollectionConfig = {
         TwoColumnBlock,
         GalleryBlock,
         ContactFormBlock,
+        HowItWorksBlock,
+        IconCardsBlock,
+        FundraiserExamplesBlock,
       ],
     },
     {

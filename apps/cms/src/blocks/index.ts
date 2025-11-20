@@ -12,3 +12,7 @@ export { TwoColumnBlock } from "./TwoColumn";
 export { GalleryBlock } from "./Gallery";
 export { ContactFormBlock } from "./ContactForm";
 export { AccordionBlock } from "./Accordion";
+export { HeroOverlappingBlock } from "./HeroOverlapping";
+export { HowItWorksBlock } from "./HowItWorks";
+export { IconCardsBlock } from "./IconCards";
+export { FundraiserExamplesBlock } from "./FundraiserExamples";
