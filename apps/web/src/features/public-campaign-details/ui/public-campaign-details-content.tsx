@@ -143,8 +143,19 @@ export function CampaignDetailContent({
                     Your donation starts {organizer}'s journey to success by inspiring others to
                     help.
                   </p>
-                  <Button className="rounded-full bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90">
-                    Donate
+                  <Button
+                    className="rounded-full bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90"
+                    disabled={!isDonateEnabled}
+                    asChild
+                  >
+                    <Link
+                      to="/f/$slug/donate"
+                      params={{
+                        slug: campaign.slug,
+                      }}
+                    >
+                      Donate
+                    </Link>
                   </Button>
                 </div>
               )}
@@ -208,8 +219,16 @@ export function CampaignDetailContent({
                       <Button
                         className="w-full rounded-full bg-primary/20 hover:bg-primary/30 text-primary py-6 text-lg font-bold"
                         disabled={!isDonateEnabled}
+                        asChild
                       >
-                        Donate now
+                        <Link
+                          to="/f/$slug/donate"
+                          params={{
+                            slug: campaign.slug,
+                          }}
+                        >
+                          Donate now
+                        </Link>
                       </Button>
                     </div>
 

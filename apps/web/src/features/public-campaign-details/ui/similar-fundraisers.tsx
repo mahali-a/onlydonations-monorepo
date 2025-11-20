@@ -50,15 +50,7 @@ function SimilarFundraisersContent({
           </h2>
         </div>
 
-        <div className="mb-6 flex items-center justify-between">
-          <Button
-            variant="outline"
-            className="rounded-full border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
-          >
-            Nearby
-            <span className="ml-2">▼</span>
-          </Button>
-
+        <div className="mb-6 flex items-center justify-end">
           <div className="flex gap-2">
             <Button
               variant="outline"
