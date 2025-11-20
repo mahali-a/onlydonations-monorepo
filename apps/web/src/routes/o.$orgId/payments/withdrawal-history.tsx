@@ -13,7 +13,6 @@ const withdrawalHistoryQueryOptions = (orgId: string) =>
   });
 
 export const Route = createFileRoute("/o/$orgId/payments/withdrawal-history")({
-  component: WithdrawalHistory,
   loader: ({ context }) => {
     const orgId = context.organization?.id;
 
@@ -23,15 +22,14 @@ export const Route = createFileRoute("/o/$orgId/payments/withdrawal-history")({
 
     return context.queryClient.ensureQueryData(withdrawalHistoryQueryOptions(orgId));
   },
+  component: () => {
+    const { organization } = Route.useRouteContext();
+    const { data } = useSuspenseQuery(withdrawalHistoryQueryOptions(organization?.id ?? ""));
+
+    if (!organization) {
+      return null;
+    }
+
+    return <WithdrawalHistoryComponent withdrawals={data.withdrawals} />;
+  },
 });
-
-function WithdrawalHistory() {
-  const { organization } = Route.useRouteContext();
-  const { data } = useSuspenseQuery(withdrawalHistoryQueryOptions(organization?.id ?? ""));
-
-  if (!organization) {
-    return null;
-  }
-
-  return <WithdrawalHistoryComponent withdrawals={data.withdrawals} />;
-}

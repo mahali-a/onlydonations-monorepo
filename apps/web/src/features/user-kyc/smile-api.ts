@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { SmileTokenRequest, SmileTokenResponse } from "./kyc-types";
+import type { SmileTokenRequest, SmileTokenResponse } from "./user-kyc-types";
 import { logger } from "@/lib/logger";
 
 export async function generateSmileToken(

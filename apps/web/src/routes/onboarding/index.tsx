@@ -3,13 +3,13 @@ import { queryOptions } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import ms from "ms";
 import { z } from "zod";
-import { OnboardingLayout, OrganizationForm, PhoneForm, ProfileForm } from "@/features/onboarding";
+import { OnboardingLayout, OrganizationForm, PhoneForm, ProfileForm } from "@/features/auth-onboarding";
 import {
   retrieveOnboardingUserFromServer,
   createOrganizationOnServer,
   updateUserPhoneOnServer,
   updateUserProfileOnServer,
-} from "@/features/onboarding/server";
+} from "@/features/auth-onboarding/server";
 
 const onboardingSearchSchema = z.object({
   step: fallback(z.enum(["name", "phone", "organization"]), "name").default("name"),

@@ -3,4 +3,4 @@ export {
   publicCampaignsInfiniteQueryOptions,
   type SearchResult,
   type SearchResponse,
-} from "./search-loaders";
+} from "./public-search-loaders";

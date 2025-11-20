@@ -2,6 +2,8 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { DonateComponent } from "@/features/org-donations/public/donate/donate-component";
+import { DonateNotFound } from "@/features/org-donations/public/donate/donate-not-found";
+import { DonateError } from "@/features/org-donations/public/donate/donate-error";
 import { retrieveDonateDataFromServer } from "@/features/org-donations/public/donate/server";
 
 const donateQueryOptions = (slug: string) =>
@@ -25,55 +27,16 @@ export const Route = createFileRoute("/f/$slug/donate")({
       throw notFound();
     }
   },
+  component: () => {
+    const { slug } = Route.useParams();
+    const { data } = useSuspenseQuery(donateQueryOptions(slug));
 
-  component: DonateRoute,
+    if (!data) {
+      return <div>Campaign not found</div>;
+    }
 
-  notFoundComponent: () => {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Campaign Not Found</h1>
-          <p className="text-muted-foreground mb-6">
-            The campaign you're looking for doesn't exist or is no longer available.
-          </p>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Back to Home
-          </a>
-        </div>
-      </div>
-    );
+    return <DonateComponent data={data} />;
   },
-
-  errorComponent: () => {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Something went wrong</h1>
-          <p className="text-muted-foreground mb-6">
-            We encountered an error loading this donation form.
-          </p>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Back to Home
-          </a>
-        </div>
-      </div>
-    );
-  },
+  notFoundComponent: DonateNotFound,
+  errorComponent: DonateError,
 });
-
-function DonateRoute() {
-  const { slug } = Route.useParams();
-  const { data } = useSuspenseQuery(donateQueryOptions(slug));
-
-  if (!data) {
-    return <div>Campaign not found</div>;
-  }
-
-  return <DonateComponent data={data} />;
-}

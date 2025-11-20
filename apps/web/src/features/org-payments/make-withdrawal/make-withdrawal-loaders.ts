@@ -7,7 +7,7 @@ import {
   retrieveTotalRaisedFromDatabaseByOrganization,
   retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus,
   retrieveWithdrawalAccountsFromDatabaseByOrganization,
-} from "../payments-models";
+} from "../org-payments-models";
 import { promiseHash } from "@/utils/promise-hash";
 
 const makeWithdrawalLogger = logger.createChildLogger("make-withdrawal-loaders");

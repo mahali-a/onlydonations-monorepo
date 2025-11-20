@@ -1,2 +1,2 @@
-export * from "./security-schemas";
+export * from "./user-account-security-schemas";
 export * from "./ui/security-section";

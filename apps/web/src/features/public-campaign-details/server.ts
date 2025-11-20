@@ -4,4 +4,4 @@ export {
   similarCampaignsQueryOptions,
   retrieveDonationsWithMessagesFromServer,
   donationsWithMessagesQueryOptions,
-} from "./public-campaign-loaders";
+} from "./public-campaign-details-loaders";

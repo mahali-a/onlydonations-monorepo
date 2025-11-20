@@ -1,4 +1,4 @@
-import type { DonationStats } from "../donations-models";
+import type { DonationStats } from "../org-donations-models";
 import { Money } from "@/lib/money";
 
 type MetricItem = {

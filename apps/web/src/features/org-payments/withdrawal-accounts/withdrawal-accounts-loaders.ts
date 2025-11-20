@@ -3,7 +3,7 @@ import { z } from "zod";
 import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
 import { paystackService } from "@/lib/paystack";
-import { retrieveWithdrawalAccountsFromDatabaseByOrganization } from "../payments-models";
+import { retrieveWithdrawalAccountsFromDatabaseByOrganization } from "../org-payments-models";
 import { promiseHash } from "@/utils/promise-hash";
 
 const withdrawalAccountsLogger = logger.createChildLogger("withdrawal-accounts-loaders");

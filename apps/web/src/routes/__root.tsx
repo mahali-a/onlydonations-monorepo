@@ -1,8 +1,4 @@
-import type {
-  SelectMember,
-  SelectOrganization,
-  SelectUser,
-} from "@repo/core/database/types";
+import type { SelectMember, SelectOrganization, SelectUser } from "@repo/core/database/types";
 import type { Setting } from "@repo/types";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -34,16 +30,16 @@ type RouterContext = {
 };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  loader: async ({ context }) => {
-    return {
-      settings: context.settings,
-    };
-  },
   beforeLoad: async () => {
     const settings = await retrieveSettingsFromServer();
 
     return {
       settings,
+    };
+  },
+  loader: async ({ context }) => {
+    return {
+      settings: context.settings,
     };
   },
   head: ({ loaderData }) => ({

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { FundraiserCard } from "@/components/fundraiser-card";
-import type { SearchResult } from "../search-loaders";
+import type { SearchResult } from "../public-search-loaders";
 
 type SearchResultsProps = {
   campaigns: SearchResult[];

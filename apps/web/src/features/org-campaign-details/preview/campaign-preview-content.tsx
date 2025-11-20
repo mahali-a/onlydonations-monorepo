@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { Flag, TrendingUp, Heart, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import type { CampaignDetailData } from "../../public-campaign-details/types";
-import { formatCampaignForPublic } from "../../public-campaign-details/public-campaign-utils";
+import { formatCampaignForPublic } from "../../public-campaign-details/public-campaign-details-utils";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { DonationItem } from "../../public-campaign-details/ui/donation-item";
 import { TrustBanner } from "../../public-campaign-details/ui/trust-banner";

@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import type { SelectCategory } from "@repo/core/database/types";
-import type { SearchFilters } from "../search-schemas";
+import type { SearchFilters } from "../public-search-schemas";
 
 interface SearchFiltersDrawerProps {
   categories: SelectCategory[];

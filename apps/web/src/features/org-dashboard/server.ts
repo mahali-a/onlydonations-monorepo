@@ -1,1 +1,1 @@
-export { retrieveDashboardDataFromServer } from "./dashboard-loaders";
+export { retrieveDashboardDataFromServer } from "./org-dashboard-loaders";

@@ -3,7 +3,7 @@ import { useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { emailSchema } from "../account-schemas";
+import { emailSchema } from "../user-account-schemas";
 import { updateUserEmailOnServer } from "../server";
 
 type EmailFormProps = {

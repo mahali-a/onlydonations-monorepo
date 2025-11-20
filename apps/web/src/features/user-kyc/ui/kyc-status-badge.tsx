@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { KycStatus } from "../kyc-types";
+import type { KycStatus } from "../user-kyc-types";
 
 type KycStatusBadgeProps = {
   status: KycStatus;

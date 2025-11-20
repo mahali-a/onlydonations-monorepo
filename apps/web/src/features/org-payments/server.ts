@@ -1,4 +1,4 @@
 export {
   savePaymentTransactionToDatabase,
   updatePaymentTransactionStatusInDatabaseById,
-} from "./payments-models";
+} from "./org-payments-models";

@@ -4,7 +4,7 @@ import type {
   retrieveRecentDonationsByCampaign,
   retrieveSimilarCampaignsByCategory,
   retrieveDonationsWithMessagesByCampaign,
-} from "./public-campaign-models";
+} from "./public-campaign-details-models";
 
 export type PublicCampaign = NonNullable<Awaited<ReturnType<typeof retrievePublicCampaignBySlug>>>;
 

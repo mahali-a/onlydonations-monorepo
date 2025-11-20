@@ -3,4 +3,4 @@ export {
   retrieveLiveDonationsFromServer,
   liveCampaignQueryOptions,
   liveDonationsQueryOptions,
-} from "./live-campaign-loaders";
+} from "./public-live-campaign-loaders";

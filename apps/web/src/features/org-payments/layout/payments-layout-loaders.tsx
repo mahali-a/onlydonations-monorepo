@@ -6,7 +6,7 @@ import {
   retrieveTotalRaisedFromDatabaseByOrganization,
   retrieveTotalRaisedFromDatabaseByOrganizationAndPeriod,
   retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus,
-} from "../payments-models";
+} from "../org-payments-models";
 import { promiseHash } from "@/utils/promise-hash";
 
 export const retrievePaymentLayoutMetricsFromServer = createServerFn({ method: "GET" })

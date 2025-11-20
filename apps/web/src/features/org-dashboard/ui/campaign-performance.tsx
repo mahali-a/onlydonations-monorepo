@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatDonationAmount } from "@/features/org-dashboard/dashboard-utils";
-import type { CampaignPerformance as CampaignPerformanceType } from "@/features/org-dashboard/dashboard-models";
+import { formatForDashboard } from "@/lib/money";
+import type { CampaignPerformance as CampaignPerformanceType } from "@/features/org-dashboard/org-dashboard-models";
 
 type CampaignPerformanceProps = {
   campaigns: CampaignPerformanceType[];
@@ -47,8 +47,8 @@ export function CampaignPerformance({ campaigns }: CampaignPerformanceProps) {
 
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-muted-foreground">
-                      {formatDonationAmount(campaign.totalRaised, campaign.currency)} /{" "}
-                      {formatDonationAmount(campaign.goal, campaign.currency)}
+                      {formatForDashboard(campaign.totalRaised, campaign.currency)} /{" "}
+                      {formatForDashboard(campaign.goal, campaign.currency)}
                     </span>
                     <span className="font-semibold">{displayPercentage.toFixed(0)}%</span>
                   </div>

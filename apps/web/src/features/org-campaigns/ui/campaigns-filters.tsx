@@ -3,8 +3,12 @@ import { Search, X } from "lucide-react";
 import type { SelectCategory } from "@repo/core/database/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { CampaignFilters } from "../campaigns-schemas";
-import { CampaignsFiltersDrawer } from "./campaigns-filters-drawer";
+import type { CampaignFilters } from "../org-campaigns-schemas";
+import { lazy, Suspense } from "react";
+
+const CampaignsFiltersDrawer = lazy(() =>
+  import("./campaigns-filters-drawer").then((m) => ({ default: m.CampaignsFiltersDrawer })),
+);
 
 type CampaignFiltersProps = {
   filters: CampaignFilters;
@@ -73,7 +77,9 @@ export function CampaignFiltersComponent({
       </form>
 
       <div className="flex-shrink-0">
-        <CampaignsFiltersDrawer categories={categories} />
+        <Suspense fallback={<div className="w-10 h-10" />}>
+          <CampaignsFiltersDrawer categories={categories} />
+        </Suspense>
       </div>
     </div>
   );

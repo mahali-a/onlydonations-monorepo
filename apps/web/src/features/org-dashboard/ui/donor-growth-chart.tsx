@@ -1,17 +1,13 @@
 "use client";
 
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
-import { calculatePercentageChange, formatChartDate } from "@/features/org-dashboard/dashboard-utils";
-import type { ChartDataPoint } from "@/features/org-dashboard/dashboard-models";
+import { calculatePercentageChange, formatChartDate } from "@/lib/utils/dashboard-utils";
+import type { ChartDataPoint } from "@/features/org-dashboard/org-dashboard-models";
+
+const DonorGrowthChartImpl = lazy(() =>
+  import("./donor-growth-chart-impl").then((m) => ({ default: m.DonorGrowthChartImpl })),
+);
 
 type DonorGrowthChartProps = {
   data: ChartDataPoint[];
@@ -65,36 +61,15 @@ export function DonorGrowthChart({ data }: DonorGrowthChartProps) {
           </div>
         </div>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="colorDonors" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
-            <XAxis dataKey="date" stroke="#6b7280" style={{ fontSize: "0.75rem" }} />
-            <YAxis stroke="#6b7280" style={{ fontSize: "0.75rem" }} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "0.5rem",
-              }}
-              formatter={(value: number) => [value, "Donors"]}
-              labelFormatter={(label) => `Date: ${label}`}
-            />
-            <Area
-              type="monotone"
-              dataKey="donors"
-              stroke="#10b981"
-              fillOpacity={1}
-              fill="url(#colorDonors)"
-              name="Donors"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        <Suspense
+          fallback={
+            <div className="w-full h-[300px] bg-muted animate-pulse rounded-lg flex items-center justify-center">
+              <span className="text-sm text-muted-foreground">Loading chart...</span>
+            </div>
+          }
+        >
+          <DonorGrowthChartImpl chartData={chartData} />
+        </Suspense>
       </div>
     </Card>
   );

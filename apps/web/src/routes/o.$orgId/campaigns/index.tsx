@@ -14,7 +14,6 @@ const campaignsQueryOptions = (orgId: string, filters: CampaignFilters) =>
   });
 
 export const Route = createFileRoute("/o/$orgId/campaigns/")({
-  component: CampaignsList,
   validateSearch: zodValidator(campaignFiltersSchema),
   loaderDeps: ({ search }) => search,
   loader: ({ deps, context }) => {
@@ -27,25 +26,24 @@ export const Route = createFileRoute("/o/$orgId/campaigns/")({
     const filters = campaignFiltersSchema.parse(deps ?? {});
     return context.queryClient.ensureQueryData(campaignsQueryOptions(orgId, filters));
   },
+  component: () => {
+    const { organization } = Route.useRouteContext();
+    const search = Route.useSearch();
+
+    if (!organization) {
+      throw new Error("Organization context is required");
+    }
+
+    const filters = campaignFiltersSchema.parse(search ?? {});
+    const { data } = useSuspenseQuery(campaignsQueryOptions(organization.id, filters));
+
+    return (
+      <CampaignsComponent
+        campaigns={data.campaigns}
+        categories={data.categories}
+        filters={data.filters}
+        pagination={data.pagination}
+      />
+    );
+  },
 });
-
-function CampaignsList() {
-  const { organization } = Route.useRouteContext();
-  const search = Route.useSearch();
-
-  if (!organization) {
-    throw new Error("Organization context is required");
-  }
-
-  const filters = campaignFiltersSchema.parse(search ?? {});
-  const { data } = useSuspenseQuery(campaignsQueryOptions(organization.id, filters));
-
-  return (
-    <CampaignsComponent
-      campaigns={data.campaigns}
-      categories={data.categories}
-      filters={data.filters}
-      pagination={data.pagination}
-    />
-  );
-}

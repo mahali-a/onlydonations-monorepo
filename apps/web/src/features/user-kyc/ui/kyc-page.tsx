@@ -1,12 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { KycStatusBadge } from "./kyc-status-badge";
 import { KycVerificationWidget } from "./kyc-verification-widget";
-import type { KycStatus } from "../kyc-types";
+import type { KycStatus } from "../user-kyc-types";
 import {
   kycStatusQueryOptions,
   smileConfigQueryOptions,
   verificationJobsQueryOptions,
-} from "../kyc-loaders";
+} from "../user-kyc-loaders";
 
 export function KycPage() {
   const { data: kycStatus } = useSuspenseQuery(kycStatusQueryOptions);

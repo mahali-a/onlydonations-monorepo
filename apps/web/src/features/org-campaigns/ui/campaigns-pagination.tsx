@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { CampaignFilters } from "../campaigns-schemas";
+import type { CampaignFilters } from "../org-campaigns-schemas";
 
 type Pagination = {
   page: number;

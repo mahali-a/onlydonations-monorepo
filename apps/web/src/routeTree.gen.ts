@@ -152,7 +152,9 @@ const OOrgIdIndexRoute = OOrgIdIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => OOrgIdRouteRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/o.$orgId/index.lazy').then((d) => d.Route),
+)
 const PublicDiscoverIndexRoute = PublicDiscoverIndexRouteImport.update({
   id: '/discover/',
   path: '/discover/',
@@ -167,7 +169,9 @@ const OOrgIdFinanceRoute = OOrgIdFinanceRouteImport.update({
   id: '/finance',
   path: '/finance',
   getParentRoute: () => OOrgIdRouteRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/o.$orgId/finance.lazy').then((d) => d.Route),
+)
 const OOrgIdDonationsRoute = OOrgIdDonationsRouteImport.update({
   id: '/donations',
   path: '/donations',
@@ -273,7 +277,11 @@ const OOrgIdCampaignsCampaignIdIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => OOrgIdCampaignsCampaignIdRoute,
-  } as any)
+  } as any).lazy(() =>
+    import('./routes/o.$orgId/campaigns.$campaignId/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 const OOrgIdCampaignsCampaignIdSharingRoute =
   OOrgIdCampaignsCampaignIdSharingRouteImport.update({
     id: '/sharing',
@@ -285,7 +293,11 @@ const OOrgIdCampaignsCampaignIdSettingsRoute =
     id: '/settings',
     path: '/settings',
     getParentRoute: () => OOrgIdCampaignsCampaignIdRoute,
-  } as any)
+  } as any).lazy(() =>
+    import('./routes/o.$orgId/campaigns.$campaignId/settings.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 
 export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRouteRouteWithChildren

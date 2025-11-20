@@ -13,7 +13,6 @@ const makeWithdrawalQueryOptions = (orgId: string) =>
   });
 
 export const Route = createFileRoute("/o/$orgId/payments/")({
-  component: MakeWithdrawal,
   loader: ({ context }) => {
     const orgId = context.organization?.id;
 
@@ -23,21 +22,20 @@ export const Route = createFileRoute("/o/$orgId/payments/")({
 
     return context.queryClient.ensureQueryData(makeWithdrawalQueryOptions(orgId));
   },
+  component: () => {
+    const { organization } = Route.useRouteContext();
+    const { data } = useSuspenseQuery(makeWithdrawalQueryOptions(organization?.id ?? ""));
+
+    if (!organization) {
+      return null;
+    }
+
+    return (
+      <MakeWithdrawalComponent
+        withdrawalAccounts={data.withdrawalAccounts}
+        availableBalance={data.availableBalance}
+        currency={data.currency}
+      />
+    );
+  },
 });
-
-function MakeWithdrawal() {
-  const { organization } = Route.useRouteContext();
-  const { data } = useSuspenseQuery(makeWithdrawalQueryOptions(organization?.id ?? ""));
-
-  if (!organization) {
-    return null;
-  }
-
-  return (
-    <MakeWithdrawalComponent
-      withdrawalAccounts={data.withdrawalAccounts}
-      availableBalance={data.availableBalance}
-      currency={data.currency}
-    />
-  );
-}

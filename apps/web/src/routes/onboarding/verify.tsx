@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { OnboardingLayout, VerifyForm } from "@/features/onboarding";
-import { createDefaultOrganizationOnServer } from "@/features/onboarding/server";
+import { OnboardingLayout, VerifyForm } from "@/features/auth-onboarding";
+import { createDefaultOrganizationOnServer } from "@/features/auth-onboarding/server";
 import { authClient } from "@/lib/auth-client";
 
 const verifySearchSchema = z.object({

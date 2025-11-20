@@ -3,11 +3,11 @@ export {
   retrieveCampaignDetailFromServer,
   retrieveCampaignPreviewFromServer,
   campaignDetailQueryOptions,
-} from "./campaigns-loaders";
+} from "./org-campaigns-loaders";
 
 export {
   createCampaignOnServer,
   deleteCampaignOnServer,
   updateCampaignStatusOnServer,
   publishCampaignOnServer,
-} from "./campaigns-actions";
+} from "./org-campaigns-actions";

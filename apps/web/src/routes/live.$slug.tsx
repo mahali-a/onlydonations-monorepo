@@ -6,9 +6,5 @@ export const Route = createFileRoute("/live/$slug")({
   loader: async ({ params, context }) => {
     await context.queryClient.ensureQueryData(liveCampaignQueryOptions(params.slug));
   },
-  component: LiveCampaignPage,
+  component: LiveCampaignComponent,
 });
-
-function LiveCampaignPage() {
-  return <LiveCampaignComponent />;
-}

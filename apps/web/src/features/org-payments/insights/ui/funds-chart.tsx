@@ -1,8 +1,12 @@
 import { TrendingUp } from "lucide-react";
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { lazy, Suspense } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatMetricValue } from "@/lib/utils/dashboard-utils";
+
+const FundsChartImpl = lazy(() =>
+  import("./funds-chart-impl").then((m) => ({ default: m.FundsChartImpl })),
+);
 
 type ChartData = Array<{ date: string; amount: number; count: number }>;
 
@@ -48,43 +52,15 @@ export function FundsChart({ data, currency }: FundsChartProps) {
         <CardTitle>Funds Raised Over Time</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={formattedData}
-              margin={{
-                left: 12,
-                right: 12,
-                top: 12,
-                bottom: 12,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="formattedDate" axisLine={false} tickLine={false} fontSize={12} />
-              <Tooltip
-                formatter={(value: number) => [
-                  formatMetricValue(Number(value) * 100, "currency", currency),
-                  "Amount Raised",
-                ]}
-                labelStyle={{ color: "#374151" }}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="displayAmount"
-                stroke="#f97316"
-                fill="#f97316"
-                fillOpacity={0.4}
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+        <Suspense
+          fallback={
+            <div className="h-48 bg-muted animate-pulse rounded-lg flex items-center justify-center">
+              <span className="text-sm text-muted-foreground">Loading chart...</span>
+            </div>
+          }
+        >
+          <FundsChartImpl formattedData={formattedData} currency={currency} />
+        </Suspense>
       </CardContent>
       <CardFooter>
         {hasData ? (

@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { Flag, TrendingUp, Heart, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import type { CampaignDetailData } from "../types";
-import { formatCampaignForPublic } from "../public-campaign-utils";
+import { formatCampaignForPublic } from "../public-campaign-details-utils";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { SimilarFundraisers } from "./similar-fundraisers";
 import { DonationItem } from "./donation-item";
@@ -39,8 +39,12 @@ function handleShare() {
   }
 }
 
-import { DonationsModal } from "./donations-modal";
+import { lazy, Suspense } from "react";
 import { Link } from "@tanstack/react-router";
+
+const DonationsModal = lazy(() =>
+  import("./donations-modal").then((m) => ({ default: m.DonationsModal })),
+);
 
 export function CampaignDetailContent({
   data,
@@ -287,17 +291,21 @@ export function CampaignDetailContent({
 
         <SimilarFundraisers categoryId={campaign.category.id} excludeCampaignId={campaign.id} />
 
-        <DonationsModal
-          isOpen={isDonationsModalOpen}
-          onClose={() => setIsDonationsModalOpen(false)}
-          campaignId={campaign.id}
-          totalDonations={campaign.donationCount}
-          onDonate={() => {
-            // Handle donate click - maybe scroll to top or open donate modal if separate
-            setIsDonationsModalOpen(false);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-        />
+        {isDonationsModalOpen && (
+          <Suspense fallback={null}>
+            <DonationsModal
+              isOpen={isDonationsModalOpen}
+              onClose={() => setIsDonationsModalOpen(false)}
+              campaignId={campaign.id}
+              totalDonations={campaign.donationCount}
+              onDonate={() => {
+                // Handle donate click - maybe scroll to top or open donate modal if separate
+                setIsDonationsModalOpen(false);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            />
+          </Suspense>
+        )}
       </div>
     </>
   );

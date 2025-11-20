@@ -1,9 +1,7 @@
 import { Card } from "@/components/ui/card";
-import {
-  formatDashboardDate,
-  formatDonationAmount,
-} from "@/features/org-dashboard/dashboard-utils";
-import type { RecentDonation } from "@/features/org-dashboard/dashboard-models";
+import { formatForDashboard } from "@/lib/money";
+import { formatDashboardDate } from "@/lib/utils/dashboard-utils";
+import type { RecentDonation } from "@/features/org-dashboard/org-dashboard-models";
 
 type RecentActivityProps = {
   donations: RecentDonation[];
@@ -37,7 +35,7 @@ export function RecentActivity({ donations }: RecentActivityProps) {
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-sm">
-                    {formatDonationAmount(donation.amount, donation.currency)}
+                    {formatForDashboard(donation.amount, donation.currency)}
                   </p>
                 </div>
               </div>

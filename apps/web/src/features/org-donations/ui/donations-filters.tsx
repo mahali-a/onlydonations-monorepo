@@ -2,8 +2,12 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { DonationFilters } from "../donations-schemas";
-import { DonationsFiltersDrawer } from "./donations-filters-drawer";
+import type { DonationFilters } from "../org-donations-schemas";
+import { lazy, Suspense } from "react";
+
+const DonationsFiltersDrawer = lazy(() =>
+  import("./donations-filters-drawer").then((m) => ({ default: m.DonationsFiltersDrawer })),
+);
 
 type SearchParams = Partial<DonationFilters>;
 
@@ -66,7 +70,9 @@ export function DonationsFilters() {
       </form>
 
       <div className="flex-shrink-0">
-        <DonationsFiltersDrawer />
+        <Suspense fallback={<div className="w-10 h-10" />}>
+          <DonationsFiltersDrawer />
+        </Suspense>
       </div>
     </div>
   );

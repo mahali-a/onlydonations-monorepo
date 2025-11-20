@@ -4,7 +4,7 @@ import {
   kycStatusQueryOptions,
   smileConfigQueryOptions,
   verificationJobsQueryOptions,
-} from "@/features/user-kyc/kyc-loaders";
+} from "@/features/user-kyc/user-kyc-loaders";
 import { KycPage } from "@/features/user-kyc/ui/kyc-page";
 
 export const Route = createFileRoute("/o/$orgId/account/kyc")({

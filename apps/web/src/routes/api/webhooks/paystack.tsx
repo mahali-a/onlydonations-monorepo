@@ -11,7 +11,7 @@ import {
   retrieveWebhookEventFromDatabaseByProcessorEventId,
   saveWebhookEventToDatabase,
   updateWebhookEventStatusInDatabaseById,
-} from "@/features/webhooks/server";
+} from "@/features/api-webhooks/server";
 import { updatePaymentTransactionStatusInDatabaseById } from "@/features/org-payments/server";
 
 const webhookLogger = logger.createChildLogger("paystack-webhook");

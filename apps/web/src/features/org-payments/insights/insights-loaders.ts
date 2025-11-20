@@ -4,7 +4,7 @@ import {
   retrieveDailyDonationAggregateFromDatabaseByOrganization,
   retrieveCampaignDonationStatsFromDatabaseByOrganization,
   retrieveTotalCampaignCountFromDatabaseByOrganization,
-} from "../payments-models";
+} from "../org-payments-models";
 import { promiseHash } from "@/utils/promise-hash";
 
 export async function retrieveFinancialInsightsFromServer(

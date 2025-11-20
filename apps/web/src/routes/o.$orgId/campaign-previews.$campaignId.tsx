@@ -32,13 +32,12 @@ export const Route = createFileRoute("/o/$orgId/campaign-previews/$campaignId")(
         throw notFound();
       }
 
+      // Prefetch related data (non-blocking)
       context.queryClient.ensureQueryData(
         similarCampaignsQueryOptions(data.campaign.category.id, data.campaign.id),
       );
 
-      context.queryClient.ensureQueryData(
-        donationsWithMessagesQueryOptions(data.campaign.id),
-      );
+      context.queryClient.ensureQueryData(donationsWithMessagesQueryOptions(data.campaign.id));
     } catch (error) {
       if (error instanceof Error && error.message.includes("not found")) {
         throw notFound();

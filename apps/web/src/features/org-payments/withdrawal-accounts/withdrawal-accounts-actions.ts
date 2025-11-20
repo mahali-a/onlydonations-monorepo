@@ -8,7 +8,7 @@ import {
   saveWithdrawalAccountToDatabase,
   retrieveWithdrawalAccountFromDatabaseById,
   deleteWithdrawalAccountInDatabase,
-} from "../payments-models";
+} from "../org-payments-models";
 
 const withdrawalAccountsLogger = logger.createChildLogger("withdrawal-accounts-actions");
 

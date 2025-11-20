@@ -13,7 +13,6 @@ const withdrawalAccountsQueryOptions = (orgId: string) =>
   });
 
 export const Route = createFileRoute("/o/$orgId/payments/withdrawal-accounts")({
-  component: WithdrawalAccounts,
   loader: ({ context }) => {
     const orgId = context.organization?.id;
 
@@ -23,22 +22,21 @@ export const Route = createFileRoute("/o/$orgId/payments/withdrawal-accounts")({
 
     return context.queryClient.ensureQueryData(withdrawalAccountsQueryOptions(orgId));
   },
+  component: () => {
+    const { organization } = Route.useRouteContext();
+
+    if (!organization) {
+      throw new Error("Organization context is required");
+    }
+
+    const { data } = useSuspenseQuery(withdrawalAccountsQueryOptions(organization.id));
+
+    return (
+      <WithdrawalAccountsComponent
+        withdrawalAccounts={data.withdrawalAccounts}
+        mobileMoneyBanks={data.mobileMoneyBanks}
+        ghipssBanks={data.ghipssBanks}
+      />
+    );
+  },
 });
-
-function WithdrawalAccounts() {
-  const { organization } = Route.useRouteContext();
-
-  if (!organization) {
-    throw new Error("Organization context is required");
-  }
-
-  const { data } = useSuspenseQuery(withdrawalAccountsQueryOptions(organization.id));
-
-  return (
-    <WithdrawalAccountsComponent
-      withdrawalAccounts={data.withdrawalAccounts}
-      mobileMoneyBanks={data.mobileMoneyBanks}
-      ghipssBanks={data.ghipssBanks}
-    />
-  );
-}

@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { avatarSchema } from "../account-schemas";
+import { avatarSchema } from "../user-account-schemas";
 import { updateUserAvatarOnServer } from "../server";
 
 type AvatarFormProps = {

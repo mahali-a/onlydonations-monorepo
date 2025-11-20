@@ -10,7 +10,7 @@ import {
   savePaymentTransactionToDatabase,
   updatePaymentTransactionInDatabase,
   retrieveWithdrawalAccountFromDatabaseById,
-} from "../payments-models";
+} from "../org-payments-models";
 import { requestWithdrawalSchema } from "./make-withdrawal-schemas";
 import { promiseHash } from "@/utils/promise-hash";
 

@@ -1,7 +1,7 @@
 import type {
   retrieveLiveCampaignBySlug,
   retrieveRecentLiveDonations,
-} from "./live-campaign-models";
+} from "./public-live-campaign-models";
 
 export type LiveCampaign = NonNullable<Awaited<ReturnType<typeof retrieveLiveCampaignBySlug>>>;
 

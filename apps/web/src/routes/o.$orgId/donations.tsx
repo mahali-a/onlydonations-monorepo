@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { zodValidator } from "@tanstack/zod-adapter";
-import { DonationsComponent } from "@/features/org-donations/donations-component";
+import { DonationsComponent } from "@/features/org-donations/org-donations-component";
+import { DonationsError } from "@/features/org-donations/org-donations-error";
 import {
   retrieveDonationsFromServer,
   retrieveDonationStatsFromServer,
 } from "@/features/org-donations/server";
-import { donationFiltersSchema } from "@/features/org-donations/donations-schemas";
-import type { DonationFilters } from "@/features/org-donations/donations-schemas";
+import { donationFiltersSchema } from "@/features/org-donations/org-donations-schemas";
+import type { DonationFilters } from "@/features/org-donations/org-donations-schemas";
 
 export const donationsQueryOptions = (orgId: string, filters?: Partial<DonationFilters>) =>
   queryOptions({
@@ -26,26 +27,24 @@ export const donationStatsQueryOptions = (orgId: string) =>
 
 export const Route = createFileRoute("/o/$orgId/donations")({
   validateSearch: zodValidator(donationFiltersSchema),
-  beforeLoad: ({ context, params }) => {
+  loader: ({ context, params }) => {
     context.queryClient.ensureQueryData(donationsQueryOptions(params.orgId));
     context.queryClient.ensureQueryData(donationStatsQueryOptions(params.orgId));
   },
-  component: DonationsPage,
-  errorComponent: () => <div>Error loading donations</div>,
+  component: () => {
+    const { orgId } = Route.useParams();
+    const search = Route.useSearch();
+
+    const donationsQuery = useSuspenseQuery(donationsQueryOptions(orgId, search));
+    const statsQuery = useSuspenseQuery(donationStatsQueryOptions(orgId));
+
+    return (
+      <DonationsComponent
+        donations={donationsQuery.data.donations}
+        stats={statsQuery.data}
+        pagination={donationsQuery.data.pagination}
+      />
+    );
+  },
+  errorComponent: DonationsError,
 });
-
-function DonationsPage() {
-  const { orgId } = Route.useParams();
-  const search = Route.useSearch();
-
-  const donationsQuery = useSuspenseQuery(donationsQueryOptions(orgId, search));
-  const statsQuery = useSuspenseQuery(donationStatsQueryOptions(orgId));
-
-  return (
-    <DonationsComponent
-      donations={donationsQuery.data.donations}
-      stats={statsQuery.data}
-      pagination={donationsQuery.data.pagination}
-    />
-  );
-}

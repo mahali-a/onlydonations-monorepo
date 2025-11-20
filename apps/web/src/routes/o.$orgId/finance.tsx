@@ -1,10 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { queryOptions } from "@tanstack/react-query";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import ms from "ms";
 import { z } from "zod";
 import { retrieveFinancialInsightsFromServer } from "@/features/org-payments/insights/server";
-import { CampaignTable, FinancialMetrics, FundsChart } from "@/features/org-payments/insights/ui";
 
 const financeSearchSchema = z.object({
   page: fallback(z.number().int().positive(), 1).default(1),
@@ -20,7 +19,6 @@ const financialInsightsQueryOptions = (orgId: string, page: number, limit: numbe
   });
 
 export const Route = createFileRoute("/o/$orgId/finance")({
-  component: FinancialInsights,
   validateSearch: zodValidator(financeSearchSchema),
   loaderDeps: ({ search }) => ({
     page: search.page,
@@ -38,51 +36,3 @@ export const Route = createFileRoute("/o/$orgId/finance")({
     );
   },
 });
-
-function FinancialInsights() {
-  const { organization } = Route.useRouteContext();
-  const { page, limit } = Route.useSearch();
-  const navigate = useNavigate();
-
-  if (!organization) {
-    throw new Error("Organization context is required");
-  }
-
-  const { data } = useSuspenseQuery(financialInsightsQueryOptions(organization.id, page, limit));
-  const { metrics, chartData, campaigns, currency, pagination } = data;
-
-  const handlePageChange = (newPage: number) => {
-    navigate({ search: { page: newPage, limit } as any });
-  };
-
-  return (
-    <div className="container mx-auto px-4 lg:px-8 pt-6 w-full space-y-6 bg-background pb-8 overflow-x-auto">
-      <div className="w-full flex flex-col md:flex-row items-start md:items-center gap-4 md:justify-between">
-        <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight">Financial Insights</h1>
-          <p className="text-muted-foreground">
-            Track {organization.name}'s fundraising performance and campaign financial analytics
-          </p>
-        </div>
-      </div>
-
-      <FinancialMetrics metrics={metrics} />
-
-      <FundsChart data={chartData} currency={currency} />
-
-      <div className="space-y-4">
-        <div className="space-y-1">
-          <h2 className="text-xl font-semibold">Campaign Financial Performance</h2>
-          <p className="text-sm text-muted-foreground">
-            Detailed breakdown of earnings and fees by campaign
-          </p>
-        </div>
-        <CampaignTable
-          campaigns={campaigns}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-        />
-      </div>
-    </div>
-  );
-}

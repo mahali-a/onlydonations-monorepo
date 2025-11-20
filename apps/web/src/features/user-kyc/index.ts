@@ -1,3 +1,3 @@
-export * from "./kyc-actions";
-export * from "./kyc-loaders";
-export * from "./kyc-types";
+export * from "./user-kyc-actions";
+export * from "./user-kyc-loaders";
+export * from "./user-kyc-types";

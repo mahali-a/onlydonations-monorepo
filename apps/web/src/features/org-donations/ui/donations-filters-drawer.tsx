@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { DonationFilters } from "../donations-schemas";
+import type { DonationFilters } from "../org-donations-schemas";
 
 const DONATION_STATUSES = [
   { value: "all", label: "All Statuses" },

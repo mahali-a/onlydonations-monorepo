@@ -1,0 +1,51 @@
+import { useDashboardMetrics } from "./hooks/use-dashboard-metrics";
+import {
+  WelcomeHeader,
+  MetricsGrid,
+  RecentActivity,
+  CampaignPerformance,
+  ChartsWrapper,
+} from "./ui";
+import type {
+  DashboardStats,
+  RecentDonation,
+  CampaignPerformance as CampaignPerformanceType,
+  ChartDataPoint,
+} from "./org-dashboard-models";
+
+type DashboardProps = {
+  user?: { name: string | null } | null;
+  allTimeStats: DashboardStats | null;
+  currentMonthTotal: number;
+  previousMonthTotal: number;
+  recentDonations: RecentDonation[];
+  topCampaigns: CampaignPerformanceType[];
+  chartData: ChartDataPoint[];
+};
+
+export function Dashboard({
+  user,
+  allTimeStats,
+  currentMonthTotal,
+  previousMonthTotal,
+  recentDonations,
+  topCampaigns,
+  chartData,
+}: DashboardProps) {
+  const metrics = useDashboardMetrics(allTimeStats, currentMonthTotal, previousMonthTotal);
+
+  return (
+    <div className="container mx-auto px-4 lg:px-8 pt-6 w-full space-y-6 bg-background pb-8 overflow-x-auto">
+      <WelcomeHeader userName={user?.name} />
+
+      <MetricsGrid metrics={metrics} />
+
+      <ChartsWrapper chartData={chartData} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentActivity donations={recentDonations} />
+        <CampaignPerformance campaigns={topCampaigns} />
+      </div>
+    </div>
+  );
+}

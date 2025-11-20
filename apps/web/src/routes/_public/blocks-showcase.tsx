@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RenderBlocks } from "@/components/cms/render-blocks";
-import { DEMO_BLOCKS } from "@/features/demo/data/blocks";
+import { DEMO_BLOCKS } from "@/features/public-demo/data/blocks";
 
 export const Route = createFileRoute("/_public/blocks-showcase")({
     component: BlocksShowcasePage,

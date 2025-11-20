@@ -1,9 +1,13 @@
 import { TrendingUp } from "lucide-react";
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { formatMetricValue } from "@/lib/utils/dashboard-utils";
-import type { ChartDataPoint } from "@/features/org-dashboard/dashboard-models";
+import type { ChartDataPoint } from "@/features/org-dashboard/org-dashboard-models";
+
+const FundsRaisedChartImpl = lazy(() =>
+  import("./funds-raised-chart-impl").then((m) => ({ default: m.FundsRaisedChartImpl })),
+);
 
 type FundsRaisedChartProps = {
   data: ChartDataPoint[];
@@ -47,41 +51,15 @@ export function FundsRaisedChart({ data }: FundsRaisedChartProps) {
           <h2 className="text-lg font-semibold">Funds Raised Over Time</h2>
         </div>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart
-            data={formattedData}
-            margin={{
-              left: 12,
-              right: 12,
-              top: 12,
-              bottom: 12,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="formattedDate" axisLine={false} tickLine={false} fontSize={12} />
-            <Tooltip
-              formatter={(value: number) => [
-                formatMetricValue(Number(value), "currency", "GHS"),
-                "Amount Raised",
-              ]}
-              labelStyle={{ color: "#374151" }}
-              contentStyle={{
-                backgroundColor: "white",
-                border: "1px solid #e5e7eb",
-                borderRadius: "8px",
-                fontSize: "12px",
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey="displayAmount"
-              stroke="#f97316"
-              fill="#f97316"
-              fillOpacity={0.4}
-              strokeWidth={2}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        <Suspense
+          fallback={
+            <div className="w-full h-[300px] bg-muted animate-pulse rounded-lg flex items-center justify-center">
+              <span className="text-sm text-muted-foreground">Loading chart...</span>
+            </div>
+          }
+        >
+          <FundsRaisedChartImpl formattedData={formattedData} />
+        </Suspense>
 
         {hasData ? (
           <div className="flex w-full items-start gap-2 text-sm">

@@ -1,8 +1,8 @@
 import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
-import type { SmileWebhookPayload } from "@/features/user-kyc/kyc-types";
-import { kycModel } from "@/features/user-kyc/kyc-models";
+import type { SmileWebhookPayload } from "@/features/user-kyc/user-kyc-types";
+import { kycModel } from "@/features/user-kyc/user-kyc-models";
 import { verifyWebhookSignature } from "@/features/user-kyc/smile-api";
 import { logger } from "@/lib/logger";
 

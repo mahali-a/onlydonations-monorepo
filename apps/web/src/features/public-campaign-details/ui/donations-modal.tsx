@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { Suspense, useEffect, useRef } from "react";
-import { donationsInfiniteQueryOptions } from "../public-campaign-loaders";
+import { donationsInfiniteQueryOptions } from "../public-campaign-details-loaders";
 import { DonationItem } from "./donation-item";
 
 type DonationsModalProps = {

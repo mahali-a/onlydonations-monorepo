@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import type { CampaignFilters } from "../campaigns-schemas";
+import type { CampaignFilters } from "../org-campaigns-schemas";
 
 type CampaignsFiltersDrawerProps = {
   categories: SelectCategory[];

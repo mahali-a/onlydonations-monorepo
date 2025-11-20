@@ -34,7 +34,7 @@ type CampaignTableProps = {
 };
 
 export function CampaignTable({ campaigns, pagination, onPageChange }: CampaignTableProps) {
-  const { orgId } = useParams({ from: "/o/$orgId/finance" });
+  const { orgId } = useParams({ from: "/o/$orgId" });
   const columns: ColumnDef<Campaign>[] = [
     {
       accessorKey: "title",

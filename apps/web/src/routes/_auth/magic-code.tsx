@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { MagicCodeComponent } from "@/features/login/magic-code-component";
+import { MagicCodeComponent } from "@/features/auth-login";
 
 const magicCodeSearchSchema = z.object({
   email: z.string(),
@@ -10,11 +10,8 @@ const magicCodeSearchSchema = z.object({
 
 export const Route = createFileRoute("/_auth/magic-code")({
   validateSearch: zodValidator(magicCodeSearchSchema),
-  component: MagicCodePage,
+  component: () => {
+    const { email, next } = Route.useSearch();
+    return <MagicCodeComponent email={email} next={next} />;
+  },
 });
-
-function MagicCodePage() {
-  const { email, next } = Route.useSearch();
-
-  return <MagicCodeComponent email={email} next={next} />;
-}
