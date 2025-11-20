@@ -13,10 +13,7 @@ type SimilarFundraisersProps = {
   excludeCampaignId: string;
 };
 
-function SimilarFundraisersContent({
-  categoryId,
-  excludeCampaignId,
-}: SimilarFundraisersProps) {
+function SimilarFundraisersContent({ categoryId, excludeCampaignId }: SimilarFundraisersProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: campaigns } = useSuspenseQuery(
@@ -41,12 +38,11 @@ function SimilarFundraisersContent({
   }
 
   return (
-    <div className="bg-secondary-foreground py-16 text-white">
+    <div className="bg-foreground py-16 text-white">
       <div className="mx-auto max-w-[1152px] px-4 sm:px-4">
         <div className="mb-8">
           <h2 className="max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">
-            More ways to make a difference. Find fundraisers inspired by what
-            you care about.
+            More ways to make a difference. Find fundraisers inspired by what you care about.
           </h2>
         </div>
 
@@ -87,7 +83,7 @@ function SimilarFundraisersContent({
 
 function SimilarFundraisersLoading() {
   return (
-    <div className="bg-[#024126] py-16 text-white">
+    <div className="bg-foreground py-16 text-white">
       <div className="mx-auto max-w-[1152px] px-4 sm:px-4">
         <div className="mb-8">
           <Skeleton className="h-10 w-2/3 bg-white/10" />
@@ -106,25 +102,16 @@ function SimilarFundraisersLoading() {
   );
 }
 
-export function SimilarFundraisers({
-  categoryId,
-  excludeCampaignId,
-}: SimilarFundraisersProps) {
+export function SimilarFundraisers({ categoryId, excludeCampaignId }: SimilarFundraisersProps) {
   return (
     <Suspense fallback={<SimilarFundraisersLoading />}>
-      <SimilarFundraisersContent
-        categoryId={categoryId}
-        excludeCampaignId={excludeCampaignId}
-      />
+      <SimilarFundraisersContent categoryId={categoryId} excludeCampaignId={excludeCampaignId} />
     </Suspense>
   );
 }
 
 function SimilarCampaignCard({ campaign }: { campaign: SimilarCampaign }) {
-  const progress = Math.min(
-    (campaign.totalRaised / campaign.amount) * 100,
-    100,
-  );
+  const progress = Math.min((campaign.totalRaised / campaign.amount) * 100, 100);
 
   return (
     <Link
@@ -149,15 +136,11 @@ function SimilarCampaignCard({ campaign }: { campaign: SimilarCampaign }) {
         </h3>
 
         <div className="mb-3 text-sm text-white/80 line-clamp-1">
-          by {campaign.beneficiaryName || "Organizer"} for{" "}
-          {campaign.categoryName || "Cause"}
+          by {campaign.beneficiaryName || "Organizer"} for {campaign.categoryName || "Cause"}
         </div>
 
         <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/20">
-          <div
-            className="h-full bg-primary rounded-full"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
         </div>
 
         <div className="mt-2 flex items-baseline gap-1 text-sm text-white">
