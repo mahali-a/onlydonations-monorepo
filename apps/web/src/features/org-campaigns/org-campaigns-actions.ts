@@ -212,11 +212,6 @@ export const publishCampaignOnServer = createServerFn({ method: "POST" })
 
     await requireOrganizationAccess(organizationId, context.user.id);
 
-    campaignsLogger.error("publish_campaign.start", {
-      organizationId,
-      campaignId,
-    });
-
     try {
       const campaign = await retrieveCampaignFromDatabaseById(campaignId);
 

@@ -18,7 +18,7 @@ export const retrievePageFromServerBySlug = createServerFn({ method: "GET" })
         limit: 1,
       });
 
-      return result.docs[0] || null;
+      return result.docs?.[0] ?? null;
     } catch (error) {
       logger.error("Failed to fetch page by slug:", error);
       return null;
@@ -42,7 +42,7 @@ export const retrievePageFromServerBySlugWithDraft = createServerFn({
         draft: true,
       });
 
-      return result.docs[0] || null;
+      return result.docs?.[0] ?? null;
     } catch (error) {
       logger.error("Failed to fetch page by slug with draft:", error);
       return null;

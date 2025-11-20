@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { ChevronDown, ChevronUp, Minus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
   Table,
   TableBody,
@@ -208,12 +209,7 @@ export function CampaignsDataTable({ campaigns, filters }: CampaignsDataTablePro
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
-                        <div
-                          className="h-full bg-primary transition-all"
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
+                      <Progress value={progress} className="h-2 flex-1" />
                       <span className="text-xs text-muted-foreground">{progress}%</span>
                     </div>
                   </div>

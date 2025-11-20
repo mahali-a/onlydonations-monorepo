@@ -141,11 +141,11 @@ type InitializePaymentParams = DonateFormData & {
 
 type PaymentInitializationResult =
   | {
-    success: true;
-    authorizationUrl: string;
-    reference: string;
-    donationId: string;
-  }
+      success: true;
+      authorizationUrl: string;
+      reference: string;
+      donationId: string;
+    }
   | { success: false; error: string };
 
 async function initializePayment(
@@ -167,7 +167,9 @@ async function initializePayment(
   const reference = `${DONATION_REFERENCE_PREFIX}${nanoid()}`;
   const donationId = nanoid();
   const paymentTransactionId = nanoid();
-  const amountInMinorUnits = Math.round(amountToCharge * MINOR_UNITS_MULTIPLIER);
+  const amountInMinorUnits = Math.round(
+    amountToCharge * MINOR_UNITS_MULTIPLIER,
+  );
 
   donationsLogger.info("initialize_payment.start", {
     donationId,
@@ -213,7 +215,10 @@ async function initializePayment(
     });
 
     // Link donation to payment transaction
-    await updateDonationPaymentTransactionInDatabaseById(donationId, paymentTransactionId);
+    await updateDonationPaymentTransactionInDatabaseById(
+      donationId,
+      paymentTransactionId,
+    );
 
     donationsLogger.info("initialize_payment.payment_transaction_created", {
       donationId,
@@ -227,7 +232,7 @@ async function initializePayment(
       amount: amountInMinorUnits,
       reference,
       currency,
-      callback_url: `${env.R2_PUBLIC_URL}/d/${donationId}/donation-status`,
+      callback_url: `${env.BASE_URL}/d/${donationId}/donation-status`,
       metadata: {
         campaignId,
         donationId,
@@ -286,58 +291,63 @@ async function initializePayment(
 }
 
 export const processDonationOnServer = createServerFn({ method: "POST" })
-  .inputValidator(async (data: unknown): Promise<{ error: string } | ValidatedDonationData> => {
-    if (!(data instanceof FormData)) {
-      return { error: "Invalid form data" };
-    }
-
-    try {
-      const honeypot = new Honeypot({
-        encryptionSeed: env.HONEYPOT_SECRET,
-      });
-      await honeypot.check(data);
-    } catch (error) {
-      if (error instanceof SpamError) {
-        donationsLogger.warn("process_donation.spam_detected", {
-          error: error.message,
-        });
-        return { error: "Spam detected" };
+  .inputValidator(
+    async (
+      data: unknown,
+    ): Promise<{ error: string } | ValidatedDonationData> => {
+      if (!(data instanceof FormData)) {
+        return { error: "Invalid form data" };
       }
-      return { error: "Validation failed" };
-    }
 
-    const campaignSlug = getFormDataString(data, "campaignSlug");
-    const amount = Number(getFormDataString(data, "amount"));
-    const donorName = getFormDataString(data, "donorName");
-    const donorEmail = getFormDataString(data, "donorEmail");
-    const donorPhone = getFormDataString(data, "donorPhone") || undefined;
-    const donorMessage = getFormDataString(data, "donorMessage") || undefined;
-    const isAnonymous = getFormDataString(data, "isAnonymous") === "true";
-    const coverFees = getFormDataString(data, "coverFees") === "true";
-    const currency = getFormDataString(data, "currency") || "GHS";
+      try {
+        const honeypot = new Honeypot({
+          encryptionSeed: env.HONEYPOT_SECRET,
+        });
+        await honeypot.check(data);
+      } catch (error) {
+        if (error instanceof SpamError) {
+          donationsLogger.warn("process_donation.spam_detected", {
+            error: error.message,
+          });
+          return { error: "Spam detected" };
+        }
+        return { error: "Validation failed" };
+      }
 
-    try {
-      const validated = donateSchema.parse({
-        amount,
-        donorName,
-        donorEmail,
-        donorPhone,
-        donorMessage,
-        isAnonymous,
-        coverFees,
-        currency,
-      });
+      const campaignSlug = getFormDataString(data, "campaignSlug");
+      const amount = Number(getFormDataString(data, "amount"));
+      const donorName = getFormDataString(data, "donorName");
+      const donorEmail = getFormDataString(data, "donorEmail");
+      const donorPhone = getFormDataString(data, "donorPhone") || undefined;
+      const donorMessage = getFormDataString(data, "donorMessage") || undefined;
+      const isAnonymous = getFormDataString(data, "isAnonymous") === "true";
+      const coverFees = getFormDataString(data, "coverFees") === "true";
+      const currency = getFormDataString(data, "currency") || "GHS";
 
-      return { ...validated, campaignSlug };
-    } catch (_error) {
-      return { error: "Invalid donation data" };
-    }
-  })
+      try {
+        const validated = donateSchema.parse({
+          amount,
+          donorName,
+          donorEmail,
+          donorPhone,
+          donorMessage,
+          isAnonymous,
+          coverFees,
+          currency,
+        });
+
+        return { ...validated, campaignSlug };
+      } catch (_error) {
+        return { error: "Invalid donation data" };
+      }
+    },
+  )
   .handler(
     async ({
       data,
     }): Promise<
-      { success: false; error: string } | { success: true; redirectUrl: string; donationId: string }
+      | { success: false; error: string }
+      | { success: true; redirectUrl: string; donationId: string }
     > => {
       if (isValidationError(data)) {
         return {
@@ -371,7 +381,10 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
 
         const feeVerification = calculateAndVerifyFees(
           donationData.amount,
-          campaignData.feeHandling as "DONOR_ASK_COVER" | "DONOR_REQUIRE_COVER" | "CAMPAIGN_ABSORB",
+          campaignData.feeHandling as
+            | "DONOR_ASK_COVER"
+            | "DONOR_REQUIRE_COVER"
+            | "CAMPAIGN_ABSORB",
           donationData.coverFees,
           campaignSlug,
         );
@@ -412,7 +425,8 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
 
         return {
           success: false,
-          error: "We couldn't process your donation. Please try again or contact support.",
+          error:
+            "We couldn't process your donation. Please try again or contact support.",
         };
       }
     },

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Flag, TrendingUp, Heart, ShieldCheck } from "lucide-react";
 import { useState } from "react";
@@ -218,9 +219,7 @@ export function CampaignPreviewContent({
                     <div className="mt-1 text-sm text-muted-foreground">
                       raised of {goalAmount} goal
                     </div>
-                    <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
-                      <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
-                    </div>
+                    <Progress value={progress} className="mt-3 h-2 w-full" />
                     <div className="mt-3 text-sm font-medium text-foreground">
                       {donationCount} donations
                     </div>

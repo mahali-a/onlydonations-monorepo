@@ -3,6 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import { Progress } from "@/components/ui/progress";
 import { formatForDashboard } from "@/lib/money";
 import { CampaignStatusBadge } from "./campaign-status-badge";
 
@@ -63,13 +64,26 @@ export function CampaignTable({ campaigns, pagination, onPageChange }: CampaignT
     {
       accessorKey: "totalRaised",
       header: () => <div className="text-right">Total Raised</div>,
-      cell: ({ row }) => (
-        <div className="text-right font-medium">
-          {formatForDashboard(row.getValue("totalRaised"), row.original.currency)}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const totalRaised = row.getValue("totalRaised") as number;
+        const progress = Math.min(Math.round((totalRaised / row.original.goalAmount) * 100), 100);
+        return (
+          <div className="space-y-1.5">
+            <div className="text-right font-medium">
+              {formatForDashboard(totalRaised, row.original.currency)}
+            </div>
+            <div className="flex items-center gap-2">
+              <Progress value={progress} className="h-1.5 flex-1" />
+              <span className="text-xs text-muted-foreground tabular-nums">{progress}%</span>
+            </div>
+            <div className="text-right text-xs text-muted-foreground">
+              of {formatForDashboard(row.original.goalAmount, row.original.currency)}
+            </div>
+          </div>
+        );
+      },
       meta: {
-        className: "hidden sm:table-cell min-w-[120px]",
+        className: "hidden sm:table-cell min-w-[180px]",
       },
     },
     {

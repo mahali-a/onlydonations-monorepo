@@ -12,8 +12,6 @@ export const emailConsumer: QueueConsumer<EmailQueueMessage> = async (
   const startTime = Date.now();
 
   try {
-    initEmail(env.RESEND_API_KEY, env.EMAIL_FROM);
-
     const { templateId, templateData } = emailQueueDataSchema.parse(message.body.data);
     await sendEmail(templateId as EmailTemplateType, templateData as never);
 

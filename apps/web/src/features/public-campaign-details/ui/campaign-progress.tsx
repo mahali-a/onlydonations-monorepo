@@ -1,4 +1,5 @@
 import { formatCurrency } from "@/lib/money";
+import { Progress } from "@/components/ui/progress";
 
 type CampaignProgressProps = {
   raised: number;
@@ -10,17 +11,15 @@ type CampaignProgressProps = {
 export function CampaignProgress({ raised, target, currency, progress }: CampaignProgressProps) {
   return (
     <div className="space-y-2">
-      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full bg-primary transition-all duration-300"
-          style={{ width: `${progress}%` }}
-          role="progressbar"
-          aria-valuenow={progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label={`${progress}% of goal reached`}
-        />
-      </div>
+      <Progress
+        value={progress}
+        className="h-2 w-full"
+        role="progressbar"
+        aria-valuenow={progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${progress}% of goal reached`}
+      />
 
       <div className="flex items-baseline justify-between text-sm">
         <div>
