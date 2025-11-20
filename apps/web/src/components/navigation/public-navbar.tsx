@@ -23,20 +23,16 @@ interface PublicNavbarProps {
 export function PublicNavbar({ settings }: PublicNavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const {
-    data: session,
-    isPending: isSessionPending,
-    error,
-  } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
 
-  const { data: orgId, error: orgError } = useQuery({
+  const { data: orgId, isPending: isOrgPending } = useQuery({
     queryFn: () => authClient.organization.list(),
     queryKey: ["user-organization", session?.user.id],
     enabled: !!session?.user?.id,
     select: ({ data }) => data?.[0]?.id || null,
   });
 
-  const isLoading = isSessionPending && !error && !orgError;
+  const isLoading = isSessionPending || (session?.user?.id && isOrgPending);
 
   const user = session?.user;
   const fallbackText = user?.name
@@ -45,12 +41,8 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
 
   const navigationLinks = settings?.navigation?.mainNav || [];
 
-  const leftNavItems = navigationLinks.filter(
-    (link) => link.position === "left",
-  );
-  const rightNavItems = navigationLinks.filter(
-    (link) => link.position === "right",
-  );
+  const leftNavItems = navigationLinks.filter((link) => link.position === "left");
+  const rightNavItems = navigationLinks.filter((link) => link.position === "right");
 
   const renderNavItem = (link: (typeof navigationLinks)[0]) => {
     if (link.hasDropdown && link.dropdownItems) {
@@ -71,18 +63,11 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                   asChild
                   className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
                 >
-                  <Link
-                    to={item.url || "/"}
-                    className="w-full cursor-pointer no-underline"
-                  >
+                  <Link to={item.url || "/"} className="w-full cursor-pointer no-underline">
                     <div className="flex flex-col gap-1">
-                      <span className="font-medium text-base">
-                        {item.label}
-                      </span>
+                      <span className="font-medium text-base">{item.label}</span>
                       {item.description && (
-                        <span className="text-xs text-muted-foreground">
-                          {item.description}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{item.description}</span>
                       )}
                     </div>
                   </Link>
@@ -233,9 +218,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
           <div className="flex items-center gap-6 ml-auto">
             {/* Right navigation */}
             {rightNavItems.length > 0 && (
-              <nav className="flex items-center gap-6">
-                {rightNavItems.map(renderNavItem)}
-              </nav>
+              <nav className="flex items-center gap-6">{rightNavItems.map(renderNavItem)}</nav>
             )}
 
             {/* Auth buttons */}
@@ -265,9 +248,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 text-left hidden sm:block">
-                          <p className="text-sm font-medium">
-                            {user?.name || "User"}
-                          </p>
+                          <p className="text-sm font-medium">{user?.name || "User"}</p>
                         </div>
                         <ChevronDown className="h-4 w-4 text-muted-foreground" />
                       </Button>
@@ -360,11 +341,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                 </>
               ) : (
                 <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate({ to: "/login" })}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/login" })}>
                     Sign In
                   </Button>
                   <Button asChild size="sm">
