@@ -132,6 +132,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 try {
                   var storageKey = 'ui-theme';
                   var defaultTheme = 'system';
+                  
+                  var pathParts = window.location.pathname.split('/');
+                  var hasOrgId = pathParts.length > 2 && pathParts[1] === 'app' && pathParts[2];
+                  
+                  if (!hasOrgId) {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                    return;
+                  }
+                  
                   var theme = localStorage.getItem(storageKey) || defaultTheme;
                   var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                   var resolvedTheme = theme === 'system' ? systemTheme : theme;
