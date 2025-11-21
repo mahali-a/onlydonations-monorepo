@@ -1,5 +1,4 @@
 import { getDb } from "@repo/core/database/setup";
-import { campaign, category, donation } from "@repo/core/drizzle/schema";
 import {
   and,
   asc,
@@ -14,6 +13,7 @@ import {
   sql,
   sum,
 } from "@repo/core/drizzle";
+import { campaign, category, donation } from "@repo/core/drizzle/schema";
 
 /**
  * Build conditions for filtering public campaigns

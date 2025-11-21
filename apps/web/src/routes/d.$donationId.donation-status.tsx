@@ -1,10 +1,10 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import ms from "ms";
 import { DonationStatus } from "@/features/public-donation-status";
-import { DonationStatusNotFound } from "@/features/public-donation-status/donation-status-not-found";
 import { DonationStatusError } from "@/features/public-donation-status/donation-status-error";
 import { retrieveDonationStatusDataFromServer } from "@/features/public-donation-status/donation-status-loaders";
+import { DonationStatusNotFound } from "@/features/public-donation-status/donation-status-not-found";
 
 const donationStatusQueryOptions = (donationId: string) =>
   queryOptions({

@@ -1,12 +1,12 @@
 import type { SelectCategory } from "@repo/core/database/types";
-import { Suspense } from "react";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { SearchHero } from "./components/search-hero";
+import { Suspense } from "react";
 import { FilterBar } from "./components/filter-bar";
-import { SearchResults } from "./components/search-results";
+import { SearchHero } from "./components/search-hero";
 import { SearchPagination } from "./components/search-pagination";
+import { SearchResults } from "./components/search-results";
 import { publicCampaignsInfiniteQueryOptions } from "./public-search-loaders";
 import type { SearchFilters } from "./public-search-schemas";
 
@@ -20,11 +20,7 @@ function SearchResultsSection() {
   const campaigns = data.pages.flatMap((page) => page.campaigns);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <SearchResults campaigns={campaigns} />
       <SearchPagination
         hasNextPage={hasNextPage}

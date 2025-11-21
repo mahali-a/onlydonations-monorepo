@@ -24,10 +24,7 @@ export const updateCampaignSettingsSchema = z.object({
   campaignId: z.string().min(1, "Campaign ID is required"),
   publishCampaign: z.boolean().optional(),
   endDate: z.date().optional().nullable(),
-  donateButtonText: z
-    .string()
-    .max(50, "Button text must be 50 characters or less")
-    .optional(),
+  donateButtonText: z.string().max(50, "Button text must be 50 characters or less").optional(),
   feeHandling: feeHandlingEnum,
   thankYouMessage: z.string().optional(),
 });

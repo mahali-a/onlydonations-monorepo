@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function SearchHero() {
   const navigate = useNavigate();
@@ -22,9 +22,7 @@ export function SearchHero() {
   return (
     <div className="w-full bg-white pt-16 pb-8 border-b">
       <div className="container mx-auto px-4 flex flex-col items-center text-center">
-        <h1 className="text-[#333] text-2xl md:text-[32px] font-bold mb-2">
-          Find campaigns
-        </h1>
+        <h1 className="text-[#333] text-2xl md:text-[32px] font-bold mb-2">Find campaigns</h1>
         <p className="text-[#767676] text-base mb-8">
           Help others by donating to their campaign, or start one for someone you care about.
         </p>

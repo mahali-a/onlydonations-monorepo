@@ -1,12 +1,17 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { queryOptions } from "@tanstack/react-query";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import ms from "ms";
 import { z } from "zod";
-import { OnboardingLayout, OrganizationForm, PhoneForm, ProfileForm } from "@/features/auth-onboarding";
 import {
-  retrieveOnboardingUserFromServer,
+  OnboardingLayout,
+  OrganizationForm,
+  PhoneForm,
+  ProfileForm,
+} from "@/features/auth-onboarding";
+import {
   createOrganizationOnServer,
+  retrieveOnboardingUserFromServer,
   updateUserPhoneOnServer,
   updateUserProfileOnServer,
 } from "@/features/auth-onboarding/server";

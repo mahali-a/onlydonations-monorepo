@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
-import { authMiddleware, organizationMiddleware } from "@/server/middleware";
 import { logger } from "@/lib/logger";
-import { dashboardModel } from "./org-dashboard-models";
+import { authMiddleware, organizationMiddleware } from "@/server/middleware";
 import { promiseHash } from "@/utils/promise-hash";
+import { dashboardModel } from "./org-dashboard-models";
 
 const dashboardLogger = logger.createChildLogger("org-dashboard-loaders");
 

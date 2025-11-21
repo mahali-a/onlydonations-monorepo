@@ -1,15 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { authMiddleware } from "@/server/middleware/auth";
-import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { formatMetricValue, getTrendMessage } from "@/lib/utils/dashboard-utils";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
+import { authMiddleware } from "@/server/middleware/auth";
+import { promiseHash } from "@/utils/promise-hash";
 import {
-  retrieveDonationAggregateFromDatabaseByOrganization,
-  retrieveDailyDonationAggregateFromDatabaseByOrganization,
   retrieveCampaignDonationStatsFromDatabaseByOrganization,
+  retrieveDailyDonationAggregateFromDatabaseByOrganization,
+  retrieveDonationAggregateFromDatabaseByOrganization,
   retrieveTotalCampaignCountFromDatabaseByOrganization,
 } from "../org-payments-models";
-import { promiseHash } from "@/utils/promise-hash";
 
 export const retrieveFinancialInsightsFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])

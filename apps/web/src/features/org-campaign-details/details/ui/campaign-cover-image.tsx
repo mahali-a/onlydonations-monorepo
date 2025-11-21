@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import type { AnyFieldApi } from "@tanstack/react-form";
 import { Trash2, Upload } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
-import type { AnyFieldApi } from "@tanstack/react-form";
+import { Label } from "@/components/ui/label";
 
 export function CampaignCoverImage({
   fileField,

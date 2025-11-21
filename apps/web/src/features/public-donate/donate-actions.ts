@@ -1,22 +1,22 @@
+import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
-import { env } from "cloudflare:workers";
+import { savePaymentTransactionToDatabase } from "@/features/org-payments/server";
+import { calculateFees } from "@/lib/fees/calculator";
 import { Honeypot, SpamError } from "@/lib/honeypot";
 import { logger } from "@/lib/logger";
-import { calculateFees } from "@/lib/fees/calculator";
 import { PaystackService } from "@/lib/paystack";
-import { donateSchema, type DonateFormData } from "./donate-schemas";
+import {
+  AMOUNT_VERIFICATION_TOLERANCE,
+  DONATION_REFERENCE_PREFIX,
+  MINOR_UNITS_MULTIPLIER,
+} from "./donate-constants";
 import {
   retrieveCampaignFromDatabaseBySlug,
   saveDonationToDatabase,
   updateDonationPaymentTransactionInDatabaseById,
 } from "./donate-models";
-import {
-  DONATION_REFERENCE_PREFIX,
-  MINOR_UNITS_MULTIPLIER,
-  AMOUNT_VERIFICATION_TOLERANCE,
-} from "./donate-constants";
-import { savePaymentTransactionToDatabase } from "@/features/org-payments/server";
+import { type DonateFormData, donateSchema } from "./donate-schemas";
 
 const donationsLogger = logger.createChildLogger("donations-actions");
 
@@ -167,9 +167,7 @@ async function initializePayment(
   const reference = `${DONATION_REFERENCE_PREFIX}${nanoid()}`;
   const donationId = nanoid();
   const paymentTransactionId = nanoid();
-  const amountInMinorUnits = Math.round(
-    amountToCharge * MINOR_UNITS_MULTIPLIER,
-  );
+  const amountInMinorUnits = Math.round(amountToCharge * MINOR_UNITS_MULTIPLIER);
 
   donationsLogger.info("initialize_payment.start", {
     donationId,
@@ -215,10 +213,7 @@ async function initializePayment(
     });
 
     // Link donation to payment transaction
-    await updateDonationPaymentTransactionInDatabaseById(
-      donationId,
-      paymentTransactionId,
-    );
+    await updateDonationPaymentTransactionInDatabaseById(donationId, paymentTransactionId);
 
     donationsLogger.info("initialize_payment.payment_transaction_created", {
       donationId,
@@ -291,63 +286,58 @@ async function initializePayment(
 }
 
 export const processDonationOnServer = createServerFn({ method: "POST" })
-  .inputValidator(
-    async (
-      data: unknown,
-    ): Promise<{ error: string } | ValidatedDonationData> => {
-      if (!(data instanceof FormData)) {
-        return { error: "Invalid form data" };
-      }
+  .inputValidator(async (data: unknown): Promise<{ error: string } | ValidatedDonationData> => {
+    if (!(data instanceof FormData)) {
+      return { error: "Invalid form data" };
+    }
 
-      try {
-        const honeypot = new Honeypot({
-          encryptionSeed: env.HONEYPOT_SECRET,
+    try {
+      const honeypot = new Honeypot({
+        encryptionSeed: env.HONEYPOT_SECRET,
+      });
+      await honeypot.check(data);
+    } catch (error) {
+      if (error instanceof SpamError) {
+        donationsLogger.warn("process_donation.spam_detected", {
+          error: error.message,
         });
-        await honeypot.check(data);
-      } catch (error) {
-        if (error instanceof SpamError) {
-          donationsLogger.warn("process_donation.spam_detected", {
-            error: error.message,
-          });
-          return { error: "Spam detected" };
-        }
-        return { error: "Validation failed" };
+        return { error: "Spam detected" };
       }
+      return { error: "Validation failed" };
+    }
 
-      const campaignSlug = getFormDataString(data, "campaignSlug");
-      const amount = Number(getFormDataString(data, "amount"));
-      const donorName = getFormDataString(data, "donorName");
-      const donorEmail = getFormDataString(data, "donorEmail");
-      const donorPhone = getFormDataString(data, "donorPhone") || undefined;
-      const donorMessage = getFormDataString(data, "donorMessage") || undefined;
-      const isAnonymous = getFormDataString(data, "isAnonymous") === "true";
-      const coverFees = getFormDataString(data, "coverFees") === "true";
-      const currency = getFormDataString(data, "currency") || "GHS";
+    const campaignSlug = getFormDataString(data, "campaignSlug");
+    const amount = Number(getFormDataString(data, "amount"));
+    const donorName = getFormDataString(data, "donorName");
+    const donorEmail = getFormDataString(data, "donorEmail");
+    const donorPhone = getFormDataString(data, "donorPhone") || undefined;
+    const donorMessage = getFormDataString(data, "donorMessage") || undefined;
+    const isAnonymous = getFormDataString(data, "isAnonymous") === "true";
+    const coverFees = getFormDataString(data, "coverFees") === "true";
+    const currency = getFormDataString(data, "currency") || "GHS";
 
-      try {
-        const validated = donateSchema.parse({
-          amount,
-          donorName,
-          donorEmail,
-          donorPhone,
-          donorMessage,
-          isAnonymous,
-          coverFees,
-          currency,
-        });
+    try {
+      const validated = donateSchema.parse({
+        amount,
+        donorName,
+        donorEmail,
+        donorPhone,
+        donorMessage,
+        isAnonymous,
+        coverFees,
+        currency,
+      });
 
-        return { ...validated, campaignSlug };
-      } catch (_error) {
-        return { error: "Invalid donation data" };
-      }
-    },
-  )
+      return { ...validated, campaignSlug };
+    } catch (_error) {
+      return { error: "Invalid donation data" };
+    }
+  })
   .handler(
     async ({
       data,
     }): Promise<
-      | { success: false; error: string }
-      | { success: true; redirectUrl: string; donationId: string }
+      { success: false; error: string } | { success: true; redirectUrl: string; donationId: string }
     > => {
       if (isValidationError(data)) {
         return {
@@ -381,10 +371,7 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
 
         const feeVerification = calculateAndVerifyFees(
           donationData.amount,
-          campaignData.feeHandling as
-            | "DONOR_ASK_COVER"
-            | "DONOR_REQUIRE_COVER"
-            | "CAMPAIGN_ABSORB",
+          campaignData.feeHandling as "DONOR_ASK_COVER" | "DONOR_REQUIRE_COVER" | "CAMPAIGN_ABSORB",
           donationData.coverFees,
           campaignSlug,
         );
@@ -425,8 +412,7 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
 
         return {
           success: false,
-          error:
-            "We couldn't process your donation. Please try again or contact support.",
+          error: "We couldn't process your donation. Please try again or contact support.",
         };
       }
     },

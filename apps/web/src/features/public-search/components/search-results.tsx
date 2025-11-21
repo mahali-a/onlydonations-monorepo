@@ -11,9 +11,7 @@ export function SearchResults({ campaigns }: SearchResultsProps) {
   if (campaigns.length === 0) {
     return (
       <div className="text-center py-16">
-        <h3 className="text-xl font-semibold text-foreground mb-2">
-          No campaigns found
-        </h3>
+        <h3 className="text-xl font-semibold text-foreground mb-2">No campaigns found</h3>
         <p className="text-muted-foreground">
           Try adjusting your search or filters to find what you're looking for.
         </p>
@@ -31,11 +29,7 @@ export function SearchResults({ campaigns }: SearchResultsProps) {
           transition={{ duration: 0.3 }}
           className="h-full"
         >
-          <Link
-            to="/f/$slug"
-            params={{ slug: campaign.slug }}
-            className="block h-full"
-          >
+          <Link to="/f/$slug" params={{ slug: campaign.slug }} className="block h-full">
             <FundraiserCard
               image={campaign.coverImage}
               title={campaign.title}

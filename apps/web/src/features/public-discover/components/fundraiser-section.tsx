@@ -1,7 +1,7 @@
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { FundraiserCard } from "@/components/fundraiser-card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import type { DiscoverCampaign } from "../public-discover-models";
 
 interface FundraiserSectionProps {

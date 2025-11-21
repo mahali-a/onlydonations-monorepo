@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
 import confetti from "canvas-confetti";
-import { formatCurrency } from "@/lib/money";
 import { formatDistanceToNow } from "date-fns";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { formatCurrency } from "@/lib/money";
 import type { LiveDonation } from "../public-live-campaign-models";
 
 type LiveDonationsFeedProps = {

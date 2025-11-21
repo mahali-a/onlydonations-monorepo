@@ -2,16 +2,16 @@ import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { HoneypotInputs, HoneypotProvider } from "@/components/honeypot-client";
-import { sendLoginOtpOnServer } from "@/features/auth-login";
 import { GoogleIcon } from "@/components/icons/google";
 import { WordmarkIcon } from "@/components/icons/wordmark";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { sendLoginOtpOnServer } from "@/features/auth-login";
 import { authClient } from "@/lib/auth-client";
-import { cn } from "@/lib/utils";
 import type { HoneypotInputProps } from "@/lib/honeypot";
+import { cn } from "@/lib/utils";
 
 type LoginForm = {
   email: string;

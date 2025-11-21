@@ -1,7 +1,7 @@
 import { FinancialMetrics } from "@/features/org-payments/insights/ui/financial-metrics";
+import { Money } from "@/lib/money";
 import { useDonationMetrics } from "../hooks/use-donation-metrics";
 import type { DonationStats } from "../org-donations-models";
-import { Money } from "@/lib/money";
 
 type DonationStatsProps = {
   stats: DonationStats | null;

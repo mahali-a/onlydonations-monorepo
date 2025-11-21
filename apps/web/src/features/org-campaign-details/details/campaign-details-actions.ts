@@ -1,15 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
-import { authMiddleware } from "@/server/middleware/auth";
-import { requireOrganizationAccess } from "@/server/middleware/access-control";
+import { fileService } from "@/lib/file-upload";
 import { logger } from "@/lib/logger";
 import { sanitizeHtml } from "@/lib/sanitize-html";
-import { fileService } from "@/lib/file-upload";
-import { updateCampaignDetailsSchema } from "./campaign-details-schema";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
+import { authMiddleware } from "@/server/middleware/auth";
 import {
   retrieveCampaignDetailsFromDatabaseById,
   updateCampaignDetailsInDatabaseById,
 } from "./campaign-details-models";
 import type { CampaignDetailsFormData } from "./campaign-details-schema";
+import { updateCampaignDetailsSchema } from "./campaign-details-schema";
 
 const campaignDetailsLogger = logger.createChildLogger("campaign-details-actions");
 

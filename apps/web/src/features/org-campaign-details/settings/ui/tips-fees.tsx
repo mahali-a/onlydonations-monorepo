@@ -1,8 +1,8 @@
+import type { AnyFieldApi } from "@tanstack/react-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { cn } from "@/lib/utils";
 import { calculateFees, formatCurrency } from "@/lib/fees/calculator";
 import { FEE_CONFIG } from "@/lib/fees/config";
-import type { AnyFieldApi } from "@tanstack/react-form";
+import { cn } from "@/lib/utils";
 
 const EXAMPLE_DONATION = 100;
 

@@ -1,11 +1,11 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import ms from "ms";
 import { CampaignPreviewPage } from "@/features/org-campaign-details/preview/campaign-preview-page";
 import { retrieveCampaignPreviewFromServer } from "@/features/org-campaigns/server";
 import {
-  similarCampaignsQueryOptions,
   donationsWithMessagesQueryOptions,
+  similarCampaignsQueryOptions,
 } from "@/features/public-campaign-details/server";
 
 const campaignPreviewQueryOptions = (campaignId: string, orgId: string) =>

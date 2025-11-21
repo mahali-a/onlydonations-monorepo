@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import type { SelectCategory } from "@repo/core/database/types";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import type { SelectCategory } from "@repo/core/database/types";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 const SearchFiltersDrawer = lazy(() =>
   import("./search-filters-drawer").then((m) => ({ default: m.SearchFiltersDrawer })),

@@ -35,6 +35,7 @@ export const donation = sqliteTable(
     donorName: text("donor_name"),
     donorEmail: text("donor_email"),
     donorMessage: text("donor_message"),
+    messageStatus: text("message_status").default("PENDING"),
     showMessage: integer("show_message", { mode: "boolean" }).notNull().default(true),
 
     status: text("status").notNull().default("PENDING"),

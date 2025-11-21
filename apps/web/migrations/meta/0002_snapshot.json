@@ -106,12 +106,8 @@
           "name": "auth_account_user_id_auth_user_id_fk",
           "tableFrom": "auth_account",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -191,9 +187,7 @@
       "indexes": {
         "auth_session_token_unique": {
           "name": "auth_session_token_unique",
-          "columns": [
-            "token"
-          ],
+          "columns": ["token"],
           "isUnique": true
         }
       },
@@ -202,12 +196,8 @@
           "name": "auth_session_user_id_auth_user_id_fk",
           "tableFrom": "auth_session",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -303,16 +293,12 @@
       "indexes": {
         "auth_user_email_unique": {
           "name": "auth_user_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         },
         "auth_user_phone_number_unique": {
           "name": "auth_user_phone_number_unique",
-          "columns": [
-            "phone_number"
-          ],
+          "columns": ["phone_number"],
           "isUnique": true
         }
       },
@@ -435,12 +421,8 @@
           "name": "invitation_organization_id_organization_id_fk",
           "tableFrom": "invitation",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -448,12 +430,8 @@
           "name": "invitation_inviter_id_auth_user_id_fk",
           "tableFrom": "invitation",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "inviter_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["inviter_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -508,12 +486,8 @@
           "name": "member_organization_id_organization_id_fk",
           "tableFrom": "member",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -521,12 +495,8 @@
           "name": "member_user_id_auth_user_id_fk",
           "tableFrom": "member",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -584,9 +554,7 @@
       "indexes": {
         "organization_slug_unique": {
           "name": "organization_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -783,9 +751,7 @@
       "indexes": {
         "campaign_slug_unique": {
           "name": "campaign_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -794,12 +760,8 @@
           "name": "campaign_currency_currencies_code_fk",
           "tableFrom": "campaign",
           "tableTo": "currencies",
-          "columnsFrom": [
-            "currency"
-          ],
-          "columnsTo": [
-            "code"
-          ],
+          "columnsFrom": ["currency"],
+          "columnsTo": ["code"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -807,12 +769,8 @@
           "name": "campaign_country_countries_code_fk",
           "tableFrom": "campaign",
           "tableTo": "countries",
-          "columnsFrom": [
-            "country"
-          ],
-          "columnsTo": [
-            "code"
-          ],
+          "columnsFrom": ["country"],
+          "columnsTo": ["code"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -820,12 +778,8 @@
           "name": "campaign_category_id_category_id_fk",
           "tableFrom": "campaign",
           "tableTo": "category",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["category_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -833,12 +787,8 @@
           "name": "campaign_created_by_auth_user_id_fk",
           "tableFrom": "campaign",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -846,12 +796,8 @@
           "name": "campaign_organization_id_organization_id_fk",
           "tableFrom": "campaign",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -935,12 +881,8 @@
           "name": "campaign_update_campaign_id_campaign_id_fk",
           "tableFrom": "campaign_update",
           "tableTo": "campaign",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -948,12 +890,8 @@
           "name": "campaign_update_author_id_auth_user_id_fk",
           "tableFrom": "campaign_update",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["author_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1007,9 +945,7 @@
       "indexes": {
         "category_name_unique": {
           "name": "category_name_unique",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": true
         }
       },
@@ -1183,12 +1119,8 @@
           "name": "content_moderation_reviewed_by_auth_user_id_fk",
           "tableFrom": "content_moderation",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "reviewed_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["reviewed_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1252,12 +1184,8 @@
           "name": "countries_currency_code_currencies_code_fk",
           "tableFrom": "countries",
           "tableTo": "currencies",
-          "columnsFrom": [
-            "currency_code"
-          ],
-          "columnsTo": [
-            "code"
-          ],
+          "columnsFrom": ["currency_code"],
+          "columnsTo": ["code"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1468,51 +1396,37 @@
       "indexes": {
         "donation_reference_unique": {
           "name": "donation_reference_unique",
-          "columns": [
-            "reference"
-          ],
+          "columns": ["reference"],
           "isUnique": true
         },
         "donation_campaign_id_idx": {
           "name": "donation_campaign_id_idx",
-          "columns": [
-            "campaign_id"
-          ],
+          "columns": ["campaign_id"],
           "isUnique": false
         },
         "donation_donor_id_idx": {
           "name": "donation_donor_id_idx",
-          "columns": [
-            "donor_id"
-          ],
+          "columns": ["donor_id"],
           "isUnique": false
         },
         "donation_donor_email_idx": {
           "name": "donation_donor_email_idx",
-          "columns": [
-            "donor_email"
-          ],
+          "columns": ["donor_email"],
           "isUnique": false
         },
         "donation_status_idx": {
           "name": "donation_status_idx",
-          "columns": [
-            "status"
-          ],
+          "columns": ["status"],
           "isUnique": false
         },
         "donation_completed_at_idx": {
           "name": "donation_completed_at_idx",
-          "columns": [
-            "completed_at"
-          ],
+          "columns": ["completed_at"],
           "isUnique": false
         },
         "donation_reference_idx": {
           "name": "donation_reference_idx",
-          "columns": [
-            "reference"
-          ],
+          "columns": ["reference"],
           "isUnique": false
         }
       },
@@ -1521,12 +1435,8 @@
           "name": "donation_campaign_id_campaign_id_fk",
           "tableFrom": "donation",
           "tableTo": "campaign",
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["campaign_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
@@ -1534,12 +1444,8 @@
           "name": "donation_currency_currencies_code_fk",
           "tableFrom": "donation",
           "tableTo": "currencies",
-          "columnsFrom": [
-            "currency"
-          ],
-          "columnsTo": [
-            "code"
-          ],
+          "columnsFrom": ["currency"],
+          "columnsTo": ["code"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1547,12 +1453,8 @@
           "name": "donation_payment_transaction_id_payment_transaction_id_fk",
           "tableFrom": "donation",
           "tableTo": "payment_transaction",
-          "columnsFrom": [
-            "payment_transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_transaction_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1560,12 +1462,8 @@
           "name": "donation_donor_id_auth_user_id_fk",
           "tableFrom": "donation",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "donor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["donor_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1658,12 +1556,8 @@
           "name": "smile_webhook_event_job_id_verification_job_smile_job_id_fk",
           "tableFrom": "smile_webhook_event",
           "tableTo": "verification_job",
-          "columnsFrom": [
-            "job_id"
-          ],
-          "columnsTo": [
-            "smile_job_id"
-          ],
+          "columnsFrom": ["job_id"],
+          "columnsTo": ["smile_job_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1727,12 +1621,8 @@
           "name": "user_kyc_status_user_id_auth_user_id_fk",
           "tableFrom": "user_kyc_status",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1821,9 +1711,7 @@
       "indexes": {
         "verification_job_smile_job_id_unique": {
           "name": "verification_job_smile_job_id_unique",
-          "columns": [
-            "smile_job_id"
-          ],
+          "columns": ["smile_job_id"],
           "isUnique": true
         }
       },
@@ -1832,12 +1720,8 @@
           "name": "verification_job_user_id_auth_user_id_fk",
           "tableFrom": "verification_job",
           "tableTo": "auth_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1962,9 +1846,7 @@
       "indexes": {
         "payment_transaction_processor_ref_unique": {
           "name": "payment_transaction_processor_ref_unique",
-          "columns": [
-            "processor_ref"
-          ],
+          "columns": ["processor_ref"],
           "isUnique": true
         }
       },
@@ -1973,12 +1855,8 @@
           "name": "payment_transaction_organization_id_organization_id_fk",
           "tableFrom": "payment_transaction",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1986,12 +1864,8 @@
           "name": "payment_transaction_currency_currencies_code_fk",
           "tableFrom": "payment_transaction",
           "tableTo": "currencies",
-          "columnsFrom": [
-            "currency"
-          ],
-          "columnsTo": [
-            "code"
-          ],
+          "columnsFrom": ["currency"],
+          "columnsTo": ["code"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2097,12 +1971,8 @@
           "name": "refund_transaction_id_payment_transaction_id_fk",
           "tableFrom": "refund",
           "tableTo": "payment_transaction",
-          "columnsFrom": [
-            "transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["transaction_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2207,9 +2077,7 @@
       "indexes": {
         "webhook_event_processor_event_id_unique": {
           "name": "webhook_event_processor_event_id_unique",
-          "columns": [
-            "processor_event_id"
-          ],
+          "columns": ["processor_event_id"],
           "isUnique": true
         }
       },
@@ -2314,12 +2182,8 @@
           "name": "withdrawal_account_organization_id_organization_id_fk",
           "tableFrom": "withdrawal_account",
           "tableTo": "organization",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

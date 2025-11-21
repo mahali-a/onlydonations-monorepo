@@ -1,6 +1,6 @@
+import { env } from "cloudflare:workers";
 import type { Cache } from "@epic-web/cachified";
 import { cloudflareKvCacheAdapter } from "cachified-adapter-cloudflare-kv";
-import { env } from "cloudflare:workers";
 
 /**
  * Creates a cachified cache adapter for Cloudflare KV storage.

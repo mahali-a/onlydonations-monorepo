@@ -3,8 +3,8 @@ import { useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { emailSchema } from "../user-account-schemas";
 import { updateUserEmailOnServer } from "../server";
+import { emailSchema } from "../user-account-schemas";
 
 type EmailFormProps = {
   defaultEmail?: string;

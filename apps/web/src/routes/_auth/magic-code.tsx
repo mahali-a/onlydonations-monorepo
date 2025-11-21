@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { MagicCodeComponent } from "@/features/auth-login";
 

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import { convertLexicalToHTML, defaultHTMLConverters } from "@payloadcms/richtext-lexical/html";
+import { cn } from "@/lib/utils";
 
 // Lexical editor state type from Payload CMS
 export interface LexicalContent {

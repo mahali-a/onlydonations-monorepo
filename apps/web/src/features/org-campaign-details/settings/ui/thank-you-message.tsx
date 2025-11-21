@@ -1,5 +1,5 @@
-import { ThankYouEmailEditor } from "./thank-you-email-editor";
 import type { AnyFieldApi } from "@tanstack/react-form";
+import { ThankYouEmailEditor } from "./thank-you-email-editor";
 
 type ThankYouMessageProps = {
   field: AnyFieldApi;

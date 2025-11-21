@@ -22,10 +22,7 @@ export type CampaignDetailsFormData = z.infer<typeof campaignDetailsSchema>;
 export const updateCampaignDetailsSchema = z.object({
   organizationId: z.string().min(1, "Organization ID is required"),
   campaignId: z.string().min(1, "Campaign ID is required"),
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(50, "Title must be 50 characters or less"),
+  title: z.string().min(1, "Title is required").max(50, "Title must be 50 characters or less"),
   beneficiaryName: z.string().min(1, "Beneficiary name is required").max(255),
   categoryId: z.string().min(1, "Category is required"),
   amount: z.number().int().positive("Goal amount must be positive"),

@@ -22,6 +22,7 @@ export default function DonationThankYouTemplate({
   campaignUrl = "https://onlydonations.com/campaign/example",
   customThankYouMessage = "",
   donatedAt = new Date().toLocaleDateString(),
+  donationShareUrl = "https://onlydonations.com/d/example123",
 }: Partial<Omit<DonationThankYouData, "email">>) {
   return (
     <Html>
@@ -51,12 +52,13 @@ export default function DonationThankYouTemplate({
               </Section>
 
               <Section className="mt-6">
-                <Text className="text-base text-gray-800 leading-7">
-                  Dear {donorName},
-                </Text>
+                <Text className="text-base text-gray-800 leading-7">Dear {donorName},</Text>
                 <Text className="text-base text-gray-800 leading-7 mt-4">
-                  Thank you for your generous donation of <strong>{currency} {amount}</strong> to{" "}
-                  <strong>{campaignTitle}</strong>.
+                  Thank you for your generous donation of{" "}
+                  <strong>
+                    {currency} {amount}
+                  </strong>{" "}
+                  to <strong>{campaignTitle}</strong>.
                 </Text>
               </Section>
 
@@ -65,9 +67,7 @@ export default function DonationThankYouTemplate({
                   <Text className="mb-2 text-sm uppercase tracking-[0.3em] text-gray-500">
                     Message from Campaign Creator
                   </Text>
-                  <Text className="text-base text-gray-800 leading-7">
-                    {customThankYouMessage}
-                  </Text>
+                  <Text className="text-base text-gray-800 leading-7">{customThankYouMessage}</Text>
                 </Section>
               )}
 
@@ -85,6 +85,24 @@ export default function DonationThankYouTemplate({
                 >
                   View Campaign
                 </Button>
+              </Section>
+
+              <Section className="mt-6 rounded-lg bg-blue-50 px-6 py-5">
+                <Text className="mb-2 text-base font-semibold text-gray-800 text-center">
+                  Share Your Impact
+                </Text>
+                <Text className="text-sm text-gray-600 leading-relaxed text-center mb-4">
+                  Inspire others to join this cause by sharing your donation. Every share helps make
+                  a bigger impact!
+                </Text>
+                <div className="text-center">
+                  <Button
+                    className="inline-block rounded-full bg-green-600 px-8 py-3 text-center text-sm font-semibold text-white no-underline"
+                    href={donationShareUrl}
+                  >
+                    Share My Donation
+                  </Button>
+                </div>
               </Section>
 
               <Hr className="my-6 border-gray-200" />

@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestWebsocketRouteImport } from './routes/test-websocket'
 import { Route as OnboardingRouteRouteImport } from './routes/onboarding/route'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -41,6 +40,7 @@ import { Route as DDonationIdDonationStatusRouteImport } from './routes/d.$donat
 import { Route as ApiWebhooksSmileRouteImport } from './routes/api/webhooks/smile'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as PublicDiscoverCategoryRouteImport } from './routes/_public/discover/$category'
+import { Route as PublicDDonationIdRouteImport } from './routes/_public/d.$donationId'
 import { Route as OOrgIdPaymentsIndexRouteImport } from './routes/o.$orgId/payments/index'
 import { Route as OOrgIdCampaignsIndexRouteImport } from './routes/o.$orgId/campaigns/index'
 import { Route as OOrgIdAccountIndexRouteImport } from './routes/o.$orgId/account/index'
@@ -55,11 +55,6 @@ import { Route as OOrgIdCampaignsCampaignIdIndexRouteImport } from './routes/o.$
 import { Route as OOrgIdCampaignsCampaignIdSharingRouteImport } from './routes/o.$orgId/campaigns.$campaignId/sharing'
 import { Route as OOrgIdCampaignsCampaignIdSettingsRouteImport } from './routes/o.$orgId/campaigns.$campaignId/settings'
 
-const TestWebsocketRoute = TestWebsocketRouteImport.update({
-  id: '/test-websocket',
-  path: '/test-websocket',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const OnboardingRouteRoute = OnboardingRouteRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -218,6 +213,11 @@ const PublicDiscoverCategoryRoute = PublicDiscoverCategoryRouteImport.update({
   path: '/discover/$category',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const PublicDDonationIdRoute = PublicDDonationIdRouteImport.update({
+  id: '/d/$donationId',
+  path: '/d/$donationId',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const OOrgIdPaymentsIndexRoute = OOrgIdPaymentsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -301,7 +301,6 @@ const OOrgIdCampaignsCampaignIdSettingsRoute =
 
 export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRouteRouteWithChildren
-  '/test-websocket': typeof TestWebsocketRoute
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/magic-code': typeof AuthMagicCodeRoute
@@ -318,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/app': typeof AppIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/d/$donationId': typeof PublicDDonationIdRoute
   '/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
@@ -345,7 +345,6 @@ export interface FileRoutesByFullPath {
   '/o/$orgId/campaigns/$campaignId/': typeof OOrgIdCampaignsCampaignIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/test-websocket': typeof TestWebsocketRoute
   '/login': typeof AuthLoginRoute
   '/magic-code': typeof AuthMagicCodeRoute
   '/$': typeof PublicSplatRoute
@@ -361,6 +360,7 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/app': typeof AppIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
+  '/d/$donationId': typeof PublicDDonationIdRoute
   '/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
@@ -388,7 +388,6 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_public': typeof PublicRouteRouteWithChildren
   '/onboarding': typeof OnboardingRouteRouteWithChildren
-  '/test-websocket': typeof TestWebsocketRoute
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/magic-code': typeof AuthMagicCodeRoute
@@ -405,6 +404,7 @@ export interface FileRoutesById {
   '/_public/': typeof PublicIndexRoute
   '/app/': typeof AppIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/_public/d/$donationId': typeof PublicDDonationIdRoute
   '/_public/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
@@ -435,7 +435,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/onboarding'
-    | '/test-websocket'
     | '/o/$orgId'
     | '/login'
     | '/magic-code'
@@ -452,6 +451,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/onboarding/'
+    | '/d/$donationId'
     | '/discover/$category'
     | '/api/auth/$'
     | '/api/webhooks/smile'
@@ -479,7 +479,6 @@ export interface FileRouteTypes {
     | '/o/$orgId/campaigns/$campaignId/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/test-websocket'
     | '/login'
     | '/magic-code'
     | '/$'
@@ -495,6 +494,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/onboarding'
+    | '/d/$donationId'
     | '/discover/$category'
     | '/api/auth/$'
     | '/api/webhooks/smile'
@@ -521,7 +521,6 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_public'
     | '/onboarding'
-    | '/test-websocket'
     | '/o/$orgId'
     | '/_auth/login'
     | '/_auth/magic-code'
@@ -538,6 +537,7 @@ export interface FileRouteTypes {
     | '/_public/'
     | '/app/'
     | '/onboarding/'
+    | '/_public/d/$donationId'
     | '/_public/discover/$category'
     | '/api/auth/$'
     | '/api/webhooks/smile'
@@ -569,7 +569,6 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
-  TestWebsocketRoute: typeof TestWebsocketRoute
   OOrgIdRouteRoute: typeof OOrgIdRouteRouteWithChildren
   LiveSlugRoute: typeof LiveSlugRoute
   R2SplatRoute: typeof R2SplatRoute
@@ -582,13 +581,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-websocket': {
-      id: '/test-websocket'
-      path: '/test-websocket'
-      fullPath: '/test-websocket'
-      preLoaderRoute: typeof TestWebsocketRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -806,6 +798,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicDiscoverCategoryRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_public/d/$donationId': {
+      id: '/_public/d/$donationId'
+      path: '/d/$donationId'
+      fullPath: '/d/$donationId'
+      preLoaderRoute: typeof PublicDDonationIdRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/o/$orgId/payments/': {
       id: '/o/$orgId/payments/'
       path: '/'
@@ -923,6 +922,7 @@ interface PublicRouteRouteChildren {
   PublicSRoute: typeof PublicSRoute
   PublicSupportRoute: typeof PublicSupportRoute
   PublicIndexRoute: typeof PublicIndexRoute
+  PublicDDonationIdRoute: typeof PublicDDonationIdRoute
   PublicDiscoverCategoryRoute: typeof PublicDiscoverCategoryRoute
   PublicDiscoverIndexRoute: typeof PublicDiscoverIndexRoute
   PublicFSlugIndexRoute: typeof PublicFSlugIndexRoute
@@ -937,6 +937,7 @@ const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicSRoute: PublicSRoute,
   PublicSupportRoute: PublicSupportRoute,
   PublicIndexRoute: PublicIndexRoute,
+  PublicDDonationIdRoute: PublicDDonationIdRoute,
   PublicDiscoverCategoryRoute: PublicDiscoverCategoryRoute,
   PublicDiscoverIndexRoute: PublicDiscoverIndexRoute,
   PublicFSlugIndexRoute: PublicFSlugIndexRoute,
@@ -1054,7 +1055,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
   OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
-  TestWebsocketRoute: TestWebsocketRoute,
   OOrgIdRouteRoute: OOrgIdRouteRouteWithChildren,
   LiveSlugRoute: LiveSlugRoute,
   R2SplatRoute: R2SplatRoute,

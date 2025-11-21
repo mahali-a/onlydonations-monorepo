@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect, Suspense } from "react";
-import { useParams } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { Trash2, Upload } from "lucide-react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Field, FieldError } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
-import { Trash2, Upload } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { campaignDetailQueryOptions } from "@/features/org-campaigns/server";
 import { updateCampaignDetailsOnServer } from "./campaign-details-actions";
 import { CampaignMainDetails } from "./ui/campaign-main-details";
@@ -43,9 +43,7 @@ function CampaignDetailsContent() {
   const params = useParams({ from: "/o/$orgId/campaigns/$campaignId" });
   const queryClient = useQueryClient();
 
-  const { data } = useSuspenseQuery(
-    campaignDetailQueryOptions(params.orgId, params.campaignId)
-  );
+  const { data } = useSuspenseQuery(campaignDetailQueryOptions(params.orgId, params.campaignId));
 
   const { campaign, categories } = data;
 
@@ -204,79 +202,81 @@ function CampaignDetailsContent() {
                         };
 
                         return (
-                  <div className="grid grid-cols-12 gap-4">
-                    <div className="col-span-full md:col-span-4">
-                      <div className="text-lg font-medium">Cover photo</div>
-                      <p className="text-sm text-foreground">Add a cover photo to your campaign.</p>
-                    </div>
+                          <div className="grid grid-cols-12 gap-4">
+                            <div className="col-span-full md:col-span-4">
+                              <div className="text-lg font-medium">Cover photo</div>
+                              <p className="text-sm text-foreground">
+                                Add a cover photo to your campaign.
+                              </p>
+                            </div>
 
-                    <section className="col-span-full md:col-span-7 md:col-start-6 space-y-4">
-                      <Field>
-                        <Label htmlFor={fileField.name}>Cover image</Label>
+                            <section className="col-span-full md:col-span-7 md:col-start-6 space-y-4">
+                              <Field>
+                                <Label htmlFor={fileField.name}>Cover image</Label>
 
-                        <div className="relative">
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            className="border-2 border-dashed rounded-md overflow-hidden cursor-pointer hover:border-muted-foreground transition-colors"
-                            onClick={triggerFileInput}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                triggerFileInput();
-                              }
-                            }}
-                          >
-                            {!displayUrl ? (
-                              <div className="h-96 w-full flex flex-col items-center justify-center text-muted-foreground">
-                                <Upload className="h-8 w-8 mb-2" />
-                                <p className="text-sm">Click to upload or drag and drop</p>
-                                <p className="text-xs text-muted-foreground">
-                                  PNG, JPG, WEBP up to 1MB
-                                </p>
-                              </div>
-                            ) : (
-                              <div className="h-96 w-full relative">
-                                <img
-                                  alt="Campaign cover preview"
-                                  className="h-full w-full object-cover"
-                                  src={displayUrl}
+                                <div className="relative">
+                                  <div
+                                    role="button"
+                                    tabIndex={0}
+                                    className="border-2 border-dashed rounded-md overflow-hidden cursor-pointer hover:border-muted-foreground transition-colors"
+                                    onClick={triggerFileInput}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        triggerFileInput();
+                                      }
+                                    }}
+                                  >
+                                    {!displayUrl ? (
+                                      <div className="h-96 w-full flex flex-col items-center justify-center text-muted-foreground">
+                                        <Upload className="h-8 w-8 mb-2" />
+                                        <p className="text-sm">Click to upload or drag and drop</p>
+                                        <p className="text-xs text-muted-foreground">
+                                          PNG, JPG, WEBP up to 1MB
+                                        </p>
+                                      </div>
+                                    ) : (
+                                      <div className="h-96 w-full relative">
+                                        <img
+                                          alt="Campaign cover preview"
+                                          className="h-full w-full object-cover"
+                                          src={displayUrl}
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {displayUrl && (
+                                    <Button
+                                      type="button"
+                                      size="icon"
+                                      variant="destructive"
+                                      className="absolute top-2 right-2"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleImageRemove();
+                                      }}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  )}
+                                </div>
+
+                                <input
+                                  ref={fileInputRef}
+                                  id={fileField.name}
+                                  name="coverImage"
+                                  type="file"
+                                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                                  className="sr-only"
+                                  onChange={handleFileChange}
                                 />
-                              </div>
-                            )}
+
+                                <FieldError errors={fileField.state.meta.errors} />
+                                <FieldError errors={keyField.state.meta.errors} />
+                              </Field>
+                            </section>
                           </div>
-
-                          {displayUrl && (
-                            <Button
-                              type="button"
-                              size="icon"
-                              variant="destructive"
-                              className="absolute top-2 right-2"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleImageRemove();
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-
-                        <input
-                          ref={fileInputRef}
-                          id={fileField.name}
-                          name="coverImage"
-                          type="file"
-                          accept="image/png,image/jpeg,image/jpg,image/webp"
-                          className="sr-only"
-                          onChange={handleFileChange}
-                        />
-
-                        <FieldError errors={fileField.state.meta.errors} />
-                        <FieldError errors={keyField.state.meta.errors} />
-                      </Field>
-                    </section>
-                  </div>
                         );
                       }}
                     </form.Subscribe>

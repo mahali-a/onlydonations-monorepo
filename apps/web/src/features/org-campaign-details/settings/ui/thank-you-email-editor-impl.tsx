@@ -1,13 +1,13 @@
-import { useState, useEffect, type FormEvent } from "react";
-import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import { type Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { BoldIcon, ItalicIcon, LinkIcon } from "lucide-react";
+import { type FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { getUrlFromString } from "@/lib/tiptap-utils";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { getUrlFromString } from "@/lib/tiptap-utils";
+import { cn } from "@/lib/utils";
 
 const LinkButton = ({ editor }: { editor: Editor }) => {
   const [link, setLink] = useState("");

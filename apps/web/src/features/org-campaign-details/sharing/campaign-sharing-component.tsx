@@ -1,17 +1,17 @@
-import { Suspense } from "react";
-import { useParams } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { Suspense } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { campaignDetailQueryOptions } from "@/features/org-campaigns/server";
 import { updateCampaignSharingOnServer } from "./campaign-sharing-actions";
+import { campaignSharingSchema } from "./campaign-sharing-schema";
 import { CustomSlug } from "./ui/custom-slug";
 import { LiveDisplay } from "./ui/live-display";
 import { SeoSettings } from "./ui/seo-settings";
-import { campaignSharingSchema } from "./campaign-sharing-schema";
 
 const EDITABLE_STATUSES = ["DRAFT", "ACTIVE", "REJECTED"] as const;
 
@@ -39,9 +39,7 @@ function CampaignSharingContent() {
   const params = useParams({ from: "/o/$orgId/campaigns/$campaignId" });
   const queryClient = useQueryClient();
 
-  const { data } = useSuspenseQuery(
-    campaignDetailQueryOptions(params.orgId, params.campaignId)
-  );
+  const { data } = useSuspenseQuery(campaignDetailQueryOptions(params.orgId, params.campaignId));
 
   const { campaign } = data;
 

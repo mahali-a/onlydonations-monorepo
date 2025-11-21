@@ -1,7 +1,7 @@
 import { getDb } from "@repo/core/database/setup";
 import type { InsertCampaign, SelectCampaign } from "@repo/core/database/types";
+import { and, count, eq, isNull } from "@repo/core/drizzle";
 import { campaign, donation } from "@repo/core/drizzle/schema";
-import { and, eq, isNull, count } from "@repo/core/drizzle";
 
 export async function retrieveCampaignSettingsFromDatabaseById(
   campaignId: SelectCampaign["id"],

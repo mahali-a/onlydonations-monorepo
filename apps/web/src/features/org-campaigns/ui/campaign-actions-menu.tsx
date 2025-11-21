@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import { Edit, MoreHorizontal, Trash2, XCircle, CheckCircle } from "lucide-react";
+import { CheckCircle, Edit, MoreHorizontal, Trash2, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {

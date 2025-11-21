@@ -48,9 +48,7 @@ export default function CampaignRejectedTemplate({
               </Section>
 
               <Section className="mt-6">
-                <Text className="text-base text-gray-800 leading-7">
-                  Hi {recipientName},
-                </Text>
+                <Text className="text-base text-gray-800 leading-7">Hi {recipientName},</Text>
                 <Text className="text-base text-gray-800 leading-7 mt-4">
                   Thank you for submitting your campaign <strong>"{campaignTitle}"</strong>. After
                   reviewing your submission, we need you to make some updates before it can be
@@ -67,8 +65,9 @@ export default function CampaignRejectedTemplate({
 
               <Section className="mt-6">
                 <Text className="text-base text-gray-800 leading-7">
-                  Please review our community guidelines and update your campaign accordingly. If you
-                  believe this was a mistake or need assistance, please contact our support team.
+                  Please review our community guidelines and update your campaign accordingly. If
+                  you believe this was a mistake or need assistance, please contact our support
+                  team.
                 </Text>
               </Section>
 

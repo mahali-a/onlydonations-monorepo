@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
 import type { AnyFieldApi } from "@tanstack/react-form";
+import { lazy, Suspense } from "react";
 
 const CampaignStoryEditor = lazy(() =>
   import("./campaign-story-editor").then((m) => ({ default: m.CampaignStoryEditor })),

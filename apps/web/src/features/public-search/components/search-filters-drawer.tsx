@@ -1,6 +1,8 @@
-import * as React from "react";
+import type { SelectCategory } from "@repo/core/database/types";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { X, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
+import * as React from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -11,12 +13,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import type { SelectCategory } from "@repo/core/database/types";
 import type { SearchFilters } from "../public-search-schemas";
 
 interface SearchFiltersDrawerProps {

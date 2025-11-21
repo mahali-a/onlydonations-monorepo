@@ -1,8 +1,10 @@
 import type { Setting } from "@repo/types";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, Menu, Search } from "lucide-react";
 import { useState } from "react";
 import { Navlogo } from "@/components/icons/nav-logo";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,9 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
 
 interface PublicNavbarProps {
   settings: Setting | null;

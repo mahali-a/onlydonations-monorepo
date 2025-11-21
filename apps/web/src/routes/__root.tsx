@@ -16,9 +16,9 @@ import { DefaultCatchBoundary } from "@/components/default-catch-boundary";
 import { NotFound } from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme";
 import { logger } from "@/lib/logger";
+import { retrieveSettingsFromServer } from "@/server/functions/cms";
 import appCss from "@/styles.css?url";
 import { seo } from "@/utils/seo";
-import { retrieveSettingsFromServer } from "@/server/functions/cms";
 
 const rootLogger = logger.createChildLogger("root");
 

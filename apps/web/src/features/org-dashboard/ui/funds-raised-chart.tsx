@@ -2,8 +2,8 @@ import { TrendingUp } from "lucide-react";
 import * as React from "react";
 import { lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
-import { formatMetricValue } from "@/lib/utils/dashboard-utils";
 import type { ChartDataPoint } from "@/features/org-dashboard/org-dashboard-models";
+import { formatMetricValue } from "@/lib/utils/dashboard-utils";
 
 const FundsRaisedChartImpl = lazy(() =>
   import("./funds-raised-chart-impl").then((m) => ({ default: m.FundsRaisedChartImpl })),

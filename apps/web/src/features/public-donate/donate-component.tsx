@@ -1,28 +1,27 @@
 import { useForm } from "@tanstack/react-form";
-import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronLeft, Info, ShieldCheck } from "lucide-react";
+import { HoneypotInputs, HoneypotProvider } from "@/components/honeypot-client";
+import { Navlogo } from "@/components/icons/nav-logo";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Field, FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { HoneypotInputs, HoneypotProvider } from "@/components/honeypot-client";
-import { calculateFees } from "@/lib/fees/calculator";
-import { Money } from "@/lib/money";
-import { cn } from "@/lib/utils";
-import { processDonationOnServer } from "./server";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { authClient } from "@/lib/auth-client";
-import { useQuery } from "@tanstack/react-query";
-import { Navlogo } from "@/components/icons/nav-logo";
+import { Field, FieldError } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "@tanstack/react-router";
+import { authClient } from "@/lib/auth-client";
+import { calculateFees } from "@/lib/fees/calculator";
+import { Money } from "@/lib/money";
+import { cn } from "@/lib/utils";
+import { processDonationOnServer } from "./server";
 
 type DonateComponentProps = {
   data: {
@@ -35,10 +34,7 @@ type DonateComponentProps = {
       currency: string;
       amount: number;
       totalRaised: number;
-      feeHandling:
-        | "DONOR_ASK_COVER"
-        | "DONOR_REQUIRE_COVER"
-        | "CAMPAIGN_ABSORB";
+      feeHandling: "DONOR_ASK_COVER" | "DONOR_REQUIRE_COVER" | "CAMPAIGN_ABSORB";
       donateButtonText: string | null;
     };
   };
@@ -75,20 +71,14 @@ export function DonateComponent({ data }: DonateComponentProps) {
     return pesewas / 100;
   };
 
-  const formatCurrency = (
-    amountInPesewas: number,
-    currency: string = "GHS",
-  ): string => {
+  const formatCurrency = (amountInPesewas: number, currency: string = "GHS"): string => {
     return Money.fromMinor(amountInPesewas, currency).format();
   };
 
   // Calculate progress percentage
   const progressPercentage =
     campaign.amount > 0
-      ? Math.min(
-          Math.round((campaign.totalRaised / campaign.amount) * 100),
-          100,
-        )
+      ? Math.min(Math.round((campaign.totalRaised / campaign.amount) * 100), 100)
       : 0;
 
   const form = useForm({
@@ -178,121 +168,115 @@ export function DonateComponent({ data }: DonateComponentProps) {
                 </>
               ) : session && orgId ? (
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-accent/30 border border-transparent hover:border-border transition-all"
-                      >
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            className="h-6 w-6"
-                            src={user?.image || undefined}
-                            alt={user?.name || "User"}
-                          />
-                          <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                            {fallbackText}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 text-left hidden sm:block">
-                          <p className="text-sm font-medium">
-                            {user?.name || "User"}
-                          </p>
-                        </div>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-[260px] p-4 rounded-3xl shadow-[0_6px_30px_rgba(0,0,0,0.1)] border-none"
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-accent/30 border border-transparent hover:border-border transition-all"
                     >
-                      {orgId && (
-                        <>
-                          <DropdownMenuItem
-                            asChild
-                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
-                          >
-                            <Link
-                              to={`/o/$orgId/account`}
-                              params={{
-                                orgId,
-                              }}
-                              className="w-full font-medium text-base"
-                            >
-                              Profile
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            asChild
-                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
-                          >
-                            <Link
-                              to={`/o/$orgId/campaigns`}
-                              params={{
-                                orgId,
-                              }}
-                              search={{}}
-                              className="w-full font-medium text-base"
-                            >
-                              Your fundraisers
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            asChild
-                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
-                          >
-                            <Link
-                              to={`/o/$orgId/donations`}
-                              params={{
-                                orgId,
-                              }}
-                              search={{}}
-                              className="w-full font-medium text-base"
-                            >
-                              Your impact
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            asChild
-                            className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
-                          >
-                            <Link
-                              to={`/o/$orgId/account`}
-                              params={{
-                                orgId,
-                              }}
-                              className="w-full font-medium text-base"
-                            >
-                              Account settings
-                            </Link>
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                      <DropdownMenuItem
-                        asChild
-                        className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
-                      >
-                        <button
-                          type="button"
-                          className="w-full text-left font-medium text-base"
-                          onClick={async () => {
-                            await authClient.signOut();
-                            navigate({ to: "/" });
-                          }}
-                        >
-                          Sign out
-                        </button>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-              ) : (
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate({ to: "/login" })}
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage
+                          className="h-6 w-6"
+                          src={user?.image || undefined}
+                          alt={user?.name || "User"}
+                        />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          {fallbackText}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 text-left hidden sm:block">
+                        <p className="text-sm font-medium">{user?.name || "User"}</p>
+                      </div>
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-[260px] p-4 rounded-3xl shadow-[0_6px_30px_rgba(0,0,0,0.1)] border-none"
                   >
-                    Sign In
-                  </Button>
+                    {orgId && (
+                      <>
+                        <DropdownMenuItem
+                          asChild
+                          className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                        >
+                          <Link
+                            to={`/o/$orgId/account`}
+                            params={{
+                              orgId,
+                            }}
+                            className="w-full font-medium text-base"
+                          >
+                            Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          asChild
+                          className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                        >
+                          <Link
+                            to={`/o/$orgId/campaigns`}
+                            params={{
+                              orgId,
+                            }}
+                            search={{}}
+                            className="w-full font-medium text-base"
+                          >
+                            Your fundraisers
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          asChild
+                          className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                        >
+                          <Link
+                            to={`/o/$orgId/donations`}
+                            params={{
+                              orgId,
+                            }}
+                            search={{}}
+                            className="w-full font-medium text-base"
+                          >
+                            Your impact
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          asChild
+                          className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                        >
+                          <Link
+                            to={`/o/$orgId/account`}
+                            params={{
+                              orgId,
+                            }}
+                            className="w-full font-medium text-base"
+                          >
+                            Account settings
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuItem
+                      asChild
+                      className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
+                    >
+                      <button
+                        type="button"
+                        className="w-full text-left font-medium text-base"
+                        onClick={async () => {
+                          await authClient.signOut();
+                          navigate({ to: "/" });
+                        }}
+                      >
+                        Sign out
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/login" })}>
+                  Sign In
+                </Button>
               )}
             </div>
           </div>
@@ -328,14 +312,10 @@ export function DonateComponent({ data }: DonateComponentProps) {
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
-                  {campaign.title}
-                </h1>
+                <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{campaign.title}</h1>
                 <p className="mt-1 text-sm font-medium text-gray-600">
                   You're supporting{" "}
-                  <span className="font-bold text-[#333]">
-                    {campaign.beneficiaryName}
-                  </span>
+                  <span className="font-bold text-[#333]">{campaign.beneficiaryName}</span>
                 </p>
               </div>
             </div>
@@ -353,9 +333,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                 {([errorMap]) =>
                   errorMap?.onSubmit?.form ? (
                     <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-                      <p className="text-sm text-destructive">
-                        {errorMap.onSubmit.form}
-                      </p>
+                      <p className="text-sm text-destructive">{errorMap.onSubmit.form}</p>
                     </div>
                   ) : null
                 }
@@ -391,9 +369,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
 
                 <div className="relative rounded-xl border border-gray-300 bg-white p-4 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
                   <div className="flex items-center justify-center">
-                    <span className="text-4xl font-bold text-[#333] mr-2">
-                      GHS
-                    </span>
+                    <span className="text-4xl font-bold text-[#333] mr-2">GHS</span>
                     <form.Field
                       name="amount"
                       validators={{
@@ -427,22 +403,16 @@ export function DonateComponent({ data }: DonateComponentProps) {
                         </div>
                       )}
                     </form.Field>
-                    <span className="text-[60px] font-bold text-[#333] ml-1">
-                      .00
-                    </span>
+                    <span className="text-[60px] font-bold text-[#333] ml-1">.00</span>
                   </div>
                   <div className="absolute bottom-2 right-4 text-xs font-bold text-gray-500">
                     GHS
                   </div>
                 </div>
-                <form.Subscribe
-                  selector={(state) => [state.fieldMeta.amount?.errors]}
-                >
+                <form.Subscribe selector={(state) => [state.fieldMeta.amount?.errors]}>
                   {([errors]) =>
                     errors && errors.length > 0 ? (
-                      <p className="text-sm text-destructive text-center">
-                        {errors[0]}
-                      </p>
+                      <p className="text-sm text-destructive text-center">{errors[0]}</p>
                     ) : null
                   }
                 </form.Subscribe>
@@ -494,10 +464,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                     name="donorEmail"
                     validators={{
                       onChange: ({ value }) => {
-                        if (
-                          !value ||
-                          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                        ) {
+                        if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
                           return "Valid email is required";
                         }
                         return undefined;
@@ -560,9 +527,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                       <Checkbox
                         id={field.name}
                         checked={field.state.value}
-                        onCheckedChange={(checked) =>
-                          field.handleChange(checked as boolean)
-                        }
+                        onCheckedChange={(checked) => field.handleChange(checked as boolean)}
                         className="mt-0.5 border-gray-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
                       <div className="grid gap-1.5 leading-none">
@@ -582,19 +547,13 @@ export function DonateComponent({ data }: DonateComponentProps) {
               {/* Summary and Fees */}
               <div className="mt-8 space-y-4 border-t border-gray-200 pt-6">
                 <form.Subscribe
-                  selector={(state) =>
-                    [state.values.amount, state.values.coverFees] as const
-                  }
+                  selector={(state) => [state.values.amount, state.values.coverFees] as const}
                 >
                   {([amount, coverFees]) => {
                     const parsedAmount = amount || 0;
                     const feeCalculation =
                       parsedAmount >= 100
-                        ? calculateFees(
-                            pesewasToGhs(parsedAmount),
-                            campaign.feeHandling,
-                            coverFees,
-                          )
+                        ? calculateFees(pesewasToGhs(parsedAmount), campaign.feeHandling, coverFees)
                         : null;
 
                     if (!feeCalculation) return null;
@@ -647,8 +606,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                                       I'd like to cover the fees of{" "}
                                       {formatCurrency(
                                         ghsToPesewas(
-                                          feeCalculation.platformFee +
-                                            feeCalculation.paymentFee,
+                                          feeCalculation.platformFee + feeCalculation.paymentFee,
                                         ),
                                         selectedCurrency,
                                       )}{" "}
@@ -671,21 +629,14 @@ export function DonateComponent({ data }: DonateComponentProps) {
                           </span>
                         </div>
 
-                        <form.Subscribe
-                          selector={(state) => [
-                            state.canSubmit,
-                            state.isSubmitting,
-                          ]}
-                        >
+                        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
                           {([canSubmit, isFormSubmitting]) => (
                             <Button
                               className="w-full rounded-full py-6 text-xl font-bold bg-primary text-primary-foreground shadow-none hover:bg-primary/90"
                               disabled={!canSubmit || isFormSubmitting}
                               type="submit"
                             >
-                              {isFormSubmitting
-                                ? "Processing..."
-                                : "Donate now"}
+                              {isFormSubmitting ? "Processing..." : "Donate now"}
                             </Button>
                           )}
                         </form.Subscribe>
@@ -709,8 +660,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                               OnlyDonation protects your donation
                             </h3>
                             <p className="text-xs text-gray-500 mt-1">
-                              We guarantee you a full refund in the rare case
-                              that fraud occurs.{" "}
+                              We guarantee you a full refund in the rare case that fraud occurs.{" "}
                               <button type="button" className="underline hover:no-underline">
                                 See our Giving Guarantee.
                               </button>

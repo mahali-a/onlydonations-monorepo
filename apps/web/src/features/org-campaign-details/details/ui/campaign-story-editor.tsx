@@ -1,34 +1,33 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { TextStyleKit } from "@tiptap/extension-text-style";
-import { EditorContent, useEditor, type Editor } from "@tiptap/react";
-import { useEditorState } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
 import type { AnyFieldApi } from "@tanstack/react-form";
-import { Label } from "@/components/ui/label";
-import { Field, FieldError } from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { getUrlFromString } from "@/lib/tiptap-utils";
+import { TextStyleKit } from "@tiptap/extension-text-style";
+import { type Editor, EditorContent, useEditor, useEditorState } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import {
   BoldIcon,
-  ItalicIcon,
-  StrikethroughIcon,
   CodeIcon,
+  FileCodeIcon,
   Heading1Icon,
   Heading2Icon,
   Heading3Icon,
+  ItalicIcon,
+  LinkIcon,
   ListIcon,
   ListOrderedIcon,
-  FileCodeIcon,
   QuoteIcon,
-  Undo2Icon,
   Redo2Icon,
-  LinkIcon,
+  StrikethroughIcon,
   Trash2,
+  Undo2Icon,
 } from "lucide-react";
+import { type FormEvent, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Field, FieldError } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { getUrlFromString } from "@/lib/tiptap-utils";
+import { cn } from "@/lib/utils";
 
 const LinkExtension = StarterKit.configure({
   link: {

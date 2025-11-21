@@ -1,22 +1,22 @@
+import { queryOptions } from "@tanstack/react-query";
 import {
   createFileRoute,
-  redirect,
   Outlet,
+  redirect,
   useLocation,
   useNavigate,
 } from "@tanstack/react-router";
-import { queryOptions } from "@tanstack/react-query";
 import ms from "ms";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { retrieveAccountUserFromServer } from "@/features/user-account/server";
+import { authClient } from "@/lib/auth-client";
+import { logger } from "@/lib/logger";
 import {
   retrieveOrganizationFromServerById,
   updateActiveOrganizationOnServer,
 } from "@/server/functions/organizations";
-import { retrieveAccountUserFromServer } from "@/features/user-account/server";
-import { authClient } from "@/lib/auth-client";
-import { logger } from "@/lib/logger";
 import { promiseHash } from "@/utils/promise-hash";
 
 const orgLogger = logger.createChildLogger("org-route");

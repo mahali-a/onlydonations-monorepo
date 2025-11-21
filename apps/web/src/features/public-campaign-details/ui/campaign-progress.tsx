@@ -1,5 +1,5 @@
-import { formatCurrency } from "@/lib/money";
 import { Progress } from "@/components/ui/progress";
+import { formatCurrency } from "@/lib/money";
 
 type CampaignProgressProps = {
   raised: number;

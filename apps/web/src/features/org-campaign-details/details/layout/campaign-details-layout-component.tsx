@@ -1,12 +1,9 @@
-import { Link, Outlet, useLocation, useParams } from "@tanstack/react-router";
-import { Copy, Eye } from "lucide-react";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { Link, Outlet, useLocation, useParams } from "@tanstack/react-router";
+import confetti from "canvas-confetti";
+import { Copy, Eye } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import confetti from "canvas-confetti";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,10 +14,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  publishCampaignOnServer,
   campaignDetailQueryOptions,
+  publishCampaignOnServer,
 } from "@/features/org-campaigns/server";
+import { cn } from "@/lib/utils";
 
 const EDITABLE_STATUSES = ["DRAFT", "ACTIVE", "REJECTED"] as const;
 const PUBLISHABLE_STATUSES = ["DRAFT", "REJECTED"] as const;

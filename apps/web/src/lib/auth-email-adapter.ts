@@ -1,5 +1,5 @@
-import type { EmailTemplateData } from "@repo/email/email/types";
 import type { EmailQueueProducer } from "@repo/email/email/queue";
+import type { EmailTemplateData } from "@repo/email/email/types";
 
 export function createAuthEmailHandler(queue: EmailQueueProducer) {
   return async (type: "otp" | "change-email", data: Record<string, unknown>) => {

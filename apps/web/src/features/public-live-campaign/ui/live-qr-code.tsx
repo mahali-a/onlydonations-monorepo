@@ -1,5 +1,5 @@
-import { QrCode } from "lucide-react";
 import confetti from "canvas-confetti";
+import { QrCode } from "lucide-react";
 
 type LiveQrCodeProps = {
   slug: string;

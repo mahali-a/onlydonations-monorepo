@@ -1,8 +1,8 @@
 import { getAuth } from "@repo/core/auth/server";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
+import { authMiddleware } from "@/server/middleware/auth";
 
 const onboardingLogger = logger.createChildLogger("auth-onboarding-loaders");
 

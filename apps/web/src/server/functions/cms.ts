@@ -1,10 +1,10 @@
-import type { Page, Setting } from "@repo/types";
+import { env } from "cloudflare:workers";
 import { cachified } from "@epic-web/cachified";
+import type { Page, Setting } from "@repo/types";
 import { createServerFn } from "@tanstack/react-start";
 import ms from "ms";
-import { env } from "cloudflare:workers";
+import { CACHE_KEYS, getCacheAdapter } from "@/lib/cache";
 import { cmsClient } from "@/lib/cms-client";
-import { getCacheAdapter, CACHE_KEYS } from "@/lib/cache";
 import { logger } from "@/lib/logger";
 
 export const retrievePageFromServerBySlug = createServerFn({ method: "GET" })

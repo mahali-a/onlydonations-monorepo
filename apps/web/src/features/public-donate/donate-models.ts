@@ -1,6 +1,6 @@
 import { getDb } from "@repo/core/database/setup";
-import { campaign, category, donation } from "@repo/core/drizzle/schema";
 import { and, eq, isNull, sql } from "@repo/core/drizzle";
+import { campaign, category, donation } from "@repo/core/drizzle/schema";
 
 /**
  * Retrieve campaign with category from database by slug
@@ -115,6 +115,7 @@ export async function retrieveDonationFromDatabaseByIdWithCampaign(donationId: s
       currency: donation.currency,
       status: donation.status,
       donorName: donation.donorName,
+      donorMessage: donation.donorMessage,
       isAnonymous: donation.isAnonymous,
       createdAt: donation.createdAt,
       updatedAt: donation.updatedAt,
@@ -153,4 +154,63 @@ export async function updateDonationPaymentTransactionInDatabaseById(
     });
 
   return updated || null;
+}
+
+/**
+ * Update donation message in database by ID
+ * @param donationId - Donation ID
+ * @param message - Donor thank you message
+ * @returns Updated donation
+ */
+export async function updateDonationMessageInDatabaseById(donationId: string, message: string) {
+  const db = getDb();
+  const [updated] = await db
+    .update(donation)
+    .set({
+      donorMessage: message,
+      messageStatus: "PENDING",
+      showMessage: false, // Hidden until approved
+      updatedAt: new Date(),
+    })
+    .where(eq(donation.id, donationId))
+    .returning({
+      id: donation.id,
+      donorMessage: donation.donorMessage,
+      messageStatus: donation.messageStatus,
+      showMessage: donation.showMessage,
+    });
+
+  return updated || null;
+}
+
+/**
+ * Retrieve donation with campaign from database by ID
+ * @param donationId - Donation ID
+ * @returns Donation with campaign data for sharing
+ */
+export async function retrieveDonationWithCampaignFromDatabaseById(donationId: string) {
+  const db = getDb();
+  const result = await db
+    .select({
+      id: donation.id,
+      amount: donation.amount,
+      currency: donation.currency,
+      status: donation.status,
+      donorName: donation.donorName,
+      donorMessage: donation.donorMessage,
+      messageStatus: donation.messageStatus,
+      showMessage: donation.showMessage,
+      isAnonymous: donation.isAnonymous,
+      createdAt: donation.createdAt,
+      campaignId: campaign.id,
+      campaignTitle: campaign.title,
+      campaignSlug: campaign.slug,
+      campaignCoverImage: campaign.coverImage,
+    })
+    .from(donation)
+    .innerJoin(campaign, eq(donation.campaignId, campaign.id))
+    .where(eq(donation.id, donationId))
+    .limit(1);
+
+  return result[0] || null;
 }

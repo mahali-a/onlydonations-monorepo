@@ -1,5 +1,5 @@
-import { Link } from "lucide-react";
 import type { HowItWorksBlock as HowItWorksBlockType } from "@repo/types/payload";
+import { Link } from "lucide-react";
 
 interface StepCardProps {
   step: string;

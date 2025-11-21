@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions } from "@tanstack/react-query";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { createFileRoute } from "@tanstack/react-router";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import ms from "ms";
 import { z } from "zod";
 import { retrieveFinancialInsightsFromServer } from "@/features/org-payments/insights/server";

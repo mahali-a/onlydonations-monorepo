@@ -1,4 +1,3 @@
-
 import { sendEmail } from "@repo/email/email/setup";
 import { emailQueueDataSchema } from "@repo/email/email/schema";
 import type { EmailTemplateType } from "@repo/email/email/types";

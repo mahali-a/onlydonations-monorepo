@@ -1,7 +1,7 @@
-import { Heart } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import type { DonationWithMessage } from "../public-campaign-details-models";
+import { Heart } from "lucide-react";
 import { Money } from "@/lib/money";
+import type { DonationWithMessage } from "../public-campaign-details-models";
 
 type DonationItemProps = {
   donation: DonationWithMessage;

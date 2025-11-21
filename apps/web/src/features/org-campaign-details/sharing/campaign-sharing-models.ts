@@ -1,7 +1,7 @@
 import { getDb } from "@repo/core/database/setup";
 import type { SelectCampaign } from "@repo/core/database/types";
-import { campaign } from "@repo/core/drizzle/schema";
 import { and, eq, isNull, ne } from "@repo/core/drizzle";
+import { campaign } from "@repo/core/drizzle/schema";
 
 export async function retrieveCampaignSharingFromDatabaseById(
   campaignId: SelectCampaign["id"],

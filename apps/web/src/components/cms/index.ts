@@ -1,3 +1,3 @@
 export { RefreshRouteOnSave } from "./refresh-route-on-save";
 export { RenderBlocks } from "./render-blocks";
-export { RichText, type LexicalContent } from "./rich-text";
+export { type LexicalContent, RichText } from "./rich-text";

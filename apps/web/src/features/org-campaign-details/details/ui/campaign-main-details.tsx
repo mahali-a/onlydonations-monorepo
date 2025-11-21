@@ -1,10 +1,10 @@
-import { useState } from "react";
 import type { SelectCategory } from "@repo/core/database/types";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import { HelpCircle } from "lucide-react";
+import { useState } from "react";
+import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Field, FieldError } from "@/components/ui/field";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 

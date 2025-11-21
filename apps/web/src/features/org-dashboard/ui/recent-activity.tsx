@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
+import type { RecentDonation } from "@/features/org-dashboard/org-dashboard-models";
 import { formatForDashboard } from "@/lib/money";
 import { formatDashboardDate } from "@/lib/utils/dashboard-utils";
-import type { RecentDonation } from "@/features/org-dashboard/org-dashboard-models";
 
 type RecentActivityProps = {
   donations: RecentDonation[];

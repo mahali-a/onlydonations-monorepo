@@ -1,8 +1,8 @@
 import { initAuth } from "@repo/core/auth/server";
 import { initDatabase } from "@repo/core/database/setup";
-import { createEmailQueue } from "@repo/email/email/queue";
 import { createModerationQueue } from "@repo/core/queues/moderation-queue";
 import { initModerationQueue } from "@repo/core/queues/setup";
+import { createEmailQueue } from "@repo/email/email/queue";
 import handler from "@tanstack/react-start/server-entry";
 import { createAuthEmailHandler } from "@/lib/auth-email-adapter";
 

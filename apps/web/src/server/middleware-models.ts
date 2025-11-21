@@ -1,7 +1,7 @@
 import { getDb } from "@repo/core/database/setup";
 import type { SelectMember, SelectOrganization } from "@repo/core/database/types";
-import { member, organization } from "@repo/core/drizzle/auth-schema";
 import { eq } from "@repo/core/drizzle";
+import { member, organization } from "@repo/core/drizzle/auth-schema";
 
 export async function findOrganizationById(id: string): Promise<SelectOrganization | null> {
   const db = getDb();

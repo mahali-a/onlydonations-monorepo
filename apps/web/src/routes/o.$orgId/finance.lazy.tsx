@@ -1,6 +1,5 @@
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { queryOptions } from "@tanstack/react-query";
 import ms from "ms";
 import { retrieveFinancialInsightsFromServer } from "@/features/org-payments/insights/server";
 import { CampaignTable, FinancialMetrics, FundsChart } from "@/features/org-payments/insights/ui";

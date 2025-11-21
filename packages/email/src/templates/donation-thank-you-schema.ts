@@ -9,6 +9,7 @@ export const donationThankYouSchema = z.object({
   campaignUrl: z.string(),
   customThankYouMessage: z.string().optional(),
   donatedAt: z.string(),
+  donationShareUrl: z.string(),
 });
 
 export type DonationThankYouData = z.infer<typeof donationThankYouSchema>;

@@ -1,5 +1,5 @@
-import type { DonationStats } from "../org-donations-models";
 import { Money } from "@/lib/money";
+import type { DonationStats } from "../org-donations-models";
 
 type MetricItem = {
   title: string;

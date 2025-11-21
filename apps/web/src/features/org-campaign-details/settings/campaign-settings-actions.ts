@@ -1,13 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
-import { authMiddleware } from "@/server/middleware/auth";
-import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { logger } from "@/lib/logger";
-import { updateCampaignSettingsSchema } from "./campaign-settings-schema";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
+import { authMiddleware } from "@/server/middleware/auth";
 import {
+  getHasDonationsInDatabase,
   retrieveCampaignSettingsFromDatabaseById,
   updateCampaignSettingsInDatabaseById,
-  getHasDonationsInDatabase,
 } from "./campaign-settings-models";
+import { updateCampaignSettingsSchema } from "./campaign-settings-schema";
 
 const campaignSettingsLogger = logger.createChildLogger("campaign-settings-actions");
 

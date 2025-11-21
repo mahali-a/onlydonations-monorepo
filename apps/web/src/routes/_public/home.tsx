@@ -1,8 +1,8 @@
+import type { Page } from "@repo/types/payload";
 import { createFileRoute } from "@tanstack/react-router";
 import { RenderBlocks } from "@/components/cms/render-blocks";
-import { retrieveCmsBaseUrlFromServer, retrievePageFromServerBySlug } from "@/server/functions/cms";
-import type { Page } from "@repo/types/payload";
 import { mockHomePage } from "@/features/public-home/data/mock-home-page";
+import { retrieveCmsBaseUrlFromServer, retrievePageFromServerBySlug } from "@/server/functions/cms";
 
 export const Route = createFileRoute("/_public/home")({
   loader: async () => {

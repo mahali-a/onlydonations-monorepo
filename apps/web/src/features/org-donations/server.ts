@@ -1,4 +1,4 @@
 export {
-  retrieveDonationsFromServer,
   retrieveDonationStatsFromServer,
+  retrieveDonationsFromServer,
 } from "./org-donations-loaders";

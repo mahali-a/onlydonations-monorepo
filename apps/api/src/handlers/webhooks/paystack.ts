@@ -168,7 +168,8 @@ webhooks.post("/", async (c) => {
 
         const emailQueue = createEmailQueue(c.env.APP_QUEUE, { defaultSource: "api" });
         const amount = (donationData.amount / 100).toFixed(2);
-        const campaignUrl = `${c.env.WEB_BASE_URL}/campaigns/${donationData.campaignSlug}`;
+        const campaignUrl = `${c.env.WEB_BASE_URL}/f/${donationData.campaignSlug}`;
+        const donationShareUrl = `${c.env.WEB_BASE_URL}/d/${existingDonation.id}`;
         const donatedAt = new Date().toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
@@ -184,6 +185,7 @@ webhooks.post("/", async (c) => {
           campaignUrl,
           customThankYouMessage: donationData.thankYouMessage || undefined,
           donatedAt,
+          donationShareUrl,
         });
 
         console.log("[PaystackWebhook] Thank you email queued successfully");

@@ -1,17 +1,15 @@
-import { Suspense } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { donationsWithMessagesQueryOptions } from "../server";
 import { DonationItem } from "./donation-item";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type WordsOfSupportProps = {
   campaignId: string;
 };
 
 function WordsOfSupportContent({ campaignId }: WordsOfSupportProps) {
-  const { data: donations } = useSuspenseQuery(
-    donationsWithMessagesQueryOptions(campaignId),
-  );
+  const { data: donations } = useSuspenseQuery(donationsWithMessagesQueryOptions(campaignId));
 
   if (donations.length === 0) {
     return (

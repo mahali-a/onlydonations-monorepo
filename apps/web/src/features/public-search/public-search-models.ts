@@ -1,5 +1,4 @@
 import { getDb } from "@repo/core/database/setup";
-import { campaign, category, donation } from "@repo/core/drizzle/schema";
 import {
   and,
   count,
@@ -13,6 +12,7 @@ import {
   or,
   sum,
 } from "@repo/core/drizzle";
+import { campaign, category, donation } from "@repo/core/drizzle/schema";
 import type { SearchFilters } from "./public-search-schemas";
 
 /**

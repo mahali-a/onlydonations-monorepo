@@ -1,13 +1,13 @@
 import { env } from "cloudflare:workers";
-import { createServerFn } from "@tanstack/react-start";
+import type { SelectVerificationJob } from "@repo/core/database/types";
 import { queryOptions } from "@tanstack/react-query";
+import { createServerFn } from "@tanstack/react-start";
 import ms from "ms";
 import { authMiddleware } from "@/server/middleware/auth";
 import {
   retrieveUserKycStatusFromDatabaseByUser,
   retrieveVerificationJobsFromDatabaseByUser,
 } from "./user-kyc-models";
-import type { SelectVerificationJob } from "@repo/core/database/types";
 
 export const retrieveKycStatusFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])

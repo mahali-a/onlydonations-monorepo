@@ -32,18 +32,9 @@ export const updateCampaignSharingSchema = z.object({
     .string()
     .min(3, "Slug must be at least 3 characters")
     .max(50, "Slug must be 50 characters or less")
-    .regex(
-      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-      "Slug must be lowercase alphanumeric with hyphens",
-    ),
-  seoTitle: z
-    .string()
-    .max(60, "SEO title must be 60 characters or less")
-    .optional(),
-  seoDescription: z
-    .string()
-    .max(160, "SEO description must be 160 characters or less")
-    .optional(),
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase alphanumeric with hyphens"),
+  seoTitle: z.string().max(60, "SEO title must be 60 characters or less").optional(),
+  seoDescription: z.string().max(160, "SEO description must be 160 characters or less").optional(),
   seoImageFileKey: z.string().optional(),
   deleteSeoImage: z.boolean().optional(),
 });

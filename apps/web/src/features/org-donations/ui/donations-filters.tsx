@@ -1,9 +1,9 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
+import { lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { DonationFilters } from "../org-donations-schemas";
-import { lazy, Suspense } from "react";
 
 const DonationsFiltersDrawer = lazy(() =>
   import("./donations-filters-drawer").then((m) => ({ default: m.DonationsFiltersDrawer })),

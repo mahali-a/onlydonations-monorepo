@@ -1,7 +1,7 @@
+import type { SelectCategory } from "@repo/core/database/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import type { SelectCategory } from "@repo/core/database/types";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";

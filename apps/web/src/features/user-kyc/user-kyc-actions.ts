@@ -1,9 +1,9 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
-import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
 import { retry } from "@/lib/retry";
+import { authMiddleware } from "@/server/middleware/auth";
 import type { KycProduct } from "./user-kyc-models";
 import { saveVerificationJobToDatabase } from "./user-kyc-models";
 

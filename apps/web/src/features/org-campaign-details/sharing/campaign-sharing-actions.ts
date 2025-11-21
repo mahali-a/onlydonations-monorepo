@@ -1,15 +1,18 @@
 import { createServerFn } from "@tanstack/react-start";
-import { authMiddleware } from "@/server/middleware/auth";
-import { requireOrganizationAccess } from "@/server/middleware/access-control";
-import { logger } from "@/lib/logger";
 import { fileService } from "@/lib/file-upload";
-import { updateCampaignSharingSchema, checkSlugAvailabilitySchema } from "./campaign-sharing-schema";
+import { logger } from "@/lib/logger";
+import { requireOrganizationAccess } from "@/server/middleware/access-control";
+import { authMiddleware } from "@/server/middleware/auth";
 import {
+  getIsSlugAvailableInDatabase,
   retrieveCampaignSharingFromDatabaseById,
   updateCampaignSharingInDatabaseById,
-  getIsSlugAvailableInDatabase,
 } from "./campaign-sharing-models";
 import type { CampaignSharingFormData } from "./campaign-sharing-schema";
+import {
+  checkSlugAvailabilitySchema,
+  updateCampaignSharingSchema,
+} from "./campaign-sharing-schema";
 
 const campaignSharingLogger = logger.createChildLogger("campaign-sharing-actions");
 
@@ -57,7 +60,15 @@ export const updateCampaignSharingOnServer = createServerFn({ method: "POST" })
   })
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
-    const { organizationId, campaignId, slug, seoTitle, seoDescription, seoImageFile, deleteSeoImage } = data;
+    const {
+      organizationId,
+      campaignId,
+      slug,
+      seoTitle,
+      seoDescription,
+      seoImageFile,
+      deleteSeoImage,
+    } = data;
 
     await requireOrganizationAccess(organizationId, context.user.id);
 

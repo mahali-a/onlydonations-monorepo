@@ -1,6 +1,6 @@
-import { FundsRaisedChart } from "./funds-raised-chart";
-import { DonorGrowthChart } from "./donor-growth-chart";
 import type { ChartDataPoint } from "@/features/org-dashboard/org-dashboard-models";
+import { DonorGrowthChart } from "./donor-growth-chart";
+import { FundsRaisedChart } from "./funds-raised-chart";
 
 type ChartsWrapperProps = {
   chartData: ChartDataPoint[];

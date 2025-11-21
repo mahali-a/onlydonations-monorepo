@@ -1,17 +1,17 @@
 import { useDashboardMetrics } from "./hooks/use-dashboard-metrics";
-import {
-  WelcomeHeader,
-  MetricsGrid,
-  RecentActivity,
-  CampaignPerformance,
-  ChartsWrapper,
-} from "./ui";
 import type {
-  DashboardStats,
-  RecentDonation,
   CampaignPerformance as CampaignPerformanceType,
   ChartDataPoint,
+  DashboardStats,
+  RecentDonation,
 } from "./org-dashboard-models";
+import {
+  CampaignPerformance,
+  ChartsWrapper,
+  MetricsGrid,
+  RecentActivity,
+  WelcomeHeader,
+} from "./ui";
 
 type DashboardProps = {
   user?: { name: string | null } | null;

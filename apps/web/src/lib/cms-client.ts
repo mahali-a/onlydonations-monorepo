@@ -1,6 +1,6 @@
+import { env } from "cloudflare:workers";
 import { PayloadSDK } from "@payloadcms/sdk";
 import type { Config } from "@repo/types/payload";
-import { env } from "cloudflare:workers";
 
 /**
  * Payload CMS SDK client instance.

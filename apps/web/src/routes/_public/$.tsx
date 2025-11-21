@@ -1,13 +1,13 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import ms from "ms";
 import { RefreshRouteOnSave } from "@/components/cms/refresh-route-on-save";
 import { RenderBlocks } from "@/components/cms/render-blocks";
 import { NotFound } from "@/components/not-found";
 import {
-  retrievePageFromServerBySlugWithDraft,
   retrieveCmsApiUrlFromServer,
   retrieveCmsBaseUrlFromServer,
+  retrievePageFromServerBySlugWithDraft,
 } from "@/server/functions/cms";
 
 const pageQueryOptions = (slug: string) =>

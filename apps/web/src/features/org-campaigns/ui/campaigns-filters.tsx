@@ -1,10 +1,10 @@
+import type { SelectCategory } from "@repo/core/database/types";
 import { useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
-import type { SelectCategory } from "@repo/core/database/types";
+import { lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CampaignFilters } from "../org-campaigns-schemas";
-import { lazy, Suspense } from "react";
 
 const CampaignsFiltersDrawer = lazy(() =>
   import("./campaigns-filters-drawer").then((m) => ({ default: m.CampaignsFiltersDrawer })),

@@ -1,6 +1,9 @@
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
+import type { AnyFieldApi } from "@tanstack/react-form";
+import { useState } from "react";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Field, FieldError } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -8,10 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Field, FieldError } from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import type { AnyFieldApi } from "@tanstack/react-form";
+import { Switch } from "@/components/ui/switch";
 
 type GeneralSettingsProps = {
   publishCampaignField: AnyFieldApi;

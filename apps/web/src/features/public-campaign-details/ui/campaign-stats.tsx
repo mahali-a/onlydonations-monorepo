@@ -1,4 +1,4 @@
-import { MapPin, Users, Calendar } from "lucide-react";
+import { Calendar, MapPin, Users } from "lucide-react";
 import { calculateDaysRemaining } from "../public-campaign-details-utils";
 
 type CampaignStatsProps = {

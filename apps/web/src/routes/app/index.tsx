@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { retrieveUserOrganizationsFromServer } from "@/server/functions/organizations";
 import { getIsOnboardingCompleteFromServer } from "@/features/auth-onboarding/server";
 import { logger } from "@/lib/logger";
+import { retrieveUserOrganizationsFromServer } from "@/server/functions/organizations";
 
 const appRouterLogger = logger.createChildLogger("app-router");
 

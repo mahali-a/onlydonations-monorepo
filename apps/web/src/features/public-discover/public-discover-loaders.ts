@@ -1,15 +1,15 @@
-import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
-import { z } from "zod";
+import { createServerFn } from "@tanstack/react-start";
 import ms from "ms";
-import {
-  retrieveCategoriesWithCampaignCountsFromDatabase,
-  retrieveCampaignsByCategoryNameFromDatabase,
-  retrieveTrendingCampaignsFromDatabase,
-  retrieveDiscoverPageDataFromDatabase,
-  retrieveCategoryByNameFromDatabase,
-} from "./public-discover-models";
+import { z } from "zod";
 import { fileService } from "@/lib/file-upload";
+import {
+  retrieveCampaignsByCategoryNameFromDatabase,
+  retrieveCategoriesWithCampaignCountsFromDatabase,
+  retrieveCategoryByNameFromDatabase,
+  retrieveDiscoverPageDataFromDatabase,
+  retrieveTrendingCampaignsFromDatabase,
+} from "./public-discover-models";
 
 /**
  * Server function to retrieve discover page data

@@ -48,9 +48,7 @@ export default function CampaignApprovedTemplate({
               </Section>
 
               <Section className="mt-6">
-                <Text className="text-base text-gray-800 leading-7">
-                  Hi {recipientName},
-                </Text>
+                <Text className="text-base text-gray-800 leading-7">Hi {recipientName},</Text>
                 <Text className="text-base text-gray-800 leading-7 mt-4">
                   Great news! Your campaign <strong>"{campaignTitle}"</strong> has been reviewed and
                   approved. It's now live and ready to receive donations from supporters.
@@ -70,10 +68,7 @@ export default function CampaignApprovedTemplate({
                 <Text className="mb-2 text-sm uppercase tracking-[0.3em] text-gray-500">
                   Share Your Campaign
                 </Text>
-                <Link
-                  href={campaignUrl}
-                  className="break-all text-sm text-brand underline"
-                >
+                <Link href={campaignUrl} className="break-all text-sm text-brand underline">
                   {campaignUrl}
                 </Link>
               </Section>

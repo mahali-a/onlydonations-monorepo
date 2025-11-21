@@ -1,12 +1,9 @@
 // @ts-nocheck - Payload type definitions are complex and may not match exactly
+
+import type { Page } from "@repo/types/payload";
 import { createFileRoute } from "@tanstack/react-router";
 import { RenderBlocks } from "@/components/cms/render-blocks";
-import {
-  retrieveCmsBaseUrlFromServer,
-  retrievePageFromServerBySlug,
-} from "@/server/functions/cms";
-import type { Page } from "@repo/types/payload";
-import { DonateNotFound } from "@/features/public-donate/donate-not-found";
+import { retrieveCmsBaseUrlFromServer, retrievePageFromServerBySlug } from "@/server/functions/cms";
 
 export const Route = createFileRoute("/_public/")({
   loader: async (): Promise<{ page: Page | null; cmsBaseUrl: string }> => {

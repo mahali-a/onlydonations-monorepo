@@ -1,5 +1,5 @@
-import { DonationStatsCard, DonationsTable, DonationsFilters, DonationsPagination } from "./ui";
-import type { DonorRow, DonationStats } from "./org-donations-models";
+import type { DonationStats, DonorRow } from "./org-donations-models";
+import { DonationStatsCard, DonationsFilters, DonationsPagination, DonationsTable } from "./ui";
 
 type DonationsComponentProps = {
   donations: DonorRow[];

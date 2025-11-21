@@ -63,10 +63,7 @@ export default buildConfig({
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
-    outputFile: path.resolve(
-      dirname,
-      "../../../packages/types/src/payload-types.ts",
-    ),
+    outputFile: path.resolve(dirname, "../../../packages/types/src/payload-types.ts"),
     declare: false, // Disable declare statement since types are used in other repos
   },
   db: vercelPostgresAdapter({

@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, FileQuestion, Home, Search } from "lucide-react";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type { ReactNode } from "react";
 
 export function NotFound({ children }: { children?: ReactNode }) {
   return (

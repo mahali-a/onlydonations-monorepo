@@ -1,10 +1,10 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import ms from "ms";
 import {
+  donationsWithMessagesQueryOptions,
   retrievePublicCampaignFromServerBySlug,
   similarCampaignsQueryOptions,
-  donationsWithMessagesQueryOptions,
 } from "@/features/public-campaign-details/server";
 import { CampaignDetailContent } from "@/features/public-campaign-details/ui/public-campaign-details-content";
 

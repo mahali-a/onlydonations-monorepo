@@ -1,8 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/ui/data-table";
-import type { DonorRow } from "../org-donations-models";
 import { Money } from "@/lib/money";
+import type { DonorRow } from "../org-donations-models";
 
 type DonationsTableProps = {
   donations: DonorRow[];

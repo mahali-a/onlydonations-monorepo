@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import ms from "ms";
 import type { CampaignFilters } from "@/features/org-campaigns";
-import { campaignFiltersSchema, CampaignsComponent } from "@/features/org-campaigns";
+import { CampaignsComponent, campaignFiltersSchema } from "@/features/org-campaigns";
 import { retrieveCampaignsFromServer } from "@/features/org-campaigns/server";
 
 const campaignsQueryOptions = (orgId: string, filters: CampaignFilters) =>

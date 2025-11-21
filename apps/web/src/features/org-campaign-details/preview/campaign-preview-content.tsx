@@ -1,14 +1,14 @@
+import { Flag, Heart, ShieldCheck, TrendingUp } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Flag, TrendingUp, Heart, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { Money } from "@/lib/money";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import type { CampaignDetailData } from "../../public-campaign-details/public-campaign-details-models";
 import { formatCampaignForPublic } from "../../public-campaign-details/public-campaign-details-utils";
-import { sanitizeHtml } from "@/lib/sanitize-html";
 import { DonationItem } from "../../public-campaign-details/ui/donation-item";
 import { TrustBanner } from "../../public-campaign-details/ui/trust-banner";
-import { Money } from "@/lib/money";
 
 type CampaignPreviewContentProps = {
   data: CampaignDetailData;

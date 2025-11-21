@@ -1,6 +1,7 @@
-import { Suspense } from "react";
+import { useForm } from "@tanstack/react-form";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { Suspense } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -8,9 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { campaignDetailQueryOptions } from "@/features/org-campaigns/server";
 import { updateCampaignSettingsOnServer } from "./campaign-settings-actions";
 import { GeneralSettings } from "./ui/general-settings";
-import { TipsFees } from "./ui/tips-fees";
 import { ThankYouMessage } from "./ui/thank-you-message";
-import { useForm } from "@tanstack/react-form";
+import { TipsFees } from "./ui/tips-fees";
 
 const EDITABLE_STATUSES = ["DRAFT", "ACTIVE", "REJECTED"] as const;
 
@@ -39,9 +39,7 @@ function CampaignSettingsContent() {
   const params = useParams({ from: "/o/$orgId/campaigns/$campaignId" });
   const queryClient = useQueryClient();
 
-  const { data } = useSuspenseQuery(
-    campaignDetailQueryOptions(params.orgId, params.campaignId)
-  );
+  const { data } = useSuspenseQuery(campaignDetailQueryOptions(params.orgId, params.campaignId));
 
   const { campaign } = data;
 

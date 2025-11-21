@@ -1,16 +1,16 @@
+import { Flag, Heart, ShieldCheck, TrendingUp } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Flag, TrendingUp, Heart, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { Money } from "@/lib/money";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import type { CampaignDetailData } from "../public-campaign-details-models";
 import { formatCampaignForPublic } from "../public-campaign-details-utils";
-import { sanitizeHtml } from "@/lib/sanitize-html";
-import { SimilarFundraisers } from "./similar-fundraisers";
 import { DonationItem } from "./donation-item";
-import { WordsOfSupport } from "./words-of-support";
+import { SimilarFundraisers } from "./similar-fundraisers";
 import { TrustBanner } from "./trust-banner";
-import { Money } from "@/lib/money";
+import { WordsOfSupport } from "./words-of-support";
 
 type CampaignDetailContentProps = {
   data: CampaignDetailData;
@@ -40,8 +40,8 @@ function handleShare() {
   }
 }
 
-import { lazy, Suspense } from "react";
 import { Link } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 
 const DonationsModal = lazy(() =>
   import("./donations-modal").then((m) => ({ default: m.DonationsModal })),

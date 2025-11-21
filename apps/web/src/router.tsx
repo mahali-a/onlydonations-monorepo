@@ -13,11 +13,7 @@ export const getRouter = () => {
     defaultPreloadDelay: 0,
     defaultPreloadStaleTime: 30 * 1000,
     Wrap: (props: { children: React.ReactNode }) => {
-      return (
-        <TanstackQuery.Provider {...rqContext}>
-          {props.children}
-        </TanstackQuery.Provider>
-      );
+      return <TanstackQuery.Provider {...rqContext}>{props.children}</TanstackQuery.Provider>;
     },
   });
 

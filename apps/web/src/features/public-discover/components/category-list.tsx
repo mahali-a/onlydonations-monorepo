@@ -1,25 +1,25 @@
-import {
-  Stethoscope,
-  Heart,
-  AlertTriangle,
-  Building2,
-  GraduationCap,
-  PawPrint,
-  Leaf,
-  Briefcase,
-  Users,
-  Trophy,
-  Palette,
-  Calendar,
-  HandHeart,
-  Home,
-  Plane,
-  Star,
-  Medal,
-  Sparkles,
-  type LucideIcon,
-} from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import {
+  AlertTriangle,
+  Briefcase,
+  Building2,
+  Calendar,
+  GraduationCap,
+  HandHeart,
+  Heart,
+  Home,
+  Leaf,
+  type LucideIcon,
+  Medal,
+  Palette,
+  PawPrint,
+  Plane,
+  Sparkles,
+  Star,
+  Stethoscope,
+  Trophy,
+  Users,
+} from "lucide-react";
 import type { CategoryWithCount } from "../public-discover-models";
 
 const categoryIcons: Record<string, LucideIcon> = {

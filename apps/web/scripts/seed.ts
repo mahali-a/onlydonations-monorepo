@@ -1,16 +1,15 @@
 // @ts-nocheck
 import "dotenv/config";
 
-import { faker } from "@faker-js/faker";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
-import { nanoid } from "nanoid";
 import { createHash } from "node:crypto";
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { readFileSync } from "node:fs";
+import { faker } from "@faker-js/faker";
 import * as authSchema from "@repo/core/drizzle/auth-schema";
 import * as schema from "@repo/core/drizzle/schema";
+import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import { nanoid } from "nanoid";
 import { logger } from "@/lib/logger";
 
 const schemaExports = schema.default || schema;

@@ -9,12 +9,9 @@ function AboutUsPage() {
     <div className="bg-background">
       <div className="container mx-auto px-4 py-24">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">
-            About Us
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-6">About Us</h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Learn more about our mission to empower African communities through
-            transparent giving.
+            Learn more about our mission to empower African communities through transparent giving.
           </p>
           {/* Content will be added soon */}
         </div>

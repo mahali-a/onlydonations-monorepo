@@ -1,9 +1,9 @@
-import { useEffect, useState, lazy, Suspense } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { liveCampaignQueryOptions } from "./public-live-campaign-loaders";
-import { LiveProgressBar, LiveDonationsFeed, LiveQrCode } from "./ui";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useRealtimeCampaign } from "@/hooks/use-realtime-campaign";
+import { liveCampaignQueryOptions } from "./public-live-campaign-loaders";
+import { LiveDonationsFeed, LiveProgressBar, LiveQrCode } from "./ui";
 
 const ShaderGradientCanvas = lazy(() =>
   import("@shadergradient/react").then((mod) => ({

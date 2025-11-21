@@ -1,7 +1,7 @@
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatForDashboard } from "@/lib/money";
+import { Card } from "@/components/ui/card";
 import type { CampaignPerformance as CampaignPerformanceType } from "@/features/org-dashboard/org-dashboard-models";
+import { formatForDashboard } from "@/lib/money";
 
 type CampaignPerformanceProps = {
   campaigns: CampaignPerformanceType[];

@@ -1,14 +1,14 @@
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { DonationsComponent } from "@/features/org-donations/org-donations-component";
 import { DonationsError } from "@/features/org-donations/org-donations-error";
-import {
-  retrieveDonationsFromServer,
-  retrieveDonationStatsFromServer,
-} from "@/features/org-donations/server";
-import { donationFiltersSchema } from "@/features/org-donations/org-donations-schemas";
 import type { DonationFilters } from "@/features/org-donations/org-donations-schemas";
+import { donationFiltersSchema } from "@/features/org-donations/org-donations-schemas";
+import {
+  retrieveDonationStatsFromServer,
+  retrieveDonationsFromServer,
+} from "@/features/org-donations/server";
 
 export const donationsQueryOptions = (orgId: string, filters?: Partial<DonationFilters>) =>
   queryOptions({

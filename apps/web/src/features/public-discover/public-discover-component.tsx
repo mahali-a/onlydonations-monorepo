@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { DiscoverHero } from "./components/discover-hero";
 import { CategoryList } from "./components/category-list";
+import { DiscoverHero } from "./components/discover-hero";
 import { FundraiserSection } from "./components/fundraiser-section";
 import { discoverPageQueryOptions } from "./server";
 

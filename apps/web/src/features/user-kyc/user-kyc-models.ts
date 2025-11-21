@@ -1,6 +1,6 @@
 import { getDb } from "@repo/core/database/setup";
-import { smileWebhookEvent, userKycStatus, verificationJob } from "@repo/core/drizzle/schema";
 import { eq } from "@repo/core/drizzle";
+import { smileWebhookEvent, userKycStatus, verificationJob } from "@repo/core/drizzle/schema";
 
 export type KycProduct = "biometric_kyc" | "doc_verification" | "authentication";
 

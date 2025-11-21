@@ -1,5 +1,5 @@
-import { formatMetricValue, getTrendMessage } from "@/lib/utils/dashboard-utils";
 import type { DashboardStats } from "@/features/org-dashboard/org-dashboard-models";
+import { formatMetricValue, getTrendMessage } from "@/lib/utils/dashboard-utils";
 
 export type FinancialMetric = {
   title: string;

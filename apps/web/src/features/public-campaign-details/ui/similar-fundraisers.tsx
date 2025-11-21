@@ -1,12 +1,12 @@
-import { useRef, Suspense } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Suspense, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { similarCampaignsQueryOptions } from "../server";
 import { Money } from "@/lib/money";
 import type { SimilarCampaign } from "../public-campaign-details-models";
+import { similarCampaignsQueryOptions } from "../server";
 
 type SimilarFundraisersProps = {
   categoryId: string;

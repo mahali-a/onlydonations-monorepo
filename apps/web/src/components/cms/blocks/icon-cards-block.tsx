@@ -1,8 +1,8 @@
 import type { IconCardsBlock as IconCardsBlockType } from "@repo/types/payload";
 import type { LucideIcon } from "lucide-react";
 import { Calendar, Check, Heart, Info, Lightbulb, Quote, Share2, Star } from "lucide-react";
+import { A11y, Keyboard, Mousewheel, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Keyboard, A11y, Mousewheel } from "swiper/modules";
 
 // Import Swiper styles
 // @ts-expect-error - CSS import

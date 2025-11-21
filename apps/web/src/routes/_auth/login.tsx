@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { generateLoginHoneypotFromServer, LoginComponent } from "@/features/auth-login";
 

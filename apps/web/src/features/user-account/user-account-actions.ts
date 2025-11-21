@@ -3,10 +3,10 @@ import { getAuth } from "@repo/core/auth/server";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { nanoid } from "nanoid";
-import { authMiddleware } from "@/server/middleware/auth";
 import { logger } from "@/lib/logger";
-import { emailSchema, nameSchema } from "./user-account-schemas";
+import { authMiddleware } from "@/server/middleware/auth";
 import { updateUserInDatabase } from "./user-account-models";
+import { emailSchema, nameSchema } from "./user-account-schemas";
 
 const accountLogger = logger.createChildLogger("user-account-actions");
 
