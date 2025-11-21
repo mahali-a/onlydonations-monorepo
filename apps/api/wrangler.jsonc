@@ -55,6 +55,12 @@
       "new_sqlite_classes": [
         "CampaignTracker"
       ]
+    },
+    {
+      "tag": "v2",
+      "deleted_classes": [
+        "TestTracker"
+      ]
     }
   ],
   "vars": {
