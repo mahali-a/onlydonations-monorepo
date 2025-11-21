@@ -2,6 +2,11 @@ import { getDb } from "@repo/core/database/setup";
 import { campaign, category, donation } from "@repo/core/drizzle/schema";
 import { and, eq, isNull, sql } from "@repo/core/drizzle";
 
+/**
+ * Retrieve campaign with category from database by slug
+ * @param slug - Campaign slug
+ * @returns Campaign with category and total raised
+ */
 export async function retrieveCampaignWithCategoryFromDatabaseBySlug(slug: string) {
   const db = getDb();
   const result = await db
@@ -39,6 +44,11 @@ export async function retrieveCampaignWithCategoryFromDatabaseBySlug(slug: strin
   };
 }
 
+/**
+ * Retrieve campaign from database by slug
+ * @param slug - Campaign slug
+ * @returns Campaign data
+ */
 export async function retrieveCampaignFromDatabaseBySlug(slug: string) {
   const db = getDb();
   const result = await db
@@ -56,6 +66,11 @@ export async function retrieveCampaignFromDatabaseBySlug(slug: string) {
   return result[0] || null;
 }
 
+/**
+ * Save donation to database
+ * @param data - Donation data
+ * @returns Created donation
+ */
 export async function saveDonationToDatabase(data: {
   id: string;
   campaignId: string;
@@ -86,6 +101,11 @@ export async function saveDonationToDatabase(data: {
   return created || null;
 }
 
+/**
+ * Retrieve donation from database by ID with campaign
+ * @param donationId - Donation ID
+ * @returns Donation with campaign data
+ */
 export async function retrieveDonationFromDatabaseByIdWithCampaign(donationId: string) {
   const db = getDb();
   const result = await db
@@ -109,62 +129,12 @@ export async function retrieveDonationFromDatabaseByIdWithCampaign(donationId: s
   return result[0] || null;
 }
 
-export async function retrieveDonationFromDatabaseByReference(reference: string) {
-  const db = getDb();
-  const result = await db
-    .select({
-      id: donation.id,
-      status: donation.status,
-      reference: donation.reference,
-      campaignId: donation.campaignId,
-      amount: donation.amount,
-      currency: donation.currency,
-      paymentTransactionId: donation.paymentTransactionId,
-    })
-    .from(donation)
-    .where(eq(donation.reference, reference))
-    .limit(1);
-
-  return result[0] || null;
-}
-
-export async function updateDonationStatusInDatabaseById(
-  donationId: string,
-  status: "SUCCESS" | "FAILED" | "PENDING",
-  additionalData?: {
-    completedAt?: Date;
-    failedAt?: Date;
-    failureReason?: string;
-  },
-) {
-  const db = getDb();
-  const updateData: Record<string, unknown> = {
-    status,
-    updatedAt: new Date(),
-  };
-
-  if (additionalData?.completedAt) {
-    updateData.completedAt = additionalData.completedAt;
-  }
-  if (additionalData?.failedAt) {
-    updateData.failedAt = additionalData.failedAt;
-  }
-  if (additionalData?.failureReason) {
-    updateData.failureReason = additionalData.failureReason;
-  }
-
-  const [updated] = await db
-    .update(donation)
-    .set(updateData)
-    .where(eq(donation.id, donationId))
-    .returning({
-      id: donation.id,
-      status: donation.status,
-    });
-
-  return updated || null;
-}
-
+/**
+ * Update donation payment transaction in database by ID
+ * @param donationId - Donation ID
+ * @param paymentTransactionId - Payment transaction ID
+ * @returns Updated donation
+ */
 export async function updateDonationPaymentTransactionInDatabaseById(
   donationId: string,
   paymentTransactionId: string,

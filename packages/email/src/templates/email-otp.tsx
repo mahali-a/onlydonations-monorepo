@@ -11,7 +11,7 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
-import type { EmailOtpData } from "./schema";
+import type { EmailOtpData } from "./email-otp-schema";
 
 const ACTION_COPY: Record<EmailOtpData["type"], string> = {
   "sign-in": "sign in to your account",
@@ -19,11 +19,11 @@ const ACTION_COPY: Record<EmailOtpData["type"], string> = {
   "forget-password": "reset your password",
 };
 
-export const EmailOtpTemplate = ({
-  otp,
-  type,
+export default function EmailOtpTemplate({
+  otp = "123456",
+  type = "sign-in" as EmailOtpData["type"],
   expiresIn = "5 minutes",
-}: Omit<EmailOtpData, "email">) => {
+}: Partial<Omit<EmailOtpData, "email">>) {
   const actionText = ACTION_COPY[type];
 
   return (
@@ -47,9 +47,9 @@ export const EmailOtpTemplate = ({
             <Container className="mx-auto max-w-[560px] py-5 pb-12">
               <Section align="center">
                 <Img
-                  alt="Logo"
+                  alt="OnlyDonations Logo"
                   height={32}
-                  src="https://via.placeholder.com/150x32/FB922A/FFFFFF?text=Logo"
+                  src="https://assets.stg.onlydonations.com/public/onlydonations-logo.png"
                 />
               </Section>
 
@@ -80,4 +80,4 @@ export const EmailOtpTemplate = ({
       </Body>
     </Html>
   );
-};
+}

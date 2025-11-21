@@ -1,11 +1,18 @@
 // @ts-nocheck - Payload type definitions are complex and may not match exactly
-import { createFileRoute } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  DefaultGlobalNotFound,
+  ErrorComponent,
+} from "@tanstack/react-router";
 import { RenderBlocks } from "@/components/cms/render-blocks";
 import {
   retrieveCmsBaseUrlFromServer,
   retrievePageFromServerBySlug,
 } from "@/server/functions/cms";
 import type { Page } from "@repo/types/payload";
+import { NotFound } from "@/components/not-found";
+import { DonationStatusNotFound } from "@/features/public-donation-status/donation-status-not-found";
+import { DonateNotFound } from "@/features/public-donate/donate-not-found";
 
 export const Route = createFileRoute("/_public/")({
   loader: async (): Promise<{ page: Page | null; cmsBaseUrl: string }> => {
@@ -16,7 +23,7 @@ export const Route = createFileRoute("/_public/")({
 
     return { page: page as Page | null, cmsBaseUrl };
   },
-  component: HomePage,
+  component: DonateNotFound,
 });
 
 function HomePage() {

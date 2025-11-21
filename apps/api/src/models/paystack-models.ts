@@ -1,0 +1,172 @@
+import { getDb } from "@repo/core/database/setup";
+import { donation, webhookEvent, paymentTransaction, campaign } from "@repo/core/drizzle/schema";
+import { eq } from "@repo/core/drizzle";
+
+/**
+ * Retrieve webhook event from database by processor event ID
+ * @param processorEventId - The processor event ID
+ * @returns Webhook event or null
+ */
+export async function retrieveWebhookEventFromDatabaseByProcessorEventId(processorEventId: string) {
+  const db = getDb();
+  const result = await db
+    .select()
+    .from(webhookEvent)
+    .where(eq(webhookEvent.processorEventId, processorEventId))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+/**
+ * Save webhook event to database
+ * @param data - Webhook event data
+ * @returns Created webhook event
+ */
+export async function saveWebhookEventToDatabase(data: {
+  processor: string;
+  processorEventId: string;
+  eventType: string;
+  signature: string;
+  rawPayload: string;
+  status: string;
+}) {
+  const db = getDb();
+  const [created] = await db
+    .insert(webhookEvent)
+    .values({
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning();
+
+  return created || null;
+}
+
+/**
+ * Update webhook event status in database by ID
+ * @param id - Webhook event ID
+ * @param status - New status
+ * @param errorMessage - Optional error message
+ */
+export async function updateWebhookEventStatusInDatabaseById(
+  id: string,
+  status: string,
+  errorMessage?: string,
+) {
+  const db = getDb();
+  await db
+    .update(webhookEvent)
+    .set({
+      status,
+      errorMessage,
+      updatedAt: new Date(),
+    })
+    .where(eq(webhookEvent.id, id));
+}
+
+/**
+ * Retrieve donation from database by reference
+ * @param reference - Payment reference
+ * @returns Donation or null
+ */
+export async function retrieveDonationFromDatabaseByReference(reference: string) {
+  const db = getDb();
+  const result = await db
+    .select({
+      id: donation.id,
+      status: donation.status,
+      reference: donation.reference,
+      campaignId: donation.campaignId,
+      amount: donation.amount,
+      currency: donation.currency,
+      paymentTransactionId: donation.paymentTransactionId,
+    })
+    .from(donation)
+    .where(eq(donation.reference, reference))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+/**
+ * Update donation status in database by ID
+ * @param id - Donation ID
+ * @param status - New status
+ * @param additionalData - Optional additional data
+ */
+export async function updateDonationStatusInDatabaseById(
+  id: string,
+  status: "SUCCESS" | "FAILED" | "PENDING",
+  additionalData?: {
+    completedAt?: Date;
+    failedAt?: Date;
+    failureReason?: string;
+  },
+) {
+  const db = getDb();
+  await db
+    .update(donation)
+    .set({
+      status,
+      completedAt: additionalData?.completedAt,
+      failedAt: additionalData?.failedAt,
+      failureReason: additionalData?.failureReason,
+      updatedAt: new Date(),
+    })
+    .where(eq(donation.id, id));
+}
+
+/**
+ * Update payment transaction status in database by ID
+ * @param id - Payment transaction ID
+ * @param status - New status
+ * @param additionalData - Optional additional data
+ */
+export async function updatePaymentTransactionStatusInDatabaseById(
+  id: string,
+  status: "SUCCESS" | "FAILED" | "PENDING",
+  additionalData?: {
+    completedAt?: Date;
+    processorTransactionId?: string;
+    statusMessage?: string;
+  },
+) {
+  const db = getDb();
+  await db
+    .update(paymentTransaction)
+    .set({
+      status,
+      completedAt: additionalData?.completedAt,
+      processorTransactionId: additionalData?.processorTransactionId,
+      statusMessage: additionalData?.statusMessage,
+      updatedAt: new Date(),
+    })
+    .where(eq(paymentTransaction.id, id));
+}
+
+/**
+ * Retrieve donation with campaign from database by donation ID
+ * @param donationId - Donation ID
+ * @returns Donation with campaign data or null
+ */
+export async function retrieveDonationWithCampaignFromDatabaseById(donationId: string) {
+  const db = getDb();
+  const result = await db
+    .select({
+      donorEmail: donation.donorEmail,
+      donorName: donation.donorName,
+      amount: donation.amount,
+      currency: donation.currency,
+      campaignTitle: campaign.title,
+      campaignSlug: campaign.slug,
+      thankYouMessage: campaign.thankYouMessage,
+    })
+    .from(donation)
+    .innerJoin(campaign, eq(donation.campaignId, campaign.id))
+    .where(eq(donation.id, donationId))
+    .limit(1);
+
+  return result[0] || null;
+}

@@ -3,8 +3,8 @@ import { z } from "zod";
 import dayjs from "dayjs";
 import { logger } from "@/lib/logger";
 import { Money } from "@/lib/money";
-import { retrieveDonationFromDatabaseByIdWithCampaign } from "../donate/donate-models";
-import { PAYMENT_TIMEOUT_MINUTES } from "../donate/donate-constants";
+import { retrieveDonationFromDatabaseByIdWithCampaign } from "../public-donate/donate-models";
+import { PAYMENT_TIMEOUT_MINUTES } from "../public-donate/donate-constants";
 
 const donationsLogger = logger.createChildLogger("donations-status");
 
