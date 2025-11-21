@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestWebsocketRouteImport } from './routes/test-websocket'
 import { Route as OnboardingRouteRouteImport } from './routes/onboarding/route'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -54,6 +55,11 @@ import { Route as OOrgIdCampaignsCampaignIdIndexRouteImport } from './routes/o.$
 import { Route as OOrgIdCampaignsCampaignIdSharingRouteImport } from './routes/o.$orgId/campaigns.$campaignId/sharing'
 import { Route as OOrgIdCampaignsCampaignIdSettingsRouteImport } from './routes/o.$orgId/campaigns.$campaignId/settings'
 
+const TestWebsocketRoute = TestWebsocketRouteImport.update({
+  id: '/test-websocket',
+  path: '/test-websocket',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRouteRoute = OnboardingRouteRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -295,6 +301,7 @@ const OOrgIdCampaignsCampaignIdSettingsRoute =
 
 export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/test-websocket': typeof TestWebsocketRoute
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/magic-code': typeof AuthMagicCodeRoute
@@ -338,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/o/$orgId/campaigns/$campaignId/': typeof OOrgIdCampaignsCampaignIdIndexRoute
 }
 export interface FileRoutesByTo {
+  '/test-websocket': typeof TestWebsocketRoute
   '/login': typeof AuthLoginRoute
   '/magic-code': typeof AuthMagicCodeRoute
   '/$': typeof PublicSplatRoute
@@ -380,6 +388,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_public': typeof PublicRouteRouteWithChildren
   '/onboarding': typeof OnboardingRouteRouteWithChildren
+  '/test-websocket': typeof TestWebsocketRoute
   '/o/$orgId': typeof OOrgIdRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/magic-code': typeof AuthMagicCodeRoute
@@ -426,6 +435,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/onboarding'
+    | '/test-websocket'
     | '/o/$orgId'
     | '/login'
     | '/magic-code'
@@ -469,6 +479,7 @@ export interface FileRouteTypes {
     | '/o/$orgId/campaigns/$campaignId/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/test-websocket'
     | '/login'
     | '/magic-code'
     | '/$'
@@ -510,6 +521,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_public'
     | '/onboarding'
+    | '/test-websocket'
     | '/o/$orgId'
     | '/_auth/login'
     | '/_auth/magic-code'
@@ -557,6 +569,7 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   OnboardingRouteRoute: typeof OnboardingRouteRouteWithChildren
+  TestWebsocketRoute: typeof TestWebsocketRoute
   OOrgIdRouteRoute: typeof OOrgIdRouteRouteWithChildren
   LiveSlugRoute: typeof LiveSlugRoute
   R2SplatRoute: typeof R2SplatRoute
@@ -569,6 +582,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-websocket': {
+      id: '/test-websocket'
+      path: '/test-websocket'
+      fullPath: '/test-websocket'
+      preLoaderRoute: typeof TestWebsocketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -1034,6 +1054,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
   OnboardingRouteRoute: OnboardingRouteRouteWithChildren,
+  TestWebsocketRoute: TestWebsocketRoute,
   OOrgIdRouteRoute: OOrgIdRouteRouteWithChildren,
   LiveSlugRoute: LiveSlugRoute,
   R2SplatRoute: R2SplatRoute,

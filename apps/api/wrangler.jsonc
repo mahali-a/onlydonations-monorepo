@@ -41,6 +41,22 @@
       "bucket_name": "assets"
     }
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CAMPAIGN_TRACKER",
+        "class_name": "CampaignTracker"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "CampaignTracker"
+      ]
+    }
+  ],
   "vars": {
     "EMAIL_FROM": "onlydonations@mahali.dev",
     "ENVIRONMENT": "production",

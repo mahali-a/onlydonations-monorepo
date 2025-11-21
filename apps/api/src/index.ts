@@ -5,6 +5,9 @@ import { app } from "@/handlers";
 import { handleQueueMessage } from "@/queues";
 import type { EmailQueueMessage } from "@repo/email/email/schema";
 
+// Export Durable Objects
+export { CampaignTracker } from "@/durable-objects/campaign-tracker";
+
 export default class DataService extends WorkerEntrypoint<Env> {
   fetch(request: Request) {
     initDatabase(env.DB);

@@ -9,6 +9,7 @@ import {
   updatePaymentTransactionStatusInDatabaseById,
   retrieveDonationWithCampaignFromDatabaseById,
 } from "@/models/paystack-models";
+import { broadcastDonationSuccess } from "@/durable-objects/broadcast-helpers";
 
 const webhooks = new Hono<{ Bindings: Env }>();
 
@@ -75,7 +76,6 @@ webhooks.post("/", async (c) => {
       payload: event,
     });
 
-    // Idempotency check
     if (event.id) {
       const existingEvent = await retrieveWebhookEventFromDatabaseByProcessorEventId(event.id);
 
@@ -85,7 +85,6 @@ webhooks.post("/", async (c) => {
       }
     }
 
-    // Store webhook event
     const newEvent = await saveWebhookEventToDatabase({
       processor: "paystack",
       processorEventId: event.id || `${event.event}-${event.data.reference}-${Date.now()}`,
@@ -119,7 +118,6 @@ webhooks.post("/", async (c) => {
       webhookAmount: event.data.amount,
     });
 
-    // Handle charge.success
     if (event.event === "charge.success") {
       const paystackAmount = event.data.amount;
 
@@ -159,7 +157,6 @@ webhooks.post("/", async (c) => {
 
       await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
 
-      // Send thank you email
       const donationData = await retrieveDonationWithCampaignFromDatabaseById(existingDonation.id);
 
       if (donationData?.donorEmail && donationData.donorName) {
@@ -196,6 +193,15 @@ webhooks.post("/", async (c) => {
           hasEmail: !!donationData?.donorEmail,
           hasName: !!donationData?.donorName,
         });
+      }
+
+      if (donationData?.campaignId) {
+        await broadcastDonationSuccess(
+          c.env,
+          donationData.campaignId,
+          existingDonation.id,
+          c.executionCtx,
+        );
       }
     } else if (event.event === "charge.failed") {
       console.log("[PaystackWebhook] Charge failed", {

@@ -1,11 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import {
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ChevronLeft,
-  ChevronDown,
-} from "lucide-react";
+import { CheckCircle2, XCircle, Clock, ChevronLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -134,9 +128,7 @@ export function DonationStatus({ data }: DonationStatusProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 text-left hidden sm:block">
-                        <p className="text-sm font-medium">
-                          {user?.name || "User"}
-                        </p>
+                        <p className="text-sm font-medium">{user?.name || "User"}</p>
                       </div>
                       <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     </Button>
@@ -226,11 +218,7 @@ export function DonationStatus({ data }: DonationStatusProps) {
               </>
             ) : (
               <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate({ to: "/login" })}
-                >
+                <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/login" })}>
                   Sign In
                 </Button>
                 <Button asChild size="sm">
@@ -246,9 +234,7 @@ export function DonationStatus({ data }: DonationStatusProps) {
         <div className="rounded-3xl bg-white p-6 shadow-sm sm:p-8 text-center">
           <div className="flex justify-center mb-6">{getStatusIcon()}</div>
 
-          <h1 className="text-3xl font-bold mb-2 text-[#333]">
-            {getStatusMessage()}
-          </h1>
+          <h1 className="text-3xl font-bold mb-2 text-[#333]">{getStatusMessage()}</h1>
 
           {data.status === "SUCCESS" && (
             <>
@@ -257,17 +243,12 @@ export function DonationStatus({ data }: DonationStatusProps) {
                 <span className="font-bold text-[#333]">
                   {data.currency} {data.formattedAmount}
                 </span>{" "}
-                to{" "}
-                <span className="font-bold text-[#333]">
-                  {data.campaignTitle}
-                </span>
+                to <span className="font-bold text-[#333]">{data.campaignTitle}</span>
               </p>
 
               <div className="space-y-6 text-left">
                 <div className="rounded-2xl bg-gray-50 p-6">
-                  <h3 className="font-bold text-lg mb-2">
-                    Leave a message of support
-                  </h3>
+                  <h3 className="font-bold text-lg mb-2">Leave a message of support</h3>
                   <p className="text-sm text-gray-600 mb-4">
                     Your message will be visible on the fundraiser page.
                   </p>
@@ -296,8 +277,8 @@ export function DonationStatus({ data }: DonationStatusProps) {
           {data.status === "FAILED" && (
             <div className="mb-8">
               <p className="text-gray-600 mb-6">
-                We couldn't process your donation of {data.currency}{" "}
-                {data.formattedAmount}. Please try again.
+                We couldn't process your donation of {data.currency} {data.formattedAmount}. Please
+                try again.
               </p>
               <Button
                 asChild
@@ -313,18 +294,14 @@ export function DonationStatus({ data }: DonationStatusProps) {
           {data.status === "PENDING" && (
             <div className="mb-8">
               <p className="text-gray-600">
-                We are confirming your payment of {data.currency}{" "}
-                {data.formattedAmount}. This may take a few moments.
+                We are confirming your payment of {data.currency} {data.formattedAmount}. This may
+                take a few moments.
               </p>
             </div>
           )}
 
           <div className="mt-8 pt-8 border-t border-gray-100">
-            <Button
-              asChild
-              variant="ghost"
-              className="text-gray-500 hover:text-[#333]"
-            >
+            <Button asChild variant="ghost" className="text-gray-500 hover:text-[#333]">
               <Link to="/f/$slug" params={{ slug: data.campaignSlug }}>
                 Return to Fundraiser
               </Link>

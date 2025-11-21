@@ -2,6 +2,5 @@ interface ExampleWorkflowParmas {
   dataToPassIn;
 }
 
-interface Env extends Cloudflare.Env {
-  PAYSTACK_SECRET_KEY: string;
-}
+// Service bindings are now auto-generated in worker-configuration.d.ts
+// This file only contains custom additions not detected by wrangler

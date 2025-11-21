@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 
-export class ExampleDurableObject extends DurableObject {
+export class ExampleDurableObject extends DurableObject<Env> {
   savedData: string | undefined;
 
   constructor(ctx: DurableObjectState, env: Env) {

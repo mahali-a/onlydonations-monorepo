@@ -155,6 +155,7 @@ export async function retrieveDonationWithCampaignFromDatabaseById(donationId: s
   const db = getDb();
   const result = await db
     .select({
+      campaignId: donation.campaignId,
       donorEmail: donation.donorEmail,
       donorName: donation.donorName,
       amount: donation.amount,

@@ -3,17 +3,18 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { liveCampaignQueryOptions } from "./public-live-campaign-loaders";
 import { LiveProgressBar, LiveDonationsFeed, LiveQrCode } from "./ui";
+import { useRealtimeCampaign } from "@/hooks/use-realtime-campaign";
 
 const ShaderGradientCanvas = lazy(() =>
   import("@shadergradient/react").then((mod) => ({
     default: mod.ShaderGradientCanvas,
-  }))
+  })),
 );
 
 const ShaderGradient = lazy(() =>
   import("@shadergradient/react").then((mod) => ({
     default: mod.ShaderGradient,
-  }))
+  })),
 );
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -25,6 +26,12 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
 export function LiveCampaignComponent() {
   const { slug } = useParams({ from: "/live/$slug" });
   const { data } = useSuspenseQuery(liveCampaignQueryOptions(slug));
+
+  const { isConnected, connectionStatus } = useRealtimeCampaign({
+    campaignId: data?.campaign.id || "",
+    slug,
+    enabled: !!data?.campaign.id,
+  });
 
   if (!data) {
     return (
@@ -43,7 +50,13 @@ export function LiveCampaignComponent() {
 
   return (
     <div className="relative h-screen w-full overflow-hidden text-white bg-black">
-      {/* Shader Gradient Background */}
+      <div className="absolute top-4 right-4 z-50">
+        <div
+          className={`h-2 w-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+          title={connectionStatus}
+        />
+      </div>
+
       <ClientOnly>
         <div className="absolute inset-0 z-0">
           <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
@@ -67,7 +80,6 @@ export function LiveCampaignComponent() {
       </ClientOnly>
 
       <div className="flex h-full w-full relative z-10">
-        {/* Left Column - Campaign Info */}
         <div className="flex w-1/2 flex-col justify-between p-12">
           <div className="space-y-6">
             <div>
@@ -86,7 +98,6 @@ export function LiveCampaignComponent() {
           <LiveQrCode slug={campaign.slug} />
         </div>
 
-        {/* Right Column - Feed */}
         <div className="relative flex w-1/2 flex-col bg-black/10 backdrop-blur-sm">
           <div className="flex-1 overflow-y-auto p-12">
             <LiveDonationsFeed donations={donations} />
