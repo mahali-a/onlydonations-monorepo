@@ -58,14 +58,15 @@ export function LiveQrCode({ slug, baseUrl = "" }: LiveQrCodeProps) {
         <QrCode className="h-6 w-6" />
         <span>Scan-to-Donate</span>
       </div>
-      <div
+      <button
+        type="button"
         className="w-fit rounded-2xl bg-white p-4 shadow-2xl cursor-pointer hover:scale-105 transition-transform"
         onClick={fireConfetti}
       >
         <div className="h-64 w-64 bg-white">
           <img src={qrCodeUrl} alt="Scan to donate" className="h-full w-full" loading="eager" />
         </div>
-      </div>
+      </button>
     </div>
   );
 }

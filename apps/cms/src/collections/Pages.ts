@@ -26,7 +26,7 @@ export const Pages: CollectionConfig = {
     useAsTitle: "title",
   },
   access: {
-    read: ({ req: { user } }) => {
+    read: () => {
       return true;
     },
   },

@@ -23,8 +23,8 @@ type DonationsListProps = {
 function DonationsListSkeleton() {
     return (
         <div className="space-y-6 py-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex gap-3 animate-pulse">
+            {Array.from({ length: 5 }, (_, i) => `donation-skeleton-${i}`).map((key) => (
+                <div key={key} className="flex gap-3 animate-pulse">
                     <div className="h-10 w-10 rounded-full bg-muted" />
                     <div className="flex-1 space-y-2">
                         <div className="h-4 w-24 bg-muted rounded" />

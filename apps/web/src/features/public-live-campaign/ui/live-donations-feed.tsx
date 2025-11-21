@@ -70,7 +70,7 @@ export function LiveDonationsFeed({ donations }: LiveDonationsFeedProps) {
     }
 
     setPrevDonationIds(currentIds);
-  }, [donations]);
+  }, [donations, prevDonationIds.has, prevDonationIds.size]);
 
   if (donations.length === 0) {
     return (

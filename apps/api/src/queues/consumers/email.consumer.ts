@@ -1,5 +1,5 @@
-import { env } from "cloudflare:workers";
-import { initEmail, sendEmail } from "@repo/email/email/setup";
+
+import { sendEmail } from "@repo/email/email/setup";
 import { emailQueueDataSchema } from "@repo/email/email/schema";
 import type { EmailTemplateType } from "@repo/email/email/types";
 import type { ConsumerResult, QueueConsumer } from "@repo/core/queues/types";

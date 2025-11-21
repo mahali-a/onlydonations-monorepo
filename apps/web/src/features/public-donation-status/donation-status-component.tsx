@@ -109,8 +109,7 @@ export function DonationStatus({ data }: DonationStatusProps) {
                 <Skeleton className="h-8 w-32" />
               </>
             ) : session && orgId ? (
-              <>
-                <DropdownMenu>
+              <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
@@ -204,6 +203,7 @@ export function DonationStatus({ data }: DonationStatusProps) {
                       className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
                     >
                       <button
+                        type="button"
                         className="w-full text-left font-medium text-base"
                         onClick={async () => {
                           await authClient.signOut();
@@ -215,7 +215,6 @@ export function DonationStatus({ data }: DonationStatusProps) {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </>
             ) : (
               <>
                 <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/login" })}>

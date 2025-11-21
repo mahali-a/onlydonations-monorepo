@@ -41,7 +41,7 @@ export async function retrievePublicCampaignsWithCategoryFromDatabaseByFilters(
   const conditions = [...buildPublicCampaignConditions(now)];
 
   // Full-text search on title, beneficiary name, and description
-  if (query && query.trim()) {
+  if (query?.trim()) {
     const searchTerm = `%${query.trim()}%`;
     const searchCondition = or(
       like(campaign.title, searchTerm),
@@ -112,7 +112,7 @@ export async function retrievePublicCampaignCountFromDatabaseByFilters(
 
   const conditions = [...buildPublicCampaignConditions(now)];
 
-  if (query && query.trim()) {
+  if (query?.trim()) {
     const searchTerm = `%${query.trim()}%`;
     const searchCondition = or(
       like(campaign.title, searchTerm),

@@ -324,6 +324,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                         className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
                       >
                         <button
+                          type="button"
                           className="w-full text-left font-medium text-base"
                           onClick={async () => {
                             await authClient.signOut();

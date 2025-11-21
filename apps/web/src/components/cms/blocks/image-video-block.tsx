@@ -75,7 +75,15 @@ export function ImageVideoBlock({
                                             <DialogTitle>Image Preview</DialogTitle>
                                         </VisuallyHidden.Root>
 
-                                        <div className="relative w-full h-full flex items-center justify-center" onClick={() => setIsOpen(false)}>
+                                        <div
+                                            className="relative w-full h-full flex items-center justify-center"
+                                            onClick={() => setIsOpen(false)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Escape') setIsOpen(false);
+                                            }}
+                                            role="button"
+                                            tabIndex={0}
+                                        >
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
@@ -89,12 +97,22 @@ export function ImageVideoBlock({
                                                 <span className="sr-only">Close</span>
                                             </Button>
 
-                                            <img
-                                                src={imageUrl}
-                                                alt={block.altText || image?.alt || ""}
-                                                className="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-md shadow-2xl select-none"
+                                            <button
+                                                type="button"
+                                                className="focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
                                                 onClick={(e) => e.stopPropagation()}
-                                            />
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.stopPropagation();
+                                                    }
+                                                }}
+                                            >
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={block.altText || image?.alt || ""}
+                                                    className="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-md shadow-2xl select-none"
+                                                />
+                                            </button>
 
                                             {block.caption && (
                                                 <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">

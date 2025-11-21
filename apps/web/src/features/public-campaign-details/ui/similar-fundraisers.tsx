@@ -89,8 +89,8 @@ function SimilarFundraisersLoading() {
           <Skeleton className="h-10 w-2/3 bg-white/10" />
         </div>
         <div className="flex gap-6 overflow-hidden">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="min-w-[280px]">
+          {Array.from({ length: 4 }, (_, i) => `similar-skeleton-${i}`).map((key) => (
+            <div key={key} className="min-w-[280px]">
               <Skeleton className="aspect-[1.6] rounded-xl mb-4 bg-white/10" />
               <Skeleton className="h-4 w-3/4 mb-2 bg-white/10" />
               <Skeleton className="h-3 w-1/2 bg-white/10" />

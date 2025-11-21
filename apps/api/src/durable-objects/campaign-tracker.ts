@@ -9,9 +9,6 @@ type RealtimeMessage =
  * Manages WebSocket connections for real-time campaign updates using hibernation
  */
 export class CampaignTracker extends DurableObject<Env> {
-  constructor(ctx: DurableObjectState, env: Env) {
-    super(ctx, env);
-  }
 
   async fetch(request: Request): Promise<Response> {
     const upgradeHeader = request.headers.get("Upgrade");

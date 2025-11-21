@@ -31,13 +31,15 @@ export function GalleryBlock({
 
     const handleNext = () => {
         if (selectedIndex === null || !block.images) return;
-        setSelectedIndex((prev) => (prev === null ? null : (prev + 1) % block.images!.length));
+        const images = block.images;
+        setSelectedIndex((prev) => (prev === null ? null : (prev + 1) % images.length));
     };
 
     const handlePrev = () => {
         if (selectedIndex === null || !block.images) return;
+        const images = block.images;
         setSelectedIndex((prev) =>
-            prev === null ? null : (prev - 1 + block.images!.length) % block.images!.length,
+            prev === null ? null : (prev - 1 + images.length) % images.length,
         );
     };
 
@@ -111,7 +113,15 @@ export function GalleryBlock({
                             <DialogTitle>Image Preview</DialogTitle>
                         </VisuallyHidden.Root>
 
-                        <div className="relative w-full h-full flex items-center justify-center" onClick={() => setSelectedIndex(null)}>
+                        <div
+                            className="relative w-full h-full flex items-center justify-center"
+                            onClick={() => setSelectedIndex(null)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Escape') setSelectedIndex(null);
+                            }}
+                            role="button"
+                            tabIndex={0}
+                        >
                             {/* Close button */}
                             <Button
                                 variant="ghost"
@@ -156,8 +166,32 @@ export function GalleryBlock({
                                     </Button>
 
                                     {/* Mobile Navigation Zones (invisible but clickable) */}
-                                    <div className="absolute left-0 top-0 bottom-0 w-1/4 z-40 sm:hidden" onClick={(e) => { e.stopPropagation(); handlePrev(); }} />
-                                    <div className="absolute right-0 top-0 bottom-0 w-1/4 z-40 sm:hidden" onClick={(e) => { e.stopPropagation(); handleNext(); }} />
+                                    <div
+                                        className="absolute left-0 top-0 bottom-0 w-1/4 z-40 sm:hidden"
+                                        onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'ArrowLeft') {
+                                                e.stopPropagation();
+                                                handlePrev();
+                                            }
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Previous image"
+                                    />
+                                    <div
+                                        className="absolute right-0 top-0 bottom-0 w-1/4 z-40 sm:hidden"
+                                        onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'ArrowRight') {
+                                                e.stopPropagation();
+                                                handleNext();
+                                            }
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Next image"
+                                    />
                                 </>
                             )}
 
@@ -167,12 +201,22 @@ export function GalleryBlock({
                             </div>
 
                             {selectedImageUrl && (
-                                <img
-                                    src={selectedImageUrl}
-                                    alt={selectedImageAlt}
-                                    className="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-md shadow-2xl select-none"
+                                <button
+                                    type="button"
+                                    className="focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
                                     onClick={(e) => e.stopPropagation()}
-                                />
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.stopPropagation();
+                                        }
+                                    }}
+                                >
+                                    <img
+                                        src={selectedImageUrl}
+                                        alt={selectedImageAlt}
+                                        className="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-md shadow-2xl select-none"
+                                    />
+                                </button>
                             )}
 
                             {/* Caption overlay */}

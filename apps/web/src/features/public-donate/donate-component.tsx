@@ -177,8 +177,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                   <Skeleton className="h-8 w-32" />
                 </>
               ) : session && orgId ? (
-                <>
-                  <DropdownMenu>
+                <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
@@ -274,6 +273,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                         className="rounded-xl px-4 py-3 cursor-pointer focus:bg-accent/50"
                       >
                         <button
+                          type="button"
                           className="w-full text-left font-medium text-base"
                           onClick={async () => {
                             await authClient.signOut();
@@ -285,17 +285,14 @@ export function DonateComponent({ data }: DonateComponentProps) {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </>
               ) : (
-                <>
-                  <Button
+                <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => navigate({ to: "/login" })}
                   >
                     Sign In
                   </Button>
-                </>
               )}
             </div>
           </div>
@@ -695,13 +692,13 @@ export function DonateComponent({ data }: DonateComponentProps) {
 
                         <p className="text-xs text-gray-500">
                           By clicking Donate now, you agree to OnlyDonation's{" "}
-                          <a href="#" className="underline">
+                          <button type="button" className="underline hover:no-underline">
                             Terms of Service
-                          </a>{" "}
+                          </button>{" "}
                           and{" "}
-                          <a href="#" className="underline">
+                          <button type="button" className="underline hover:no-underline">
                             Privacy Notice
-                          </a>
+                          </button>
                           .
                         </p>
 
@@ -714,9 +711,9 @@ export function DonateComponent({ data }: DonateComponentProps) {
                             <p className="text-xs text-gray-500 mt-1">
                               We guarantee you a full refund in the rare case
                               that fraud occurs.{" "}
-                              <a href="#" className="underline">
+                              <button type="button" className="underline hover:no-underline">
                                 See our Giving Guarantee.
-                              </a>
+                              </button>
                             </p>
                           </div>
                         </div>
