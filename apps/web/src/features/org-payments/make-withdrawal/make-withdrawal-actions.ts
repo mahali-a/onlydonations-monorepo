@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
+import { retrieveUserKycStatusFromDatabaseByUser } from "@/features/user-account/kyc/kyc-models";
 import { logger } from "@/lib/logger";
 import { paystackService } from "@/lib/paystack";
 import { promiseHash } from "@/lib/promise-hash";
@@ -8,6 +9,7 @@ import { authMiddleware } from "@/server/middleware/auth";
 import {
   retrieveTotalRaisedFromDatabaseByOrganization,
   retrieveWithdrawalAccountFromDatabaseById,
+  retrieveWithdrawalAccountsFromDatabaseByOrganization,
   retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus,
   savePaymentTransactionToDatabase,
   updatePaymentTransactionInDatabase,
@@ -32,6 +34,35 @@ export const createWithdrawalRequestOnServer = createServerFn({ method: "POST" }
     });
 
     try {
+      const user = context.user;
+
+      // Validate verification requirements
+      const phoneVerified = Boolean(user.phoneNumber && user.phoneNumberVerified);
+      if (!phoneVerified) {
+        return {
+          success: false,
+          error: "Phone number must be verified before making withdrawals",
+        };
+      }
+
+      const kycStatus = await retrieveUserKycStatusFromDatabaseByUser(user.id);
+      const kycVerified = kycStatus?.kycStatus === "VERIFIED";
+      if (!kycVerified) {
+        return {
+          success: false,
+          error: "KYC verification must be completed before making withdrawals",
+        };
+      }
+
+      const withdrawalAccounts =
+        await retrieveWithdrawalAccountsFromDatabaseByOrganization(organizationId);
+      if (withdrawalAccounts.length === 0) {
+        return {
+          success: false,
+          error: "No payout account configured. Please add a payout account first",
+        };
+      }
+
       const withdrawalAccount = await retrieveWithdrawalAccountFromDatabaseById(
         payoutAccountId,
         organizationId,
