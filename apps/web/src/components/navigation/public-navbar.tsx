@@ -163,10 +163,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                 <Button
                   variant="ghost"
                   className="w-full text-muted-foreground hover:text-foreground"
-                  onClick={async () => {
-                    await authClient.signOut();
-                    navigate({ to: "/" });
-                  }}
+                  onClick={() => authClient.signOut()}
                 >
                   Sign Out
                 </Button>
@@ -357,10 +354,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                         <button
                           type="button"
                           className="w-full text-left font-medium text-base"
-                          onClick={async () => {
-                            await authClient.signOut();
-                            navigate({ to: "/" });
-                          }}
+                          onClick={() => authClient.signOut()}
                         >
                           Sign out
                         </button>
