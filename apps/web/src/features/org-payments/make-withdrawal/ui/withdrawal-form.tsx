@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { calculateWithdrawalFees, getPlatformFeePercentage } from "@/lib/fees/calculator";
 import { formatCurrency } from "@/lib/money";
 import { createWithdrawalRequestOnServer } from "../server";
 
@@ -51,35 +52,40 @@ export function WithdrawalForm({
 
   const params = useParams({ from: "/o/$orgId" });
 
+  const platformFeePercent = getPlatformFeePercentage() * 100;
+
   const form = useForm({
     defaultValues: defaultFormValues,
     validators: {
       onSubmitAsync: async ({ value }) => {
-        const result = await createWithdrawalRequestOnServer({
-          data: {
-            organizationId: params.orgId,
-            payoutAccountId: value.payoutAccountId,
-            amount: value.amount,
-            currency,
-          },
-        });
+        try {
+          const result = await createWithdrawalRequestOnServer({
+            data: {
+              organizationId: params.orgId,
+              payoutAccountId: value.payoutAccountId,
+              amount: value.amount,
+              currency,
+            },
+          });
 
-        if (!result.success) {
-          return {
-            form: result.error || "Failed to process withdrawal",
-          };
+          if (!result.success) {
+            throw new Error("Withdrawal request failed");
+          }
+
+          setShowConfirmDialog(false);
+          form.reset();
+          router.invalidate();
+
+          toast.success("Withdrawal request submitted!", {
+            description: `${formatCurrency(Math.round(value.amount * 100), currency)} will be transferred to your account.`,
+            icon: <CheckCircle2 className="h-5 w-5" />,
+          });
+
+          return null;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Failed to process withdrawal";
+          return { form: message };
         }
-
-        setShowConfirmDialog(false);
-        form.reset();
-        router.invalidate();
-
-        toast.success("Withdrawal request submitted!", {
-          description: `${formatCurrency(Math.round(value.amount * 100), currency)} will be transferred to your account.`,
-          icon: <CheckCircle2 className="h-5 w-5" />,
-        });
-
-        return null;
       },
     },
   });
@@ -162,15 +168,15 @@ export function WithdrawalForm({
 
                 const payoutAccountId = fieldApi.form.getFieldValue("payoutAccountId");
                 const selectedAccount = payoutAccounts.find((acc) => acc.id === payoutAccountId);
+                if (!selectedAccount) return undefined;
 
-                const transferFee = selectedAccount?.accountType === "mobile_money" ? 100 : 800;
-
+                const accountType = selectedAccount.accountType as "mobile_money" | "bank";
                 const amountInMinorUnits = Math.round(value * 100);
-                const totalNeeded = amountInMinorUnits + transferFee;
+                const fees = calculateWithdrawalFees(amountInMinorUnits, accountType);
 
                 if (value < minAmount) return `Minimum withdrawal is ${minAmount} ${currency}`;
-                if (totalNeeded > availableBalance) {
-                  return `Insufficient balance (including ${formatCurrency(transferFee, currency)} transfer fee)`;
+                if (fees.totalDeduction > availableBalance) {
+                  return `Insufficient balance. You need ${formatCurrency(fees.totalDeduction, currency)} (including ${platformFeePercent}% platform fee + transfer fee)`;
                 }
                 return undefined;
               },
@@ -208,19 +214,23 @@ export function WithdrawalForm({
               const selectedAccount = payoutAccounts.find((acc) => acc.id === payoutAccountId);
               if (!selectedAccount) return null;
 
-              const transferFee = selectedAccount.accountType === "mobile_money" ? 100 : 800;
-
+              const accountType = selectedAccount.accountType as "mobile_money" | "bank";
               const amountInMinorUnits = Math.round(amountValue * 100);
-              const totalDeduction = amountInMinorUnits + transferFee;
-              const youReceive = amountInMinorUnits;
+              const fees = calculateWithdrawalFees(amountInMinorUnits, accountType);
 
               return (
                 <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 text-sm">
-                  <p className="text-blue-900 font-medium mb-2">Transfer Details</p>
+                  <p className="text-blue-900 font-medium mb-2">Withdrawal Summary</p>
                   <div className="space-y-2 text-blue-800">
                     <div className="flex justify-between">
-                      <span>Amount to receive:</span>
-                      <span className="font-semibold">{formatCurrency(youReceive, currency)}</span>
+                      <span>You will receive:</span>
+                      <span className="font-semibold">
+                        {formatCurrency(fees.requestedAmount, currency)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>Platform fee ({platformFeePercent}%):</span>
+                      <span>{formatCurrency(fees.platformFee, currency)}</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span>
@@ -228,11 +238,11 @@ export function WithdrawalForm({
                         {selectedAccount.accountType === "mobile_money" ? "Mobile Money" : "Bank"}
                         ):
                       </span>
-                      <span>{formatCurrency(transferFee, currency)}</span>
+                      <span>{formatCurrency(fees.transferFee, currency)}</span>
                     </div>
                     <div className="flex justify-between border-t border-blue-200 pt-2 font-semibold">
                       <span>Total deducted from balance:</span>
-                      <span>{formatCurrency(totalDeduction, currency)}</span>
+                      <span>{formatCurrency(fees.totalDeduction, currency)}</span>
                     </div>
                   </div>
                 </div>
@@ -280,26 +290,36 @@ export function WithdrawalForm({
               if (!selectedAccount) return null;
 
               const amountValue = typeof values.amount === "number" ? values.amount : 0;
-              const transferFee = selectedAccount.accountType === "mobile_money" ? 100 : 800;
+              const accountType = selectedAccount.accountType as "mobile_money" | "bank";
               const amountInMinorUnits = Math.round(amountValue * 100);
-              const totalDeduction = amountInMinorUnits + transferFee;
+              const fees = calculateWithdrawalFees(amountInMinorUnits, accountType);
 
               return (
                 <div className="space-y-4 py-4">
                   <div className="rounded-lg border border-border p-4 space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Amount to receive:</span>
+                      <span className="text-muted-foreground">You will receive:</span>
                       <span className="font-semibold">
-                        {formatCurrency(amountInMinorUnits, currency)}
+                        {formatCurrency(fees.requestedAmount, currency)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        Platform fee ({platformFeePercent}%):
+                      </span>
+                      <span className="font-medium">
+                        {formatCurrency(fees.platformFee, currency)}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Transfer fee:</span>
-                      <span className="font-medium">{formatCurrency(transferFee, currency)}</span>
+                      <span className="font-medium">
+                        {formatCurrency(fees.transferFee, currency)}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm border-t border-border pt-3 font-semibold">
                       <span>Total deducted:</span>
-                      <span>{formatCurrency(totalDeduction, currency)}</span>
+                      <span>{formatCurrency(fees.totalDeduction, currency)}</span>
                     </div>
                     <div className="flex justify-between text-sm pt-2 border-t border-border">
                       <span className="text-muted-foreground">Account:</span>
@@ -319,8 +339,8 @@ export function WithdrawalForm({
                   </div>
 
                   <p className="text-sm text-muted-foreground">
-                    The total amount (including transfer fee) will be deducted from your available
-                    balance.
+                    A {platformFeePercent}% platform fee plus transfer fee will be deducted from
+                    your available balance.
                   </p>
                 </div>
               );

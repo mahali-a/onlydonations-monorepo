@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import { retrieveUserKycStatusFromDatabaseByUser } from "@/features/user-account/kyc/kyc-models";
+import { calculateWithdrawalFees } from "@/lib/fees/calculator";
 import { logger } from "@/lib/logger";
 import { paystackService } from "@/lib/paystack";
 import { promiseHash } from "@/lib/promise-hash";
@@ -18,6 +19,13 @@ import { requestWithdrawalSchema } from "./make-withdrawal-schema";
 
 const makeWithdrawalLogger = logger.createChildLogger("make-withdrawal-actions");
 
+class WithdrawalError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "WithdrawalError";
+  }
+}
+
 export const createWithdrawalRequestOnServer = createServerFn({ method: "POST" })
   .inputValidator(requestWithdrawalSchema)
   .middleware([authMiddleware])
@@ -26,140 +34,119 @@ export const createWithdrawalRequestOnServer = createServerFn({ method: "POST" }
 
     await requireOrganizationAccess(organizationId, context.user.id);
 
-    makeWithdrawalLogger.error("request_withdrawal.start", {
-      organizationId,
+    const user = context.user;
+
+    // Validate phone verification
+    const phoneVerified = Boolean(user.phoneNumber && user.phoneNumberVerified);
+    if (!phoneVerified) {
+      throw new WithdrawalError("Phone number must be verified before making withdrawals");
+    }
+
+    // Validate KYC
+    const kycStatus = await retrieveUserKycStatusFromDatabaseByUser(user.id);
+    if (kycStatus?.kycStatus !== "VERIFIED") {
+      throw new WithdrawalError("KYC verification must be completed before making withdrawals");
+    }
+
+    // Validate payout accounts exist
+    const withdrawalAccounts =
+      await retrieveWithdrawalAccountsFromDatabaseByOrganization(organizationId);
+    if (withdrawalAccounts.length === 0) {
+      throw new WithdrawalError("No payout account configured. Please add a payout account first");
+    }
+
+    // Validate selected payout account
+    const withdrawalAccount = await retrieveWithdrawalAccountFromDatabaseById(
       payoutAccountId,
-      amount,
-      currency,
+      organizationId,
+    );
+    if (!withdrawalAccount) {
+      throw new WithdrawalError("Withdrawal account not found");
+    }
+
+    // Calculate fees
+    const amountInMinorUnits = Math.round(amount * 100);
+    const accountType = withdrawalAccount.accountType as "mobile_money" | "bank";
+    const fees = calculateWithdrawalFees(amountInMinorUnits, accountType);
+
+    // Check available balance
+    const { donations, completedWithdrawals, pendingWithdrawals } = await promiseHash({
+      donations: retrieveTotalRaisedFromDatabaseByOrganization(organizationId),
+      completedWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+        organizationId,
+        "SUCCESS",
+      ),
+      pendingWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
+        organizationId,
+        "PENDING",
+      ),
     });
 
-    try {
-      const user = context.user;
+    const availableBalance = Math.max(
+      0,
+      donations.totalRaised - completedWithdrawals - pendingWithdrawals,
+    );
 
-      // Validate verification requirements
-      const phoneVerified = Boolean(user.phoneNumber && user.phoneNumberVerified);
-      if (!phoneVerified) {
-        return {
-          success: false,
-          error: "Phone number must be verified before making withdrawals",
-        };
-      }
-
-      const kycStatus = await retrieveUserKycStatusFromDatabaseByUser(user.id);
-      const kycVerified = kycStatus?.kycStatus === "VERIFIED";
-      if (!kycVerified) {
-        return {
-          success: false,
-          error: "KYC verification must be completed before making withdrawals",
-        };
-      }
-
-      const withdrawalAccounts =
-        await retrieveWithdrawalAccountsFromDatabaseByOrganization(organizationId);
-      if (withdrawalAccounts.length === 0) {
-        return {
-          success: false,
-          error: "No payout account configured. Please add a payout account first",
-        };
-      }
-
-      const withdrawalAccount = await retrieveWithdrawalAccountFromDatabaseById(
-        payoutAccountId,
-        organizationId,
+    if (fees.totalDeduction > availableBalance) {
+      throw new WithdrawalError(
+        `Insufficient balance. You need at least ${(fees.totalDeduction / 100).toFixed(2)} ${currency} (including fees) but only have ${(availableBalance / 100).toFixed(2)} ${currency} available.`,
       );
-
-      if (!withdrawalAccount) {
-        return {
-          success: false,
-          error: "Withdrawal account not found",
-        };
-      }
-
-      const amountInMinorUnits = Math.round(amount * 100);
-
-      const transferFee = withdrawalAccount.accountType === "mobile_money" ? 100 : 800;
-
-      const totalAmount = amountInMinorUnits + transferFee;
-
-      const { donations, completedWithdrawals, pendingWithdrawals } = await promiseHash({
-        donations: retrieveTotalRaisedFromDatabaseByOrganization(organizationId),
-        completedWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
-          organizationId,
-          "SUCCESS",
-        ),
-        pendingWithdrawals: retrieveWithdrawalAggregateFromDatabaseByOrganizationAndStatus(
-          organizationId,
-          "PENDING",
-        ),
-      });
-
-      const availableBalance = Math.max(
-        0,
-        donations.totalRaised - completedWithdrawals - pendingWithdrawals,
-      );
-
-      if (totalAmount > availableBalance) {
-        return {
-          success: false,
-          error: "Insufficient balance (including transfer fee)",
-        };
-      }
-
-      const reference = `wdl_${nanoid(16)}`;
-
-      const transaction = await savePaymentTransactionToDatabase({
-        organizationId,
-        processor: "paystack_transfer",
-        processorRef: reference,
-        processorTransactionId: undefined,
-        amount: amountInMinorUnits,
-        fees: 0,
-        currency: currency,
-        status: "PENDING",
-        metadata: JSON.stringify({
-          organizationId,
-          withdrawalAccountId: payoutAccountId,
-          type: "withdrawal",
-          recipientCode: withdrawalAccount.recipientCode,
-        }),
-      });
-
-      if (!transaction) {
-        throw new Error("Failed to create transaction record");
-      }
-
-      const paystack = paystackService();
-      const transferResult = await paystack.initiateTransfer({
-        source: "balance",
-        amount: amountInMinorUnits,
-        recipient: withdrawalAccount.recipientCode,
-        reference: reference,
-        reason: `Withdrawal to ${withdrawalAccount.name || withdrawalAccount.accountName}`,
-        currency: currency as "GHS" | "NGN",
-      });
-
-      const updatedTransaction = await updatePaymentTransactionInDatabase(transaction.id, {
-        processorTransactionId: transferResult.data.transfer_code,
-        status: transferResult.data.status === "success" ? "SUCCESS" : "PENDING",
-        fees: transferResult.data.fee_charged || 0,
-        completedAt: transferResult.data.status === "success" ? new Date() : undefined,
-      });
-
-      return {
-        success: true,
-        transaction: updatedTransaction,
-        transferStatus: transferResult.data.status,
-      };
-    } catch (error) {
-      makeWithdrawalLogger.error("request_withdrawal.error", error, {
-        organizationId,
-        payoutAccountId,
-        amount,
-      });
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : "Failed to process withdrawal",
-      };
     }
+
+    // Create transaction record
+    const reference = `wdl_${nanoid(16)}`;
+    const transaction = await savePaymentTransactionToDatabase({
+      organizationId,
+      processor: "paystack_transfer",
+      processorRef: reference,
+      processorTransactionId: undefined,
+      amount: amountInMinorUnits,
+      fees: fees.totalFees,
+      currency: currency,
+      status: "PENDING",
+      metadata: JSON.stringify({
+        organizationId,
+        withdrawalAccountId: payoutAccountId,
+        type: "withdrawal",
+        recipientCode: withdrawalAccount.recipientCode,
+        platformFee: fees.platformFee,
+        transferFee: fees.transferFee,
+      }),
+    });
+
+    if (!transaction) {
+      throw new Error("Failed to create transaction record");
+    }
+
+    // Initiate transfer with Paystack
+    const paystack = paystackService();
+    const transferResult = await paystack.initiateTransfer({
+      source: "balance",
+      amount: amountInMinorUnits,
+      recipient: withdrawalAccount.recipientCode,
+      reference: reference,
+      reason: `Withdrawal to ${withdrawalAccount.name || withdrawalAccount.accountName}`,
+      currency: currency as "GHS" | "NGN",
+    });
+
+    // Update transaction with transfer result
+    const updatedTransaction = await updatePaymentTransactionInDatabase(transaction.id, {
+      processorTransactionId: transferResult.data.transfer_code,
+      status: transferResult.data.status === "success" ? "SUCCESS" : "PENDING",
+      fees: fees.totalFees,
+      completedAt: transferResult.data.status === "success" ? new Date() : undefined,
+    });
+
+    makeWithdrawalLogger.error("request_withdrawal.success", {
+      organizationId,
+      transactionId: updatedTransaction?.id,
+      amount: amountInMinorUnits,
+      fees: fees.totalFees,
+    });
+
+    return {
+      success: true,
+      transaction: updatedTransaction,
+      transferStatus: transferResult.data.status,
+    };
   });

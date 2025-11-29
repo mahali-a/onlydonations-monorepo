@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { formatMetricValue, formatTrendMessage } from "@/lib/dashboard-utils";
+import { FEE_CONFIG } from "@/lib/fees/config";
 import { promiseHash } from "@/lib/promise-hash";
 import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { authMiddleware } from "@/server/middleware/auth";
@@ -10,6 +11,8 @@ import {
   retrieveDonationAggregateFromDatabaseByOrganization,
   retrieveTotalCampaignCountFromDatabaseByOrganization,
 } from "../org-payments-models";
+
+const WITHDRAWAL_FEE_PERCENTAGE = FEE_CONFIG.withdrawal.platformPercentage;
 
 export const retrieveFinancialInsightsFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
@@ -58,7 +61,7 @@ async function retrieveFinancialInsightsUtil(
   const previousMonthTotal = previousMonthData.reduce((sum: number, d) => sum + d.amount, 0);
 
   const totalRaised = totalStats.totalRaised;
-  const totalFees = Math.round(totalRaised * 0.0295);
+  const totalFees = Math.round(totalRaised * WITHDRAWAL_FEE_PERCENTAGE);
   const netEarnings = totalRaised - totalFees;
   const avgDonation =
     totalStats.donationCount > 0 ? Math.round(totalRaised / totalStats.donationCount) : 0;
@@ -89,7 +92,7 @@ async function retrieveFinancialInsightsUtil(
       trendMessage: formatTrendMessage(totalRaisedChange, "total raised"),
     },
     {
-      title: "Total Fees Deducted",
+      title: "Est. Withdrawal Fees",
       value: formatMetricValue(totalFees, "currency", "GHS"),
       change: feesChange,
       metric: "fees deducted",
@@ -124,7 +127,7 @@ async function retrieveFinancialInsightsUtil(
       totalRaised: number;
       donationCount: number;
     }) => {
-      const feesDeducted = Math.round(campaign.totalRaised * 0.0295);
+      const feesDeducted = Math.round(campaign.totalRaised * WITHDRAWAL_FEE_PERCENTAGE);
       const netEarnings = campaign.totalRaised - feesDeducted;
       const avgDonation =
         campaign.donationCount > 0 ? Math.round(campaign.totalRaised / campaign.donationCount) : 0;

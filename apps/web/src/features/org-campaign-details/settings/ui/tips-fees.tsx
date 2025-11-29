@@ -20,6 +20,8 @@ export function TipsFees({
   const feeSetting = feeHandlingField.state.value || "DONOR_ASK_COVER";
   const fees = calculateFees(EXAMPLE_DONATION, feeSetting);
 
+  const pspFeePercent = (FEE_CONFIG.donation.pspPercentage * 100).toFixed(2);
+
   const handleFeeSettingChange = (value: string) => {
     if (
       value === "DONOR_ASK_COVER" ||
@@ -37,7 +39,7 @@ export function TipsFees({
           <div>
             <div className="text-lg font-medium">Fee handling</div>
             <p className="text-sm text-muted-foreground">
-              Choose how platform and processing fees are handled for your campaign.
+              Choose how payment processing fees are handled for your campaign.
             </p>
           </div>
           <div className="flex flex-col gap-3">
@@ -49,13 +51,9 @@ export function TipsFees({
                       Fee Structure
                     </p>
                     <div className="flex flex-col gap-1">
-                      <p className="font-medium">
-                        {FEE_CONFIG.platform.description}:{" "}
-                        {(FEE_CONFIG.platform.percentage * 100).toFixed(2)}%
-                      </p>
-                      <p className="text-sm text-foreground">
-                        {FEE_CONFIG.payment.description}:{" "}
-                        {(FEE_CONFIG.payment.percentage * 100).toFixed(2)}%
+                      <p className="font-medium">Payment processing: {pspFeePercent}%</p>
+                      <p className="text-sm text-muted-foreground">
+                        Charged by our payment provider on each donation
                       </p>
                     </div>
                   </div>
@@ -76,7 +74,7 @@ export function TipsFees({
                         <span className="font-medium">{formatCurrency(fees.campaignReceives)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Total fees:</span>
+                        <span className="text-muted-foreground">Processing fee:</span>
                         <span className="font-medium">{formatCurrency(fees.totalFees)}</span>
                       </div>
                     </div>
@@ -88,14 +86,14 @@ export function TipsFees({
                     {feeSetting === "CAMPAIGN_ABSORB" && (
                       <div className="rounded-md bg-primary/10 p-2">
                         <p className="text-xs text-primary/80 font-medium">
-                          Campaign absorbs all fees
+                          Campaign absorbs processing fees
                         </p>
                       </div>
                     )}
                     {feeSetting === "DONOR_REQUIRE_COVER" && (
                       <div className="rounded-md bg-emerald-50 dark:bg-emerald-950 p-2">
                         <p className="text-xs text-emerald-700 dark:text-emerald-300 font-medium">
-                          Donors cover all fees
+                          Donors cover processing fees
                         </p>
                       </div>
                     )}
@@ -143,8 +141,8 @@ export function TipsFees({
                   <span className="text-sm font-medium">Ask donors to cover fees</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Donors can choose to cover platform (1%) and payment provider processing fees
-                  (1.95%). Campaign receives full donation amount if they choose to cover fees.
+                  Donors can choose to cover the {pspFeePercent}% payment processing fee. Campaign
+                  receives full donation amount if they choose to cover fees.
                 </p>
               </div>
             </label>
@@ -172,8 +170,8 @@ export function TipsFees({
                   <span className="text-sm font-medium">Require donors to cover fees</span>
                 </div>
                 <p className="text-left text-sm text-muted-foreground">
-                  Donors will automatically cover platform (1%) and payment provider processing fees
-                  (1.95%). Campaign receives full donation amount.
+                  Donors will automatically cover the {pspFeePercent}% payment processing fee.
+                  Campaign receives full donation amount.
                 </p>
               </div>
             </label>
@@ -201,8 +199,8 @@ export function TipsFees({
                   <span className="text-sm font-medium">Campaign absorbs fees</span>
                 </div>
                 <p className="text-left text-sm text-muted-foreground">
-                  Platform fee (1%) and payment provider processing fees (1.95%) are deducted from
-                  the donation. Donors pay only the intended donation amount.
+                  The {pspFeePercent}% payment processing fee is deducted from the donation. Donors
+                  pay only the intended donation amount.
                 </p>
               </div>
             </label>
