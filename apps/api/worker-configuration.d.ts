@@ -17,6 +17,7 @@ declare namespace Cloudflare {
 		RESEND_API_KEY: string;
 		PILO_API_KEY: string;
 		PILO_SENDER_ID: string;
+		SMILE_API_KEY: string;
 		TELNYX_API_KEY: string;
 		TELNYX_FROM_NUMBER: string;
 		CAMPAIGN_TRACKER: DurableObjectNamespace<import("./src/index").CampaignTracker>;

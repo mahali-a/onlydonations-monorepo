@@ -5,6 +5,15 @@ import { webhookQueueDataSchema } from "@repo/core/queues/webhook-schema";
 import { createEmailQueue } from "@repo/email/email/queue";
 import { broadcastDonationSuccess } from "@/durable-objects/broadcast-helpers";
 import {
+  retrieveSmileWebhookEventFromDatabaseById,
+  retrieveUserKycStatusFromDatabaseByUser,
+  retrieveVerificationJobFromDatabaseBySmileId,
+  saveUserKycStatusToDatabase,
+  updateSmileWebhookEventStatusInDatabaseById,
+  updateUserKycStatusInDatabase,
+  updateVerificationJobInDatabase,
+} from "./smile-models";
+import {
   retrieveDonationFromDatabaseByReference,
   retrieveDonationWithCampaignFromDatabaseById,
   retrieveWebhookEventFromDatabaseById,
@@ -30,13 +39,7 @@ export const webhookConsumer: QueueConsumer<WebhookQueueMessage> = async (
       case "paystack":
         return await processPaystackWebhook(data.webhookEventId, ctx, startTime);
       case "smile":
-        // Smile webhooks are handled in the web app for now
-        // This is a placeholder for future migration
-        return {
-          status: "failed",
-          reason: "Smile webhooks are not yet supported in the queue consumer",
-          fatal: true,
-        };
+        return await processSmileWebhook(data.webhookEventId, startTime);
       default: {
         const _exhaustive: never = data.processor;
         return {
@@ -196,6 +199,112 @@ async function processPaystackWebhook(
     // Unknown event type - mark as processed
     await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
   }
+
+  return { status: "success", duration: Date.now() - startTime };
+}
+
+type SmileWebhookPayload = {
+  job_id: string;
+  user_id: string;
+  job_type: number;
+  result: {
+    ResultCode: string;
+    ResultText: string;
+    Actions: {
+      Verify_ID_Number: string;
+      Return_Personal_Info: string;
+    };
+  };
+  signature: string;
+  timestamp: string;
+};
+
+async function processSmileWebhook(
+  webhookEventId: string,
+  startTime: number,
+): Promise<ConsumerResult> {
+  const webhookEvent = await retrieveSmileWebhookEventFromDatabaseById(webhookEventId);
+
+  if (!webhookEvent) {
+    return {
+      status: "failed",
+      reason: `Smile webhook event not found: ${webhookEventId}`,
+      fatal: true,
+    };
+  }
+
+  const payload: SmileWebhookPayload = JSON.parse(webhookEvent.rawPayload);
+
+  // Find the verification job
+  const job = await retrieveVerificationJobFromDatabaseBySmileId(payload.job_id);
+
+  if (!job) {
+    await updateSmileWebhookEventStatusInDatabaseById(
+      webhookEventId,
+      "failed",
+      "Verification job not found",
+    );
+    return {
+      status: "failed",
+      reason: `Verification job not found for job_id: ${payload.job_id}`,
+      fatal: true,
+    };
+  }
+
+  // Update verification job with results
+  await updateVerificationJobInDatabase(payload.job_id, {
+    status: "completed",
+    resultCode: payload.result.ResultCode,
+    resultText: payload.result.ResultText,
+    rawResult: payload as unknown as Record<string, unknown>,
+  });
+
+  // Determine KYC status based on result code
+  const isVerified = payload.result.ResultCode === "1";
+  const isRejected = payload.result.ResultCode === "0";
+
+  // Check if user already has KYC status
+  const existingKycStatus = await retrieveUserKycStatusFromDatabaseByUser(job.userId);
+
+  if (isVerified) {
+    const kycData = {
+      kycStatus: "VERIFIED" as const,
+      kycVerifiedAt: new Date(),
+      smileJobId: payload.job_id,
+    };
+
+    if (existingKycStatus) {
+      await updateUserKycStatusInDatabase(job.userId, kycData);
+    } else {
+      await saveUserKycStatusToDatabase(job.userId, kycData);
+    }
+  } else if (isRejected) {
+    const kycData = {
+      kycStatus: "REJECTED" as const,
+      smileJobId: payload.job_id,
+    };
+
+    if (existingKycStatus) {
+      await updateUserKycStatusInDatabase(job.userId, kycData);
+    } else {
+      await saveUserKycStatusToDatabase(job.userId, kycData);
+    }
+  } else {
+    // Unknown result - mark as requires input
+    const kycData = {
+      kycStatus: "REQUIRES_INPUT" as const,
+      smileJobId: payload.job_id,
+    };
+
+    if (existingKycStatus) {
+      await updateUserKycStatusInDatabase(job.userId, kycData);
+    } else {
+      await saveUserKycStatusToDatabase(job.userId, kycData);
+    }
+  }
+
+  // Mark webhook as processed
+  await updateSmileWebhookEventStatusInDatabaseById(webhookEventId, "processed");
 
   return { status: "success", duration: Date.now() - startTime };
 }

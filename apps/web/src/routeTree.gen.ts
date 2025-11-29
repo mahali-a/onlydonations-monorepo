@@ -37,7 +37,6 @@ import { Route as OOrgIdCampaignsRouteImport } from './routes/o.$orgId/campaigns
 import { Route as OOrgIdAccountRouteImport } from './routes/o.$orgId/account'
 import { Route as FSlugDonateRouteImport } from './routes/f.$slug.donate'
 import { Route as DDonationIdDonationStatusRouteImport } from './routes/d.$donationId.donation-status'
-import { Route as ApiWebhooksSmileRouteImport } from './routes/api/webhooks/smile'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as PublicDiscoverCategoryRouteImport } from './routes/_public/discover/$category'
 import { Route as PublicDDonationIdRouteImport } from './routes/_public/d.$donationId'
@@ -198,11 +197,6 @@ const DDonationIdDonationStatusRoute =
     path: '/d/$donationId/donation-status',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiWebhooksSmileRoute = ApiWebhooksSmileRouteImport.update({
-  id: '/api/webhooks/smile',
-  path: '/api/webhooks/smile',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -320,7 +314,6 @@ export interface FileRoutesByFullPath {
   '/d/$donationId': typeof PublicDDonationIdRoute
   '/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
   '/d/$donationId/donation-status': typeof DDonationIdDonationStatusRoute
   '/f/$slug/donate': typeof FSlugDonateRoute
   '/o/$orgId/account': typeof OOrgIdAccountRouteWithChildren
@@ -363,7 +356,6 @@ export interface FileRoutesByTo {
   '/d/$donationId': typeof PublicDDonationIdRoute
   '/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
   '/d/$donationId/donation-status': typeof DDonationIdDonationStatusRoute
   '/f/$slug/donate': typeof FSlugDonateRoute
   '/o/$orgId/donations': typeof OOrgIdDonationsRoute
@@ -407,7 +399,6 @@ export interface FileRoutesById {
   '/_public/d/$donationId': typeof PublicDDonationIdRoute
   '/_public/discover/$category': typeof PublicDiscoverCategoryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/webhooks/smile': typeof ApiWebhooksSmileRoute
   '/d/$donationId/donation-status': typeof DDonationIdDonationStatusRoute
   '/f/$slug/donate': typeof FSlugDonateRoute
   '/o/$orgId/account': typeof OOrgIdAccountRouteWithChildren
@@ -454,7 +445,6 @@ export interface FileRouteTypes {
     | '/d/$donationId'
     | '/discover/$category'
     | '/api/auth/$'
-    | '/api/webhooks/smile'
     | '/d/$donationId/donation-status'
     | '/f/$slug/donate'
     | '/o/$orgId/account'
@@ -497,7 +487,6 @@ export interface FileRouteTypes {
     | '/d/$donationId'
     | '/discover/$category'
     | '/api/auth/$'
-    | '/api/webhooks/smile'
     | '/d/$donationId/donation-status'
     | '/f/$slug/donate'
     | '/o/$orgId/donations'
@@ -540,7 +529,6 @@ export interface FileRouteTypes {
     | '/_public/d/$donationId'
     | '/_public/discover/$category'
     | '/api/auth/$'
-    | '/api/webhooks/smile'
     | '/d/$donationId/donation-status'
     | '/f/$slug/donate'
     | '/o/$orgId/account'
@@ -574,7 +562,6 @@ export interface RootRouteChildren {
   R2SplatRoute: typeof R2SplatRoute
   AppIndexRoute: typeof AppIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  ApiWebhooksSmileRoute: typeof ApiWebhooksSmileRoute
   DDonationIdDonationStatusRoute: typeof DDonationIdDonationStatusRoute
   FSlugDonateRoute: typeof FSlugDonateRoute
 }
@@ -775,13 +762,6 @@ declare module '@tanstack/react-router' {
       path: '/d/$donationId/donation-status'
       fullPath: '/d/$donationId/donation-status'
       preLoaderRoute: typeof DDonationIdDonationStatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/webhooks/smile': {
-      id: '/api/webhooks/smile'
-      path: '/api/webhooks/smile'
-      fullPath: '/api/webhooks/smile'
-      preLoaderRoute: typeof ApiWebhooksSmileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -1060,7 +1040,6 @@ const rootRouteChildren: RootRouteChildren = {
   R2SplatRoute: R2SplatRoute,
   AppIndexRoute: AppIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  ApiWebhooksSmileRoute: ApiWebhooksSmileRoute,
   DDonationIdDonationStatusRoute: DDonationIdDonationStatusRoute,
   FSlugDonateRoute: FSlugDonateRoute,
 }

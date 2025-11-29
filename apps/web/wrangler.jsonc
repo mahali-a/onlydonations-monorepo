@@ -20,7 +20,7 @@
     "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
     "SMILE_PARTNER_ID": "7634",
     "SMILE_ENVIRONMENT": "sandbox",
-    "SMILE_CALLBACK_URL": "https://stg.onlydonations.com/api/smile/callback"
+    "SMILE_CALLBACK_URL": "https://api.stg.onlydonations.com/webhooks/smile"
   },
   "observability": {
     "enabled": true,

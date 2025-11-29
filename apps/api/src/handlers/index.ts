@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import health from "./health";
 import realtime from "./realtime";
-import webhooks from "./webhooks/paystack";
+import paystackWebhooks from "./webhooks/paystack";
+import smileWebhooks from "./webhooks/smile";
 
 export const app = new Hono<{ Bindings: Env }>();
 
@@ -26,7 +27,8 @@ app.use(
 );
 
 app.route("/health", health);
-app.route("/webhooks/paystack", webhooks);
+app.route("/webhooks/paystack", paystackWebhooks);
+app.route("/webhooks/smile", smileWebhooks);
 app.route("/", realtime);
 app.get("/", (c) => c.text("OnlyDonations API"));
 
