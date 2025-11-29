@@ -5,7 +5,7 @@ import { MagicCodeComponent } from "@/features/auth-login";
 
 const magicCodeSearchSchema = z.object({
   email: z.string(),
-  next: fallback(z.string(), "/app").default("/app"),
+  next: fallback(z.string(), "/app"),
 });
 
 export const Route = createFileRoute("/_auth/magic-code")({

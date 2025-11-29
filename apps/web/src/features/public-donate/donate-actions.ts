@@ -6,6 +6,7 @@ import { calculateFees } from "@/lib/fees/calculator";
 import { Honeypot, SpamError } from "@/lib/honeypot";
 import { logger } from "@/lib/logger";
 import { PaystackService } from "@/lib/paystack";
+import { optionalSessionMiddleware } from "@/server/middleware/auth";
 import {
   AMOUNT_VERIFICATION_TOLERANCE,
   DONATION_REFERENCE_PREFIX,
@@ -17,6 +18,10 @@ import {
   updateDonationPaymentTransactionInDatabaseById,
 } from "./donate-models";
 import { type DonateFormData, donateSchema } from "./donate-schema";
+
+type ValidatedDonationData = DonateFormData & {
+  campaignSlug: string;
+};
 
 const donationsLogger = logger.createChildLogger("donations-actions");
 
@@ -121,22 +126,11 @@ function calculateAndVerifyFees(
   };
 }
 
-type ValidatedDonationData = {
-  campaignSlug: string;
-  amount: number;
-  donorName: string;
-  donorEmail: string;
-  donorPhone?: string;
-  donorMessage?: string;
-  isAnonymous: boolean;
-  coverFees: boolean;
-  currency: "GHS";
-};
-
 type InitializePaymentParams = DonateFormData & {
   campaignId: string;
   organizationId: string;
   amountToCharge: number;
+  donorId: string | null;
 };
 
 type PaymentInitializationResult =
@@ -168,6 +162,7 @@ async function initializePayment(
   const donationId = nanoid();
   const paymentTransactionId = nanoid();
   const amountInMinorUnits = Math.round(amountToCharge * MINOR_UNITS_MULTIPLIER);
+  const { donorId } = params;
 
   donationsLogger.info("initialize_payment.start", {
     donationId,
@@ -176,107 +171,185 @@ async function initializePayment(
     amount,
     amountToCharge,
     currency,
+    donorId,
   });
 
   try {
-    await saveDonationToDatabase({
-      id: donationId,
-      campaignId,
-      amount: amountInMinorUnits,
-      currency,
-      reference,
-      donorId: null,
-      donorName: isAnonymous ? null : donorName,
-      donorEmail,
-      donorMessage: donorMessage || null,
-      isAnonymous,
-      coverFees,
-    });
+    try {
+      const normalizedDonorName =
+        donorName && donorName.trim().length > 0 ? donorName.trim() : null;
 
-    donationsLogger.info("initialize_payment.donation_created", {
-      donationId,
-      reference,
-    });
+      const donationDataToSave = {
+        id: donationId,
+        campaignId,
+        amount: amountInMinorUnits,
+        currency,
+        reference,
+        donorId,
+        donorName: normalizedDonorName,
+        donorEmail,
+        donorMessage: donorMessage || null,
+        isAnonymous,
+        coverFees,
+      };
 
-    // Create payment transaction record for audit trail
-    await savePaymentTransactionToDatabase({
-      id: paymentTransactionId,
-      organizationId,
-      processor: "paystack",
-      processorRef: reference,
-      amount: amountInMinorUnits,
-      fees: 0,
-      currency,
-      status: "PENDING",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+      donationsLogger.info("initialize_payment.saving_donation", {
+        donationId,
+        reference,
+        donorName: donationDataToSave.donorName,
+        donorNameLength: donationDataToSave.donorName?.length ?? 0,
+        isAnonymous,
+        donorEmail,
+      });
 
-    // Link donation to payment transaction
-    await updateDonationPaymentTransactionInDatabaseById(donationId, paymentTransactionId);
+      await saveDonationToDatabase(donationDataToSave);
 
-    donationsLogger.info("initialize_payment.payment_transaction_created", {
-      donationId,
-      paymentTransactionId,
-      reference,
-    });
-
-    const paystack = new PaystackService();
-    const paystackResponse = await paystack.initializePayment({
-      email: donorEmail,
-      amount: amountInMinorUnits,
-      reference,
-      currency,
-      callback_url: `${env.BASE_URL}/d/${donationId}/donation-status`,
-      metadata: {
+      donationsLogger.info("initialize_payment.donation_created", {
+        donationId,
+        reference,
+      });
+    } catch (error) {
+      donationsLogger.error("initialize_payment.error.save_donation", {
+        reference,
         campaignId,
         donationId,
-        donorName: isAnonymous ? "Anonymous" : donorName,
-        custom_fields: [
-          {
-            display_name: "Donation ID",
-            variable_name: "donation_id",
-            value: donationId,
-          },
-          {
-            display_name: "Campaign ID",
-            variable_name: "campaign_id",
-            value: campaignId,
-          },
-        ],
-      },
-    });
-
-    if (!paystackResponse.status || !paystackResponse.data?.authorization_url) {
-      donationsLogger.error("initialize_payment.paystack_failed", {
-        reference,
-        donationId,
-        paystackResponse,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        errorType: error?.constructor?.name,
       });
-      return {
-        success: false,
-        error: "Unable to initialize payment. Please try again.",
-      };
+      throw new Error(
+        `Failed to save donation: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
 
-    donationsLogger.info("initialize_payment.success", {
-      reference,
-      donationId,
-      authorizationUrl: paystackResponse.data.authorization_url,
-    });
+    try {
+      await savePaymentTransactionToDatabase({
+        id: paymentTransactionId,
+        organizationId,
+        processor: "paystack",
+        processorRef: reference,
+        amount: amountInMinorUnits,
+        fees: 0,
+        currency,
+        status: "PENDING",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    } catch (error) {
+      donationsLogger.error("initialize_payment.error.save_payment_transaction", {
+        reference,
+        campaignId,
+        donationId,
+        paymentTransactionId,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        errorType: error?.constructor?.name,
+      });
+      throw new Error(
+        `Failed to save payment transaction: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
-    return {
-      success: true,
-      authorizationUrl: paystackResponse.data.authorization_url,
-      reference,
-      donationId,
-    };
+    try {
+      await updateDonationPaymentTransactionInDatabaseById(donationId, paymentTransactionId);
+
+      donationsLogger.info("initialize_payment.payment_transaction_created", {
+        donationId,
+        paymentTransactionId,
+        reference,
+      });
+    } catch (error) {
+      donationsLogger.error("initialize_payment.error.link_payment_transaction", {
+        reference,
+        campaignId,
+        donationId,
+        paymentTransactionId,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        errorType: error?.constructor?.name,
+      });
+      throw new Error(
+        `Failed to link payment transaction: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
+    try {
+      const paystack = new PaystackService();
+      const paystackResponse = await paystack.initializePayment({
+        email: donorEmail,
+        amount: amountInMinorUnits,
+        reference,
+        currency,
+        callback_url: `${env.BASE_URL}/d/${donationId}/donation-status`,
+        metadata: {
+          campaignId,
+          donationId,
+          donorName: donorName || "Anonymous",
+          custom_fields: [
+            {
+              display_name: "Donation ID",
+              variable_name: "donation_id",
+              value: donationId,
+            },
+            {
+              display_name: "Campaign ID",
+              variable_name: "campaign_id",
+              value: campaignId,
+            },
+          ],
+        },
+      });
+
+      if (!paystackResponse.status || !paystackResponse.data?.authorization_url) {
+        donationsLogger.error("initialize_payment.paystack_failed", {
+          reference,
+          donationId,
+          paystackResponse,
+        });
+        return {
+          success: false,
+          error: "Unable to initialize payment. Please try again.",
+        };
+      }
+
+      donationsLogger.info("initialize_payment.success", {
+        reference,
+        donationId,
+        authorizationUrl: paystackResponse.data.authorization_url,
+      });
+
+      return {
+        success: true,
+        authorizationUrl: paystackResponse.data.authorization_url,
+        reference,
+        donationId,
+      };
+    } catch (error) {
+      donationsLogger.error("initialize_payment.error.paystack_api", {
+        reference,
+        campaignId,
+        donationId,
+        donorEmail,
+        amountInMinorUnits,
+        currency,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        errorType: error?.constructor?.name,
+      });
+      throw new Error(
+        `Paystack API error: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   } catch (error) {
     donationsLogger.error("initialize_payment.error", {
       reference,
       campaignId,
       donationId,
-      error: (error as Error).message,
+      paymentTransactionId,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      errorType: error?.constructor?.name,
+      cause: error instanceof Error && "cause" in error ? error.cause : undefined,
     });
     return {
       success: false,
@@ -286,6 +359,7 @@ async function initializePayment(
 }
 
 export const processDonationOnServer = createServerFn({ method: "POST" })
+  .middleware([optionalSessionMiddleware])
   .inputValidator(async (data: unknown): Promise<{ error: string } | ValidatedDonationData> => {
     if (!(data instanceof FormData)) {
       return { error: "Invalid form data" };
@@ -316,6 +390,15 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
     const coverFees = getFormDataString(data, "coverFees") === "true";
     const currency = getFormDataString(data, "currency") || "GHS";
 
+    donationsLogger.info("process_donation.form_data_received", {
+      campaignSlug,
+      donorName,
+      donorNameLength: donorName?.length ?? 0,
+      donorEmail,
+      isAnonymous,
+      amount,
+    });
+
     try {
       const validated = donateSchema.parse({
         amount,
@@ -328,14 +411,27 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
         currency,
       });
 
+      donationsLogger.info("process_donation.schema_validated", {
+        validatedDonorName: validated.donorName,
+        validatedDonorNameLength: validated.donorName?.length ?? 0,
+        isAnonymous: validated.isAnonymous,
+      });
+
       return { ...validated, campaignSlug };
-    } catch (_error) {
+    } catch (error) {
+      donationsLogger.error("process_donation.schema_validation_failed", {
+        error: error instanceof Error ? error.message : String(error),
+        donorName,
+        donorNameLength: donorName?.length ?? 0,
+        donorEmail,
+      });
       return { error: "Invalid donation data" };
     }
   })
   .handler(
     async ({
       data,
+      context,
     }): Promise<
       { success: false; error: string } | { success: true; redirectUrl: string; donationId: string }
     > => {
@@ -385,6 +481,7 @@ export const processDonationOnServer = createServerFn({ method: "POST" })
           campaignId: campaignData.id,
           organizationId: campaignData.organizationId,
           amountToCharge: feeVerification.data.donorPays,
+          donorId: context.userId ?? null,
         });
 
         if (!paymentResult.success) {

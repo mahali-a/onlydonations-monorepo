@@ -170,7 +170,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                         className="w-full justify-start"
                         onClick={() => {
                           setMobileOpen(false);
-                          navigate({ to: "/login" });
+                          navigate({ to: "/login", search: { next: "/app" } });
                         }}
                       >
                         Sign In
@@ -179,7 +179,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                         className="w-full"
                         onClick={() => {
                           setMobileOpen(false);
-                          navigate({ to: "/onboarding", search: {} });
+                          navigate({ to: "/onboarding", search: { step: "name", next: "/app" } });
                         }}
                       >
                         Get Started
@@ -198,6 +198,14 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
           <nav className="flex items-center gap-6">
             <Link
               to="/s"
+              search={{
+                query: "",
+                closeToGoal: false,
+                timePeriod: "all",
+                page: 1,
+                limit: 12,
+                sortBy: "recent",
+              }}
               className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors no-underline"
             >
               <Search className="h-4 w-4" />
@@ -282,7 +290,13 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                               params={{
                                 orgId,
                               }}
-                              search={{}}
+                              search={{
+                                search: "",
+                                sortBy: "created",
+                                sortOrder: "desc",
+                                page: 1,
+                                limit: 10,
+                              }}
                               className="w-full font-medium text-base"
                             >
                               Your fundraisers
@@ -297,7 +311,13 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                               params={{
                                 orgId,
                               }}
-                              search={{}}
+                              search={{
+                                search: "",
+                                page: 1,
+                                limit: 50,
+                                sortBy: "createdAt",
+                                sortOrder: "desc",
+                              }}
                               className="w-full font-medium text-base"
                             >
                               Your impact
@@ -337,16 +357,24 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Button asChild size="sm">
-                    <Link to="/login">Start fundraider</Link>
+                    <Link to="/login" search={{ next: "/app" }}>
+                      Start fundraider
+                    </Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/login" })}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate({ to: "/login", search: { next: "/app" } })}
+                  >
                     Sign In
                   </Button>
                   <Button asChild size="sm">
-                    <Link to="/login">Start fundraider</Link>
+                    <Link to="/login" search={{ next: "/app" }}>
+                      Start fundraider
+                    </Link>
                   </Button>
                 </>
               )}

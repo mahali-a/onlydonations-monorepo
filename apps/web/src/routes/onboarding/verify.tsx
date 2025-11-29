@@ -7,7 +7,7 @@ import { authClient } from "@/lib/auth-client";
 
 const verifySearchSchema = z.object({
   phone: z.string(),
-  next: fallback(z.string(), "/app").default("/app"),
+  next: fallback(z.string(), "/app"),
 });
 
 export const Route = createFileRoute("/onboarding/verify")({

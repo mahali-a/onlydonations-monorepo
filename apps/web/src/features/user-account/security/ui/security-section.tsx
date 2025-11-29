@@ -1,5 +1,7 @@
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { deleteSessionOnServer } from "../server";
@@ -38,6 +40,7 @@ function formatLastActive(updatedAt: Date): string {
 
 function SessionItem({ session }: { session: Session }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm({
     defaultValues: {
@@ -51,11 +54,15 @@ function SessionItem({ session }: { session: Session }) {
         const result = await deleteSessionOnServer({ data: formData });
 
         if (result?.error) {
+          toast.error("Failed to revoke session", {
+            description: result.error,
+          });
           return {
             form: result.error,
           };
         }
 
+        await queryClient.invalidateQueries({ queryKey: ["sessions"] });
         router.invalidate();
         return null;
       },

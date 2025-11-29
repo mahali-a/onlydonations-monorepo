@@ -11,16 +11,16 @@ export const campaignStatusEnum = z.enum([
 ]);
 
 export const campaignFiltersSchema = z.object({
-  search: fallback(z.string(), "").default(""),
+  search: fallback(z.string(), ""),
   status: campaignStatusEnum.optional(),
   categoryId: z.string().optional(),
   sortBy: fallback(
     z.enum(["title", "status", "goal", "created", "supporters", "raised"]),
     "created",
-  ).default("created"),
-  sortOrder: fallback(z.enum(["asc", "desc"]), "desc").default("desc"),
-  page: fallback(z.number().int().min(1), 1).default(1),
-  limit: fallback(z.number().int().min(5).max(100), 10).default(10),
+  ),
+  sortOrder: fallback(z.enum(["asc", "desc"]), "desc"),
+  page: fallback(z.number().int().min(1), 1),
+  limit: fallback(z.number().int().min(5).max(100), 10),
 });
 
 export type CampaignFilters = z.infer<typeof campaignFiltersSchema>;

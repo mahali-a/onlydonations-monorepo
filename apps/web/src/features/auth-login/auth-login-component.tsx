@@ -1,13 +1,13 @@
 import { useForm } from "@tanstack/react-form";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Star } from "lucide-react";
 import { HoneypotInputs, HoneypotProvider } from "@/components/honeypot-client";
 import { GoogleIcon } from "@/components/icons/google";
 import { WordmarkIcon } from "@/components/icons/wordmark";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { sendLoginOtpOnServer } from "@/features/auth-login";
 import { authClient } from "@/lib/auth-client";
 import type { HoneypotInputProps } from "@/lib/honeypot";
@@ -93,7 +93,7 @@ export function LoginComponent({ next, honeypotProps }: LoginComponentProps) {
         <div className="flex w-full flex-col items-center justify-center px-4 text-center md:px-8">
           <TooltipProvider>
             <HoneypotProvider {...honeypotProps}>
-              <div className="w-full max-w-sm rounded-xl bg-card p-6 pb-14 shadow-lg">
+              <div className="relative w-full max-w-sm rounded-xl bg-card p-6 pb-14 shadow-lg">
                 <div className="text-center">
                   <Link className="inline-block py-8" to="/">
                     <WordmarkIcon className="h-10" />
@@ -109,25 +109,25 @@ export function LoginComponent({ next, honeypotProps }: LoginComponentProps) {
 
                 <div className="mt-8">
                   <div className="space-y-4">
-                    <Button
-                      type="button"
-                      onClick={handleGoogleLogin}
-                      variant={lastMethod === "google" ? "default" : "outline"}
-                      className="relative w-full justify-center"
-                    >
-                      <GoogleIcon className="w-4" />
-                      Continue with Google
+                    <div className="relative">
                       {lastMethod === "google" && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Star className="absolute right-3 h-4 w-4 fill-primary-foreground/70 text-primary-foreground/70" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Last used</p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <Badge
+                          variant="outline"
+                          className="absolute -top-2 right-0 z-20 text-xs bg-slate-900 text-white border-slate-700 dark:bg-slate-800 dark:border-slate-600"
+                        >
+                          Last login
+                        </Badge>
                       )}
-                    </Button>
+                      <Button
+                        type="button"
+                        onClick={handleGoogleLogin}
+                        variant={lastMethod === "google" ? "secondary" : "outline"}
+                        className="relative w-full justify-center"
+                      >
+                        <GoogleIcon className="w-4" />
+                        Continue with Google
+                      </Button>
+                    </div>
 
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
@@ -203,24 +203,24 @@ export function LoginComponent({ next, honeypotProps }: LoginComponentProps) {
                         selector={(state) => [state.canSubmit, state.isSubmitting]}
                       >
                         {([canSubmit, isSubmitting]) => (
-                          <Button
-                            type="submit"
-                            variant={lastMethod === "email-otp" ? "default" : "outline"}
-                            className="relative w-full"
-                            disabled={!canSubmit || isSubmitting}
-                          >
-                            {isSubmitting ? "Sending..." : "Continue"}
+                          <div className="relative">
                             {lastMethod === "email-otp" && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Star className="absolute right-3 h-4 w-4 fill-primary-foreground/70 text-primary-foreground/70" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Last used</p>
-                                </TooltipContent>
-                              </Tooltip>
+                              <Badge
+                                variant="outline"
+                                className="absolute -top-2 right-0 z-20 text-xs bg-slate-900 text-white border-slate-700 dark:bg-slate-800 dark:border-slate-600"
+                              >
+                                Last login
+                              </Badge>
                             )}
-                          </Button>
+                            <Button
+                              type="submit"
+                              variant={lastMethod === "email-otp" ? "default" : "outline"}
+                              className="relative w-full"
+                              disabled={!canSubmit || isSubmitting}
+                            >
+                              {isSubmitting ? "Sending..." : "Continue"}
+                            </Button>
+                          </div>
                         )}
                       </emailForm.Subscribe>
                     </form>

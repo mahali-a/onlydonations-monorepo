@@ -209,13 +209,13 @@ export function KycVerificationWidget({
           form.handleSubmit();
         }}
       >
-        <div className="rounded-lg border border-primary/30 bg-primary/10 p-6">
+        <div className="rounded-lg border border-border bg-muted/50 p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
             <ShieldCheck className="h-6 w-6 shrink-0 text-primary" />
             <div className="flex-1 space-y-3">
               <div>
-                <h3 className="text-lg font-semibold text-primary">Complete Biometric KYC</h3>
-                <p className="mt-1 text-sm text-primary/80">
+                <h3 className="text-lg font-semibold text-foreground">Complete Biometric KYC</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
                   Full identity verification with ID document scan and live selfie capture. This is
                   the most comprehensive verification option.
                 </p>

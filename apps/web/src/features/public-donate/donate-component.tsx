@@ -219,7 +219,13 @@ export function DonateComponent({ data }: DonateComponentProps) {
                             params={{
                               orgId,
                             }}
-                            search={{}}
+                            search={{
+                              search: "",
+                              sortBy: "created",
+                              sortOrder: "desc",
+                              page: 1,
+                              limit: 10,
+                            }}
                             className="w-full font-medium text-base"
                           >
                             Your fundraisers
@@ -234,7 +240,13 @@ export function DonateComponent({ data }: DonateComponentProps) {
                             params={{
                               orgId,
                             }}
-                            search={{}}
+                            search={{
+                              search: "",
+                              page: 1,
+                              limit: 50,
+                              sortBy: "createdAt",
+                              sortOrder: "desc",
+                            }}
                             className="w-full font-medium text-base"
                           >
                             Your impact
@@ -274,7 +286,11 @@ export function DonateComponent({ data }: DonateComponentProps) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/login" })}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate({ to: "/login", search: { next: "/app" } })}
+                >
                   Sign In
                 </Button>
               )}
@@ -424,6 +440,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                     name="donorName"
                     validators={{
                       onChange: ({ value }) => {
+                        // Name is always required, even when anonymous
                         if (!value || value.trim().length < 2) {
                           return "Name is required";
                         }
@@ -438,6 +455,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                         </Label>
                         <Input
                           id={field.name}
+                          name={field.name}
                           placeholder="Full name"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}

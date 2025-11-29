@@ -32,8 +32,14 @@ export function FilterBar({ categories }: FilterBarProps) {
     navigate({
       to: "/s",
       search: (prev) => ({
-        ...prev,
         query: query.trim(),
+        closeToGoal: prev?.closeToGoal ?? false,
+        timePeriod: prev?.timePeriod ?? "all",
+        page: prev?.page ?? 1,
+        limit: prev?.limit ?? 12,
+        sortBy: prev?.sortBy ?? "recent",
+        categoryId: prev?.categoryId,
+        country: prev?.country,
       }),
     });
   };

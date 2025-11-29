@@ -68,10 +68,14 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
     navigate({
       to: "/s",
       search: (prev) => ({
-        ...prev,
+        query: prev?.query ?? "",
         categoryId: selectedCategory,
+        country: prev?.country,
         closeToGoal,
         timePeriod,
+        page: prev?.page ?? 1,
+        limit: prev?.limit ?? 12,
+        sortBy: prev?.sortBy ?? "recent",
       }),
     });
     setOpen(false);

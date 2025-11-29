@@ -6,8 +6,8 @@ import { z } from "zod";
 import { retrieveFinancialInsightsFromServer } from "@/features/org-payments/insights/server";
 
 const financeSearchSchema = z.object({
-  page: fallback(z.number().int().positive(), 1).default(1),
-  limit: fallback(z.number().int().positive(), 10).default(10),
+  page: fallback(z.number().int().positive(), 1),
+  limit: fallback(z.number().int().positive(), 10),
 });
 
 const financialInsightsQueryOptions = (orgId: string, page: number, limit: number) =>

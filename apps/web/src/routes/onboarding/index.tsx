@@ -18,8 +18,8 @@ import {
 } from "@/features/auth-onboarding/server";
 
 const onboardingSearchSchema = z.object({
-  step: fallback(z.enum(["name", "phone", "organization"]), "name").default("name"),
-  next: fallback(z.string(), "/app").default("/app"),
+  step: fallback(z.enum(["name", "phone", "organization"]), "name"),
+  next: fallback(z.string(), "/app"),
   change: z.string().optional(),
 });
 

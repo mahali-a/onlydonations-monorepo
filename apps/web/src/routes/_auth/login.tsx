@@ -4,7 +4,7 @@ import { z } from "zod";
 import { generateLoginHoneypotFromServer, LoginComponent } from "@/features/auth-login";
 
 const loginSearchSchema = z.object({
-  next: fallback(z.string(), "/app").default("/app"),
+  next: fallback(z.string(), "/app"),
 });
 
 export const Route = createFileRoute("/_auth/login")({

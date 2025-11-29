@@ -8,6 +8,26 @@ import { retrieveMembersFromDatabaseByUserId } from "./models";
 
 const authMiddlewareLogger = logger.createChildLogger("auth-middleware");
 
+export const optionalSessionMiddleware = createMiddleware({ type: "function" }).server(
+  async ({ next }) => {
+    const auth = getAuth();
+    const req = getRequest();
+
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    });
+
+    return next({
+      context: {
+        session: session ?? null,
+        userId: session?.user?.id ?? null,
+        user: session?.user ? (session.user as SelectUser) : null,
+        auth,
+      },
+    });
+  },
+);
+
 export const authMiddleware = createMiddleware({ type: "function" }).server(async ({ next }) => {
   const auth = getAuth();
   const req = getRequest();
