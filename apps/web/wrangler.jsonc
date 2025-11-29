@@ -60,6 +60,7 @@
     // Deploy: wrangler deploy
     // ============================================
     "staging": {
+      "name": "onlydonations-staging",
       "routes": [
         {
           "pattern": "stg.onlydonations.com",
@@ -109,9 +110,9 @@
     // PRODUCTION environment
     // Build: CLOUDFLARE_ENV=production vite build
     // Deploy: wrangler deploy
-    // Worker name: onlydonations-production
     // ============================================
     "production": {
+      "name": "onlydonations-production",
       "routes": [
         {
           "pattern": "onlydonations.com",

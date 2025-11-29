@@ -64,14 +64,20 @@
       }
     ]
   },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["CampaignTracker"]
+    }
+  ],
 
   "env": {
     // ============================================
     // STAGING environment
     // Deploy with: wrangler deploy --env staging
-    // Worker name: onlydonations-api-staging
     // ============================================
     "staging": {
+      "name": "onlydonations-api-staging",
       "routes": [
         {
           "pattern": "api.stg.onlydonations.com",
@@ -122,15 +128,21 @@
             "class_name": "CampaignTracker"
           }
         ]
-      }
+      },
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_classes": ["CampaignTracker"]
+        }
+      ]
     },
 
     // ============================================
     // PRODUCTION environment
     // Deploy with: wrangler deploy --env production
-    // Worker name: onlydonations-api-production
     // ============================================
     "production": {
+      "name": "onlydonations-api-production",
       "routes": [
         {
           "pattern": "api.onlydonations.com",
@@ -181,7 +193,13 @@
             "class_name": "CampaignTracker"
           }
         ]
-      }
+      },
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_classes": ["CampaignTracker"]
+        }
+      ]
     }
   }
 }
