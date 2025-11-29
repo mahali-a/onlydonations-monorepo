@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { isValidPhoneNumber } from "libphonenumber-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,14 +15,28 @@ const defaultPhoneForm: PhoneFormData = {
 
 type PhoneFormProps = {
   onSubmit: (values: PhoneFormData) => Promise<{ error?: string } | null>;
+  onSkip?: () => void;
 };
 
-export function PhoneForm({ onSubmit }: PhoneFormProps) {
+function normalizeGhanaPhone(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (digits.startsWith("233")) {
+    return `+${digits}`;
+  }
+  if (digits.startsWith("0")) {
+    return `+233${digits.slice(1)}`;
+  }
+  return `+233${digits}`;
+}
+
+export function PhoneForm({ onSubmit, onSkip }: PhoneFormProps) {
   const form = useForm({
     defaultValues: defaultPhoneForm,
     validators: {
       onSubmitAsync: async ({ value }) => {
-        const result = await onSubmit(value);
+        // Normalize before submitting
+        const normalized = normalizeGhanaPhone(value.phoneNumber);
+        const result = await onSubmit({ phoneNumber: normalized });
 
         if (result?.error) {
           return {
@@ -57,9 +72,21 @@ export function PhoneForm({ onSubmit }: PhoneFormProps) {
           onChange: ({ value }) => {
             if (!value) return "Phone number is required";
 
-            if (!/^\+[1-9]\d{1,14}$/.test(value)) {
-              return "Invalid phone number format. Use E.164 format (e.g., +11234567890)";
+            // Only allow digits
+            const digits = value.replace(/\D/g, "");
+            if (digits.length < 9) {
+              return "Please enter your 9-digit phone number";
             }
+            if (digits.length > 10) {
+              return "Phone number is too long";
+            }
+
+            // Validate with libphonenumber
+            const normalized = normalizeGhanaPhone(value);
+            if (!isValidPhoneNumber(normalized, "GH")) {
+              return "Please enter a valid Ghana phone number";
+            }
+
             return undefined;
           },
         }}
@@ -69,24 +96,35 @@ export function PhoneForm({ onSubmit }: PhoneFormProps) {
             <Label className="text-sm font-medium text-foreground" htmlFor="phoneNumber">
               Phone Number
             </Label>
-            <Input
-              id="phoneNumber"
-              type="tel"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              className={cn(
-                "h-10",
-                field.state.meta.errors.length > 0 &&
-                  "border-destructive focus-visible:ring-destructive",
-              )}
-              placeholder="+1 (555) 123-4567"
-            />
+            <div className="flex">
+              <div className="flex h-10 items-center rounded-l-md border border-r-0 bg-muted px-3 text-sm text-muted-foreground">
+                +233
+              </div>
+              <Input
+                id="phoneNumber"
+                type="tel"
+                inputMode="numeric"
+                value={field.state.value}
+                onChange={(e) => {
+                  // Only allow digits and limit length
+                  const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  field.handleChange(digits);
+                }}
+                onBlur={field.handleBlur}
+                className={cn(
+                  "h-10 rounded-l-none",
+                  field.state.meta.errors.length > 0 &&
+                    "border-destructive focus-visible:ring-destructive",
+                )}
+                placeholder="24 123 4567"
+                maxLength={10}
+              />
+            </div>
             {field.state.meta.errors.length > 0 && (
               <div className="text-left text-sm text-destructive">{field.state.meta.errors[0]}</div>
             )}
             <p className="text-left text-xs text-muted-foreground">
-              Include country code (e.g., +1 for US)
+              Enter your Ghana mobile number (e.g., 24 123 4567)
             </p>
           </div>
         )}
@@ -99,6 +137,16 @@ export function PhoneForm({ onSubmit }: PhoneFormProps) {
           </Button>
         )}
       </form.Subscribe>
+
+      {onSkip && (
+        <button
+          type="button"
+          onClick={onSkip}
+          className="w-full text-center text-sm text-muted-foreground underline hover:text-foreground"
+        >
+          Skip for now
+        </button>
+      )}
     </form>
   );
 }

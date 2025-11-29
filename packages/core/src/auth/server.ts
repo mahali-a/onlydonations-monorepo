@@ -1,6 +1,6 @@
 import type { BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { type AuthEmailHandler, createBetterAuth } from "@/auth/setup";
+import { type AuthEmailHandler, type AuthSMSHandler, createBetterAuth } from "@/auth/setup";
 import type { initDatabase } from "@/database/setup";
 import {
   auth_account,
@@ -26,6 +26,8 @@ export interface InitAuthConfig {
   socialProviders?: BetterAuthOptions["socialProviders"];
   /** Email handler for auth-related emails */
   emailHandler?: AuthEmailHandler;
+  /** SMS handler for phone verification */
+  smsHandler?: AuthSMSHandler;
 }
 
 /**
@@ -77,6 +79,7 @@ export function initAuth(config: InitAuthConfig) {
       secret: config.secret,
       socialProviders: config.socialProviders,
       emailHandler: config.emailHandler,
+      smsHandler: config.smsHandler,
     });
   }
   return authInstance;

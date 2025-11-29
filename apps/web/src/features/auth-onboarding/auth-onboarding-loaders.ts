@@ -8,6 +8,20 @@ const onboardingLogger = logger.createChildLogger("auth-onboarding-loaders");
 
 type OnboardingStep = "name" | "phone" | "organization";
 
+function getNextOnboardingStep(user: {
+  name?: string | null;
+  phoneNumber?: string | null;
+  phoneNumberVerified?: boolean | null;
+}): OnboardingStep | null {
+  if (!user?.name) {
+    return "name";
+  }
+  if (!user?.phoneNumberVerified) {
+    return "phone";
+  }
+  return null;
+}
+
 export const getIsOnboardingCompleteFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
@@ -19,11 +33,9 @@ export const getIsOnboardingCompleteFromServer = createServerFn({ method: "GET" 
 
     if (!user?.name) {
       requiredStep = "name";
-    } else if (!user?.phoneNumber || !user?.phoneNumberVerified) {
-      requiredStep = "phone";
     } else {
       try {
-        // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
+        // @ts-expect-error - Better Auth type inference limitation
         const organizations = await auth.api.listOrganizations({
           headers: req.headers,
         });
@@ -51,27 +63,43 @@ export const retrieveOnboardingUserFromServer = createServerFn({ method: "GET" }
     const auth = getAuth();
     const req = getRequest();
 
-    let requiredStep: OnboardingStep | null = null;
+    const stepFromUser = getNextOnboardingStep(user);
 
-    if (!user?.name) {
-      requiredStep = "name";
-    } else if (!user?.phoneNumber || !user?.phoneNumberVerified) {
-      requiredStep = "phone";
-    } else {
+    if (stepFromUser === "name") {
+      return { user, requiredStep: "name" as OnboardingStep };
+    }
+
+    if (stepFromUser === "phone") {
       try {
-        // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
+        // @ts-expect-error - Better Auth type inference limitation
         const organizations = await auth.api.listOrganizations({
           headers: req.headers,
         });
 
-        if (!organizations || organizations.length === 0) {
-          requiredStep = "organization";
+        if (organizations && organizations.length > 0) {
+          return { user, requiredStep: null };
         }
+
+        return { user, requiredStep: "phone" as OnboardingStep };
       } catch (error) {
-        onboardingLogger.error("Failed to fetch organizations for onboarding check", error);
-        requiredStep = "organization";
+        onboardingLogger.error("Failed to fetch organizations", error);
+        return { user, requiredStep: "phone" as OnboardingStep };
       }
     }
 
-    return { user, requiredStep };
+    try {
+      // @ts-expect-error - Better Auth type inference limitation
+      const organizations = await auth.api.listOrganizations({
+        headers: req.headers,
+      });
+
+      if (!organizations || organizations.length === 0) {
+        return { user, requiredStep: "organization" as OnboardingStep };
+      }
+    } catch (error) {
+      onboardingLogger.error("Failed to fetch organizations", error);
+      return { user, requiredStep: "organization" as OnboardingStep };
+    }
+
+    return { user, requiredStep: null };
   });

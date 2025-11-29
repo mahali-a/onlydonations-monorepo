@@ -24,16 +24,13 @@
     "lint": {
       "outputs": []
     },
+    "lint:ci": {
+      "outputs": []
+    },
     "format": {
       "outputs": []
     },
     "format:check": {
-      "outputs": []
-    },
-    "check": {
-      "outputs": []
-    },
-    "check:ci": {
       "outputs": []
     },
     "dev": {

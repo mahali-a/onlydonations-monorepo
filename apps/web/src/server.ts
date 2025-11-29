@@ -2,15 +2,21 @@ import { initAuth } from "@repo/core/auth/server";
 import { initDatabase } from "@repo/core/database/setup";
 import { createModerationQueue } from "@repo/core/queues/moderation-queue";
 import { initModerationQueue } from "@repo/core/queues/setup";
+import { createSMSQueue } from "@repo/core/queues/sms-queue";
 import { createEmailQueue } from "@repo/email/email/queue";
 import handler from "@tanstack/react-start/server-entry";
 import { createAuthEmailHandler } from "@/lib/auth-email-adapter";
+import { createAuthSMSHandler } from "@/lib/auth-sms-adapter";
 
 export default {
   async fetch(request: Request, env: Env) {
     const db = initDatabase(env.DB);
 
     const emailQueue = createEmailQueue(env.APP_QUEUE, {
+      defaultSource: "auth",
+    });
+
+    const smsQueue = createSMSQueue(env.APP_QUEUE, {
       defaultSource: "auth",
     });
 
@@ -30,6 +36,7 @@ export default {
         },
       },
       emailHandler: createAuthEmailHandler(emailQueue),
+      smsHandler: createAuthSMSHandler(smsQueue),
     });
 
     return handler.fetch(request, {

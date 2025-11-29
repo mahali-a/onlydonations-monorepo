@@ -1,14 +1,8 @@
-import { createEmailQueue } from "@repo/email/email/queue";
+import { createWebhookQueue } from "@repo/core/queues/webhook-queue";
 import { Hono } from "hono";
-import { broadcastDonationSuccess } from "@/durable-objects/broadcast-helpers";
 import {
-  retrieveDonationFromDatabaseByReference,
-  retrieveDonationWithCampaignFromDatabaseById,
   retrieveWebhookEventFromDatabaseByProcessorEventId,
   saveWebhookEventToDatabase,
-  updateDonationStatusInDatabaseById,
-  updatePaymentTransactionStatusInDatabaseById,
-  updateWebhookEventStatusInDatabaseById,
 } from "@/models/paystack-models";
 
 const webhooks = new Hono<{ Bindings: Env }>();
@@ -25,6 +19,10 @@ type PaystackEvent = {
   };
 };
 
+/**
+ * Timing-safe signature verification using HMAC SHA-512
+ * Prevents timing attacks by using constant-time comparison
+ */
 async function verifyPaystackSignature(
   body: string,
   signature: string,
@@ -43,23 +41,50 @@ async function verifyPaystackSignature(
   const hashArray = Array.from(new Uint8Array(hash));
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-  return hashHex === signature;
+  // Timing-safe comparison
+  if (hashHex.length !== signature.length) {
+    return false;
+  }
+
+  const hashBytes = encoder.encode(hashHex);
+  const signatureBytes = encoder.encode(signature);
+
+  // Use constant-time comparison to prevent timing attacks
+  let result = 0;
+  for (let i = 0; i < hashBytes.length; i++) {
+    result |= (hashBytes[i] ?? 0) ^ (signatureBytes[i] ?? 0);
+  }
+
+  return result === 0;
 }
 
+/**
+ * Paystack Webhook Handler
+ *
+ * Implements the "fast acknowledgment" pattern:
+ * 1. Verify signature (timing-safe)
+ * 2. Check for duplicates
+ * 3. Store event in database
+ * 4. Queue for async processing
+ * 5. Return 200 immediately (< 1 second)
+ *
+ * This ensures Paystack doesn't retry unnecessarily while
+ * allowing robust async processing with retries.
+ */
 webhooks.post("/", async (c) => {
-  let webhookEventId: string | null = null;
-
   try {
     const rawBody = await c.req.text();
     const signature = c.req.header("x-paystack-signature");
 
     console.log("[PaystackWebhook] Received webhook request");
 
+    // 1. Validate signature presence
     if (!signature) {
       console.error("[PaystackWebhook] Missing signature");
       return c.json({ error: "Missing signature" }, 400);
     }
 
+    // 2. Verify signature (timing-safe)
     const isValid = await verifyPaystackSignature(rawBody, signature, c.env.PAYSTACK_SECRET_KEY);
 
     if (!isValid) {
@@ -68,193 +93,65 @@ webhooks.post("/", async (c) => {
     }
 
     const event: PaystackEvent = JSON.parse(rawBody);
+    const processorEventId = event.id || `${event.event}-${event.data.reference}-${Date.now()}`;
 
     console.log("[PaystackWebhook] Event received", {
       eventType: event.event,
       eventId: event.id,
       reference: event.data.reference,
-      payload: event,
     });
 
+    // 3. Check for duplicates (deduplication)
     if (event.id) {
       const existingEvent = await retrieveWebhookEventFromDatabaseByProcessorEventId(event.id);
 
       if (existingEvent) {
-        console.log("[PaystackWebhook] Event already processed", { eventId: event.id });
-        return c.json({ success: true, message: "Event already processed" }, 200);
+        console.log("[PaystackWebhook] Event already received", { eventId: event.id });
+        return c.json({ success: true, message: "Event already received" }, 200);
       }
     }
 
+    // 4. Store event with QUEUED status
     const newEvent = await saveWebhookEventToDatabase({
       processor: "paystack",
-      processorEventId: event.id || `${event.event}-${event.data.reference}-${Date.now()}`,
+      processorEventId,
       eventType: event.event,
       signature,
       rawPayload: rawBody,
-      status: "PENDING",
+      status: "QUEUED",
     });
 
     if (!newEvent) {
+      console.error("[PaystackWebhook] Failed to store webhook event");
       return c.json({ error: "Failed to store webhook event" }, 500);
     }
 
-    webhookEventId = newEvent.id;
+    // 5. Queue for async processing
+    const webhookQueue = createWebhookQueue(c.env.APP_QUEUE, { defaultSource: "api" });
 
-    const existingDonation = await retrieveDonationFromDatabaseByReference(event.data.reference);
-
-    if (!existingDonation) {
-      console.error("[PaystackWebhook] Donation not found", {
-        reference: event.data.reference,
-        webhookEventId,
-      });
-      await updateWebhookEventStatusInDatabaseById(webhookEventId, "FAILED", "Donation not found");
-      return c.json({ error: "Donation not found" }, 404);
-    }
-
-    console.log("[PaystackWebhook] Donation found", {
-      donationId: existingDonation.id,
-      currentStatus: existingDonation.status,
-      expectedAmount: existingDonation.amount,
-      webhookAmount: event.data.amount,
-    });
-
-    if (event.event === "charge.success") {
-      const paystackAmount = event.data.amount;
-
-      if (paystackAmount !== existingDonation.amount) {
-        console.error("[PaystackWebhook] Amount mismatch", {
-          expected: existingDonation.amount,
-          received: paystackAmount,
-          donationId: existingDonation.id,
-        });
-        await updateWebhookEventStatusInDatabaseById(webhookEventId, "FAILED", "Amount mismatch");
-        await updateDonationStatusInDatabaseById(existingDonation.id, "FAILED", {
-          failedAt: new Date(),
-          failureReason: "Amount mismatch",
-        });
-        return c.json({ error: "Amount mismatch detected" }, 400);
-      }
-
-      console.log("[PaystackWebhook] Marking donation as successful", {
-        donationId: existingDonation.id,
-        amount: existingDonation.amount,
-      });
-
-      await updateDonationStatusInDatabaseById(existingDonation.id, "SUCCESS", {
-        completedAt: new Date(),
-      });
-
-      if (existingDonation.paymentTransactionId) {
-        await updatePaymentTransactionStatusInDatabaseById(
-          existingDonation.paymentTransactionId,
-          "SUCCESS",
-          {
-            completedAt: new Date(),
-            processorTransactionId: event.id || event.data.reference,
-          },
-        );
-      }
-
-      await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
-
-      const donationData = await retrieveDonationWithCampaignFromDatabaseById(existingDonation.id);
-
-      if (donationData?.donorEmail && donationData.donorName) {
-        console.log("[PaystackWebhook] Sending thank you email", {
-          donationId: existingDonation.id,
-          email: donationData.donorEmail,
-          campaign: donationData.campaignTitle,
-        });
-
-        const emailQueue = createEmailQueue(c.env.APP_QUEUE, { defaultSource: "api" });
-        const amount = (donationData.amount / 100).toFixed(2);
-        const campaignUrl = `${c.env.WEB_BASE_URL}/f/${donationData.campaignSlug}`;
-        const donationShareUrl = `${c.env.WEB_BASE_URL}/d/${existingDonation.id}`;
-        const donatedAt = new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-
-        await emailQueue.send("donation-thank-you", {
-          email: donationData.donorEmail,
-          donorName: donationData.donorName,
-          amount,
-          currency: donationData.currency,
-          campaignTitle: donationData.campaignTitle,
-          campaignUrl,
-          customThankYouMessage: donationData.thankYouMessage || undefined,
-          donatedAt,
-          donationShareUrl,
-        });
-
-        console.log("[PaystackWebhook] Thank you email queued successfully");
-      } else {
-        console.log("[PaystackWebhook] Skipping thank you email - missing donor data", {
-          donationId: existingDonation.id,
-          hasEmail: !!donationData?.donorEmail,
-          hasName: !!donationData?.donorName,
-        });
-      }
-
-      if (donationData?.campaignId) {
-        await broadcastDonationSuccess(
-          c.env,
-          donationData.campaignId,
-          existingDonation.id,
-          c.executionCtx,
-        );
-      }
-    } else if (event.event === "charge.failed") {
-      console.log("[PaystackWebhook] Charge failed", {
-        donationId: existingDonation.id,
-        reason: event.data.gateway_response || "Payment failed",
-      });
-
-      await updateDonationStatusInDatabaseById(existingDonation.id, "FAILED", {
-        failedAt: new Date(),
-        failureReason: event.data.gateway_response || "Payment failed",
-      });
-
-      if (existingDonation.paymentTransactionId) {
-        await updatePaymentTransactionStatusInDatabaseById(
-          existingDonation.paymentTransactionId,
-          "FAILED",
-          {
-            statusMessage: event.data.gateway_response || "Payment failed",
-          },
-        );
-      }
-
-      await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
-    } else {
-      console.log("[PaystackWebhook] Unhandled event type", { eventType: event.event });
-      await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
-    }
-
-    console.log("[PaystackWebhook] Webhook processed successfully", {
+    await webhookQueue.send({
+      webhookEventId: newEvent.id,
+      processor: "paystack",
       eventType: event.event,
-      donationId: existingDonation.id,
-      webhookEventId,
+      processorEventId,
     });
 
-    return c.json({ success: true }, 200);
+    console.log("[PaystackWebhook] Event queued for processing", {
+      webhookEventId: newEvent.id,
+      eventType: event.event,
+      processorEventId,
+    });
+
+    // 6. Return 200 immediately (fast acknowledgment)
+    return c.json({ success: true, message: "Event queued for processing" }, 200);
   } catch (error) {
-    console.error("[PaystackWebhook] Error processing webhook", {
+    console.error("[PaystackWebhook] Error handling webhook", {
       error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
-      webhookEventId,
     });
 
-    if (webhookEventId) {
-      await updateWebhookEventStatusInDatabaseById(
-        webhookEventId,
-        "FAILED",
-        error instanceof Error ? error.message : "Unknown error",
-      );
-    }
-
-    return c.json({ error: "Failed to process webhook" }, 500);
+    // Return 500 to trigger Paystack retry
+    return c.json({ error: "Failed to handle webhook" }, 500);
   }
 });
 

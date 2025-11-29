@@ -10,6 +10,7 @@ import {
   ProfileForm,
 } from "@/features/auth-onboarding";
 import {
+  createDefaultOrganizationOnServer,
   createOrganizationOnServer,
   retrieveOnboardingUserFromServer,
   updateUserPhoneOnServer,
@@ -46,14 +47,28 @@ export const Route = createFileRoute("/onboarding/")({
       return { user, requiredStep };
     }
 
+    // Onboarding complete - redirect to destination
     if (!requiredStep) {
       throw redirect({ to: deps.next });
     }
 
+    // Allow changing phone number
     if (deps.change === "phone" && deps.step === "phone") {
       return { user, requiredStep };
     }
 
+    // After name step, show phone step (optional but shown)
+    if (requiredStep === "organization" && deps.step === "phone") {
+      // User completed name, now on phone step - allow it
+      return { user, requiredStep: "phone" };
+    }
+
+    // Allow organization step if user skipped phone
+    if (requiredStep === "organization" && deps.step === "organization") {
+      return { user, requiredStep };
+    }
+
+    // Redirect to required step if mismatch
     if (deps.step !== requiredStep) {
       throw redirect({
         to: "/onboarding",
@@ -94,6 +109,16 @@ function OnboardingPage() {
     return null;
   };
 
+  const handlePhoneSkip = async () => {
+    const orgResult = await createDefaultOrganizationOnServer();
+
+    if (orgResult.success && orgResult.organizationId) {
+      navigate({ to: `/o/${orgResult.organizationId}` });
+    } else {
+      navigate({ to: "/onboarding", search: { step: "organization", next: "/app" } });
+    }
+  };
+
   const handleOrganizationSubmit = async (values: { organizationName: string }) => {
     const result = await createOrganizationOnServer({ data: values });
     if (result.success && result.organizationId) {
@@ -105,7 +130,7 @@ function OnboardingPage() {
   return (
     <OnboardingLayout step={step}>
       {step === "name" && <ProfileForm onSubmit={handleProfileSubmit} />}
-      {step === "phone" && <PhoneForm onSubmit={handlePhoneSubmit} />}
+      {step === "phone" && <PhoneForm onSubmit={handlePhoneSubmit} onSkip={handlePhoneSkip} />}
       {step === "organization" && (
         <OrganizationForm onSubmit={handleOrganizationSubmit} defaultName={`My Organization`} />
       )}

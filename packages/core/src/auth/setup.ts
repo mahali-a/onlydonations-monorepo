@@ -17,6 +17,11 @@ export type AuthEmailHandler = (
 ) => Promise<void>;
 
 /**
+ * SMS handler callback type for phone verification
+ */
+export type AuthSMSHandler = (phoneNumber: string, code: string) => Promise<void>;
+
+/**
  * Configuration for creating Better Auth instance
  */
 export interface CreateAuthConfig {
@@ -28,6 +33,8 @@ export interface CreateAuthConfig {
   socialProviders?: BetterAuthOptions["socialProviders"];
   /** Handler for sending authentication emails (OTP, email change, etc.) */
   emailHandler?: AuthEmailHandler;
+  /** Handler for sending SMS OTP for phone verification */
+  smsHandler?: AuthSMSHandler;
 }
 
 /**
@@ -95,7 +102,11 @@ export function createBetterAuth(config: CreateAuthConfig): ReturnType<typeof be
       }),
       phoneNumber({
         sendOTP: async ({ phoneNumber: phone, code }) => {
-          console.log(`[NOOP] Send SMS OTP to ${phone}: ${code}`);
+          if (config.smsHandler) {
+            await config.smsHandler(phone, code);
+          } else {
+            console.log(`[NOOP] Send SMS OTP to ${phone}: ${code}`);
+          }
         },
         otpLength: 6,
         expiresIn: 900,

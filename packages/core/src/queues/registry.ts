@@ -7,8 +7,8 @@ import type { QueueMessage } from "./types";
 export const QUEUE_TYPES = {
   EMAIL: "email",
   MODERATION: "moderation",
-  // Future: WEBHOOK: 'webhook',
-  // Future: ANALYTICS: 'analytics',
+  WEBHOOK: "webhook",
+  SMS: "sms",
 } as const;
 
 export type QueueType = (typeof QUEUE_TYPES)[keyof typeof QUEUE_TYPES];
@@ -29,6 +29,4 @@ export type QueueType = (typeof QUEUE_TYPES)[keyof typeof QUEUE_TYPES];
  */
 export interface QueueBindings {
   APP_QUEUE: Queue<QueueMessage>;
-  // Future queues:
-  // WEBHOOK_QUEUE: Queue<QueueMessage>;
 }

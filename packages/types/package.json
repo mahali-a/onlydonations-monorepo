@@ -14,11 +14,10 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "biome lint --write .",
-    "lint:check": "biome lint .",
+    "lint": "biome check --write .",
+    "lint:ci": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "check": "biome check --write .",
     "check:ci": "biome check ."
   },
   "keywords": [],
