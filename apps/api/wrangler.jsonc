@@ -7,14 +7,15 @@
   "name": "onlydonations-api",
   "main": "./src/index.ts",
   "compatibility_date": "2025-09-02",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "observability": {
     "enabled": true,
     "traces": {
       "enabled": true
     }
   },
-
   // ============================================
   // TOP-LEVEL (local development)
   // Used when running: wrangler dev
@@ -27,7 +28,7 @@
     }
   ],
   "vars": {
-    "EMAIL_FROM": "onlydonations@mahali.dev",
+    "EMAIL_FROM": "send@onlydonations.com",
     "ENVIRONMENT": "development",
     "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
     "WEB_BASE_URL": "http://localhost:3000"
@@ -67,10 +68,11 @@
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["CampaignTracker"]
+      "new_classes": [
+        "CampaignTracker"
+      ]
     }
   ],
-
   "env": {
     // ============================================
     // STAGING environment
@@ -92,7 +94,7 @@
         }
       ],
       "vars": {
-        "EMAIL_FROM": "onlydonations@mahali.dev",
+        "EMAIL_FROM": "send@onlydonations.com",
         "ENVIRONMENT": "staging",
         "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
         "WEB_BASE_URL": "https://stg.onlydonations.com"
@@ -132,11 +134,12 @@
       "migrations": [
         {
           "tag": "v1",
-          "new_classes": ["CampaignTracker"]
+          "new_classes": [
+            "CampaignTracker"
+          ]
         }
       ]
     },
-
     // ============================================
     // PRODUCTION environment
     // Deploy with: wrangler deploy --env production
@@ -157,7 +160,7 @@
         }
       ],
       "vars": {
-        "EMAIL_FROM": "hello@onlydonations.com",
+        "EMAIL_FROM": "send@onlydonations.com",
         "ENVIRONMENT": "production",
         "R2_PUBLIC_URL": "https://assets.onlydonations.com",
         "WEB_BASE_URL": "https://onlydonations.com"
@@ -197,7 +200,9 @@
       "migrations": [
         {
           "tag": "v1",
-          "new_classes": ["CampaignTracker"]
+          "new_classes": [
+            "CampaignTracker"
+          ]
         }
       ]
     }
