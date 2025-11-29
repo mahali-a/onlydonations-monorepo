@@ -6,7 +6,7 @@ import type {
   SelectUser,
 } from "@repo/core/database/types";
 import { eq } from "@repo/core/drizzle";
-import { auth_user, organization } from "@repo/core/drizzle/auth-schema";
+import { auth_user, organization } from "@repo/core/drizzle/schema";
 
 export async function retrieveOrganizationFromDatabaseBySlug(
   slug: string,

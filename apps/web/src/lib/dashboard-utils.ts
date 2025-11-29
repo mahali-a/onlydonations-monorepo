@@ -25,7 +25,7 @@ export function formatMetricValue(
   return value.toString();
 }
 
-export function getTrendMessage(change: number, metric: string): string {
+export function formatTrendMessage(change: number, metric: string): string {
   if (change > 0) {
     return `Up ${Math.abs(change).toFixed(1)}% this month`;
   }
@@ -35,7 +35,7 @@ export function getTrendMessage(change: number, metric: string): string {
   return `No change in ${metric}`;
 }
 
-export function getTrendStatus(percentageChange: number): {
+export function classifyTrend(percentageChange: number): {
   color: "green" | "red";
   direction: "up" | "down";
 } {

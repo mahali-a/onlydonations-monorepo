@@ -8,7 +8,7 @@ import { SearchHero } from "./components/search-hero";
 import { SearchPagination } from "./components/search-pagination";
 import { SearchResults } from "./components/search-results";
 import { publicCampaignsInfiniteQueryOptions } from "./public-search-loaders";
-import type { SearchFilters } from "./public-search-schemas";
+import type { SearchFilters } from "./public-search-schema";
 
 function SearchResultsSection() {
   const search = useSearch({ from: "/_public/s" }) as Partial<SearchFilters>;

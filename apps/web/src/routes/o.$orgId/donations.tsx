@@ -3,8 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { DonationsComponent } from "@/features/org-donations/org-donations-component";
 import { DonationsError } from "@/features/org-donations/org-donations-error";
-import type { DonationFilters } from "@/features/org-donations/org-donations-schemas";
-import { donationFiltersSchema } from "@/features/org-donations/org-donations-schemas";
+import type { DonationFilters } from "@/features/org-donations/org-donations-schema";
+import { donationFiltersSchema } from "@/features/org-donations/org-donations-schema";
 import {
   retrieveDonationStatsFromServer,
   retrieveDonationsFromServer,

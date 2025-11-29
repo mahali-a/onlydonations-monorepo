@@ -18,7 +18,7 @@ import {
   deleteCampaignSchema,
   publishCampaignSchema,
   toggleCampaignStatusSchema,
-} from "./org-campaigns-schemas";
+} from "./org-campaigns-schema";
 
 const campaignsLogger = logger.createChildLogger("org-campaigns-actions");
 

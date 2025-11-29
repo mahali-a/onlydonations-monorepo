@@ -3,12 +3,12 @@ import { createServerFn } from "@tanstack/react-start";
 import ms from "ms";
 import { retrieveEnabledCategories } from "@/features/public-campaign-details/public-campaign-details-models";
 import { fileService } from "@/lib/file-upload";
-import { promiseHash } from "@/utils/promise-hash";
+import { promiseHash } from "@/lib/promise-hash";
 import {
   retrievePublicCampaignCountFromDatabaseByFilters,
   retrievePublicCampaignsWithCategoryFromDatabaseByFilters,
 } from "./public-search-models";
-import { type SearchFilters, searchFiltersSchema } from "./public-search-schemas";
+import { type SearchFilters, searchFiltersSchema } from "./public-search-schema";
 
 export type SearchResult = Awaited<
   ReturnType<typeof retrievePublicCampaignsWithCategoryFromDatabaseByFilters>

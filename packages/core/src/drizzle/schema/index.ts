@@ -1,3 +1,4 @@
+export * from "./auth.schema";
 export * from "./campaign.schema";
 export * from "./campaign-update.schema";
 export * from "./category.schema";
@@ -5,7 +6,7 @@ export * from "./content-moderation.schema";
 export * from "./countries.schema";
 export * from "./currencies.schema";
 export * from "./donation.schema";
-export * from "./kyc-schema";
+export * from "./kyc.schema";
 export * from "./payment-transaction.schema";
 export * from "./refund.schema";
 export * from "./webhook-event.schema";

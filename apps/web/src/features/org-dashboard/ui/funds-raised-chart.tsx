@@ -3,7 +3,7 @@ import * as React from "react";
 import { lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import type { ChartDataPoint } from "@/features/org-dashboard/org-dashboard-models";
-import { formatMetricValue } from "@/lib/utils/dashboard-utils";
+import { formatMetricValue } from "@/lib/dashboard-utils";
 
 const FundsRaisedChartImpl = lazy(() =>
   import("./funds-raised-chart-impl").then((m) => ({ default: m.FundsRaisedChartImpl })),

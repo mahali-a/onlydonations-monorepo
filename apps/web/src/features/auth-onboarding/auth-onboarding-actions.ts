@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/server/middleware/auth";
 import { updateOnboardingUserInDatabase } from "./auth-onboarding-models";
-import { organizationSchema, phoneSchema, profileSchema } from "./auth-onboarding-schemas";
+import { organizationSchema, phoneSchema, profileSchema } from "./auth-onboarding-schema";
 
 const onboardingLogger = logger.createChildLogger("auth-onboarding-actions");
 

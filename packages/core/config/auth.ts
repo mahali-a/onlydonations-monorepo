@@ -4,8 +4,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { createBetterAuth } from "../src/auth/setup";
-import * as authSchema from "../src/drizzle/auth-schema";
 import * as schema from "../src/drizzle/schema";
+import * as authSchema from "../src/drizzle/schema/auth.schema";
 
 /**
  * Find local D1 database for Better Auth schema generation

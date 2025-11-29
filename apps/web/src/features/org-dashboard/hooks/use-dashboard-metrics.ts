@@ -1,5 +1,5 @@
 import type { DashboardStats } from "@/features/org-dashboard/org-dashboard-models";
-import { formatMetricValue, getTrendMessage } from "@/lib/utils/dashboard-utils";
+import { formatMetricValue, formatTrendMessage } from "@/lib/dashboard-utils";
 
 export type FinancialMetric = {
   title: string;
@@ -29,21 +29,21 @@ export function useDashboardMetrics(
       value: formatMetricValue(allTimeStats.totalRaised, "currency", "GHS"),
       change: totalRaisedChange,
       metric: "total raised",
-      trendMessage: getTrendMessage(totalRaisedChange, "total raised"),
+      trendMessage: formatTrendMessage(totalRaisedChange, "total raised"),
     },
     {
       title: "Total Donors",
       value: formatMetricValue(allTimeStats.totalDonors, "number"),
       change: 0,
       metric: "total donors",
-      trendMessage: getTrendMessage(0, "total donors"),
+      trendMessage: formatTrendMessage(0, "total donors"),
     },
     {
       title: "Active Campaigns",
       value: formatMetricValue(allTimeStats.activeCampaigns, "number"),
       change: 0,
       metric: "active campaigns",
-      trendMessage: getTrendMessage(0, "active campaigns"),
+      trendMessage: formatTrendMessage(0, "active campaigns"),
     },
   ];
 }

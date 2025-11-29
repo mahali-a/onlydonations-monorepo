@@ -2,9 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { nanoid } from "nanoid";
 import { logger } from "@/lib/logger";
 import { paystackService } from "@/lib/paystack";
+import { promiseHash } from "@/lib/promise-hash";
 import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { authMiddleware } from "@/server/middleware/auth";
-import { promiseHash } from "@/utils/promise-hash";
 import {
   retrieveTotalRaisedFromDatabaseByOrganization,
   retrieveWithdrawalAccountFromDatabaseById,
@@ -12,7 +12,7 @@ import {
   savePaymentTransactionToDatabase,
   updatePaymentTransactionInDatabase,
 } from "../org-payments-models";
-import { requestWithdrawalSchema } from "./make-withdrawal-schemas";
+import { requestWithdrawalSchema } from "./make-withdrawal-schema";
 
 const makeWithdrawalLogger = logger.createChildLogger("make-withdrawal-actions");
 

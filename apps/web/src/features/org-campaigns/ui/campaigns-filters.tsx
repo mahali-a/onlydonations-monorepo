@@ -4,7 +4,7 @@ import { Search, X } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { CampaignFilters } from "../org-campaigns-schemas";
+import type { CampaignFilters } from "../org-campaigns-schema";
 
 const CampaignsFiltersDrawer = lazy(() =>
   import("./campaigns-filters-drawer").then((m) => ({ default: m.CampaignsFiltersDrawer })),

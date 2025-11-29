@@ -7,7 +7,7 @@ import { authMiddleware } from "@/server/middleware/auth";
 import {
   retrieveUserKycStatusFromDatabaseByUser,
   retrieveVerificationJobsFromDatabaseByUser,
-} from "./user-kyc-models";
+} from "./kyc-models";
 
 export const retrieveKycStatusFromServer = createServerFn({ method: "GET" })
   .middleware([authMiddleware])

@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { FundraiserCard } from "@/components/fundraiser-card";
+import { FundraiserCard } from "@/components/cards/fundraiser-card";
 import { Button } from "@/components/ui/button";
 import { categoryCampaignsQueryOptions } from "@/features/public-discover/server";
 

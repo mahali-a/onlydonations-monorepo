@@ -21,7 +21,7 @@ type FinancialMetricsProps = {
   metrics: FinancialMetric[];
 };
 
-function getTrendMessage(change: number): string {
+function formatTrendMessage(change: number): string {
   if (change > 0) return `Up ${change.toFixed(1)}% this month`;
   if (change < 0) return `Down ${Math.abs(change).toFixed(1)}% this month`;
   return "No change this month";
@@ -58,7 +58,7 @@ export function FinancialMetrics({ metrics }: FinancialMetricsProps) {
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="flex items-center gap-2 font-medium w-full">
-              <span className="truncate">{getTrendMessage(metric.change)}</span>
+              <span className="truncate">{formatTrendMessage(metric.change)}</span>
               {metric.change > 0 && <TrendingUpIcon className="size-4 flex-shrink-0" />}
               {metric.change < 0 && <TrendingDownIcon className="size-4 flex-shrink-0" />}
             </div>

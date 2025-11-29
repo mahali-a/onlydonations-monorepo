@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { updateUserEmailOnServer } from "../server";
-import { emailSchema } from "../user-account-schemas";
+import { emailSchema } from "../user-account-schema";
 
 type EmailFormProps = {
   defaultEmail?: string;

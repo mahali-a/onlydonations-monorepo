@@ -1,8 +1,7 @@
 import { getDb } from "@repo/core/database/setup";
 import type { SelectCampaign, SelectUser } from "@repo/core/database/types";
 import { eq } from "@repo/core/drizzle";
-import { auth_user } from "@repo/core/drizzle/auth-schema";
-import { campaign, contentModeration, donation } from "@repo/core/drizzle/schema";
+import { auth_user, campaign, contentModeration, donation } from "@repo/core/drizzle/schema";
 import type { ModerationResult } from "@/lib/openai";
 
 export async function retrieveCampaignByIdFromDatabase(

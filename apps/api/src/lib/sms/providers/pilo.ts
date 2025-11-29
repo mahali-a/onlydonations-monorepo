@@ -1,0 +1,159 @@
+import { SMSError } from "../errors";
+import {
+  type BalanceInfo,
+  type PiloConfig,
+  PiloResponseCode,
+  SMSErrorCode,
+  type SMSErrorCodeType,
+  SMSProvider as SMSProviderConst,
+  type SMSRequest,
+  type SMSResult,
+} from "../types";
+import type { SMSProvider } from "./provider";
+
+const PILO_API_BASE = "https://api.pilosms.com/v1";
+
+/**
+ * Pilo API response types
+ */
+type PiloSendResponse = {
+  status: number;
+  detail: string;
+  total_cost: number;
+  errors: { count: number; list: unknown[] };
+  duplicates: { count: number; list: unknown[] };
+};
+
+type PiloBalanceResponse = {
+  balance: number;
+  units: number;
+  last_topup: {
+    date: string;
+    amount: string;
+    status: string;
+  };
+};
+
+/**
+ * Map Pilo response codes to our error codes
+ */
+function mapPiloErrorCode(code: number): SMSErrorCodeType {
+  switch (code) {
+    case PiloResponseCode.MISSING_PARAMS:
+      return SMSErrorCode.INVALID_PARAMS;
+    case PiloResponseCode.INVALID_API_KEY:
+      return SMSErrorCode.INVALID_API_KEY;
+    case PiloResponseCode.API_KEY_INACTIVE:
+      return SMSErrorCode.API_KEY_INACTIVE;
+    case PiloResponseCode.INSUFFICIENT_BALANCE:
+      return SMSErrorCode.INSUFFICIENT_BALANCE;
+    case PiloResponseCode.INVALID_NUMBERS:
+      return SMSErrorCode.INVALID_RECIPIENT;
+    case PiloResponseCode.SENDER_NOT_APPROVED:
+      return SMSErrorCode.SENDER_NOT_APPROVED;
+    default:
+      return SMSErrorCode.UNKNOWN;
+  }
+}
+
+/**
+ * Pilo SMS Provider
+ *
+ * Sends SMS via PiloSMS API (Ghana-focused provider)
+ */
+export class PiloProvider implements SMSProvider {
+  readonly type = SMSProviderConst.PILO;
+
+  constructor(private readonly config: PiloConfig) {}
+
+  async send(request: SMSRequest): Promise<SMSResult> {
+    try {
+      const formData = new FormData();
+      formData.append("sender", this.config.senderId);
+      formData.append("message", request.message);
+      formData.append("receipients", request.to); // Pilo's typo
+
+      const response = await fetch(`${PILO_API_BASE}/send-message?apikey=${this.config.apiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        console.error("[PiloSMS] HTTP error", {
+          status: response.status,
+          to: request.to,
+        });
+        return {
+          success: false,
+          code: SMSErrorCode.NETWORK_ERROR,
+          message: `HTTP ${response.status}`,
+          provider: this.type,
+          retryable: response.status >= 500,
+        };
+      }
+
+      const data = (await response.json()) as PiloSendResponse;
+
+      if (data.status === PiloResponseCode.SUCCESS) {
+        return {
+          success: true,
+          id: `pilo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          provider: this.type,
+          cost: data.total_cost,
+        };
+      }
+
+      const errorCode = mapPiloErrorCode(data.status);
+      console.error("[PiloSMS] API error", {
+        to: request.to,
+        status: data.status,
+        detail: data.detail,
+        errorCode,
+      });
+
+      return {
+        success: false,
+        code: errorCode,
+        message: data.detail,
+        provider: this.type,
+        retryable: false, // Pilo errors are generally not retryable
+      };
+    } catch (error) {
+      const smsError = SMSError.fromUnknown(error, this.type);
+      console.error("[PiloSMS] Request failed", {
+        to: request.to,
+        error: smsError.message,
+      });
+
+      return {
+        success: false,
+        code: smsError.code,
+        message: smsError.message,
+        provider: this.type,
+        retryable: smsError.retryable,
+      };
+    }
+  }
+
+  async checkBalance(): Promise<BalanceInfo> {
+    const response = await fetch(`${PILO_API_BASE}/check-balance?apikey=${this.config.apiKey}`);
+
+    if (!response.ok) {
+      throw new SMSError(SMSErrorCode.NETWORK_ERROR, `HTTP ${response.status}`, this.type);
+    }
+
+    const data = (await response.json()) as PiloBalanceResponse;
+
+    return {
+      balance: data.balance,
+      units: data.units,
+      lastTopup: data.last_topup
+        ? {
+            date: data.last_topup.date,
+            amount: data.last_topup.amount,
+            status: data.last_topup.status,
+          }
+        : undefined,
+    };
+  }
+}

@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { formatMetricValue, getTrendMessage } from "@/lib/utils/dashboard-utils";
+import { formatMetricValue, formatTrendMessage } from "@/lib/dashboard-utils";
+import { promiseHash } from "@/lib/promise-hash";
 import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { authMiddleware } from "@/server/middleware/auth";
-import { promiseHash } from "@/utils/promise-hash";
 import {
   retrieveCampaignDonationStatsFromDatabaseByOrganization,
   retrieveDailyDonationAggregateFromDatabaseByOrganization,
@@ -86,28 +86,28 @@ async function retrieveFinancialInsightsUtil(
       value: formatMetricValue(totalRaised, "currency", "GHS"),
       change: totalRaisedChange,
       metric: "total raised",
-      trendMessage: getTrendMessage(totalRaisedChange, "total raised"),
+      trendMessage: formatTrendMessage(totalRaisedChange, "total raised"),
     },
     {
       title: "Total Fees Deducted",
       value: formatMetricValue(totalFees, "currency", "GHS"),
       change: feesChange,
       metric: "fees deducted",
-      trendMessage: getTrendMessage(feesChange, "fees deducted"),
+      trendMessage: formatTrendMessage(feesChange, "fees deducted"),
     },
     {
       title: "Net Earnings",
       value: formatMetricValue(netEarnings, "currency", "GHS"),
       change: netEarningsChange,
       metric: "net earnings",
-      trendMessage: getTrendMessage(netEarningsChange, "net earnings"),
+      trendMessage: formatTrendMessage(netEarningsChange, "net earnings"),
     },
     {
       title: "Average Donation",
       value: formatMetricValue(avgDonation, "currency", "GHS"),
       change: avgDonationChange,
       metric: "average donation",
-      trendMessage: getTrendMessage(avgDonationChange, "average donation"),
+      trendMessage: formatTrendMessage(avgDonationChange, "average donation"),
     },
   ];
 

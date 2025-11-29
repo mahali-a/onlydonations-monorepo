@@ -1,6 +1,6 @@
 import type { SelectCategory } from "@repo/core/database/types";
 import { useState } from "react";
-import type { CampaignFilters } from "./org-campaigns-schemas";
+import type { CampaignFilters } from "./org-campaigns-schema";
 import { CampaignsView } from "./ui/campaigns-view";
 import { NewCampaignDialog } from "./ui/new-campaign-dialog";
 

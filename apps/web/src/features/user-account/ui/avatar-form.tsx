@@ -3,7 +3,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { updateUserAvatarOnServer } from "../server";
-import { avatarSchema } from "../user-account-schemas";
+import { avatarSchema } from "../user-account-schema";
 
 type AvatarFormProps = {
   currentAvatar?: string;

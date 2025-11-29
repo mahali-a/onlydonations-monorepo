@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import ms from "ms";
 import { z } from "zod";
 import { fileService } from "@/lib/file-upload";
-import { promiseHash } from "@/utils/promise-hash";
+import { promiseHash } from "@/lib/promise-hash";
 import {
   retrieveDonationsByCampaignWithPagination,
   retrieveDonationsWithMessagesByCampaign,

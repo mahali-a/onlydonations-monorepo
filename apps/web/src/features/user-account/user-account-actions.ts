@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/server/middleware/auth";
 import { updateUserInDatabase } from "./user-account-models";
-import { emailSchema, nameSchema } from "./user-account-schemas";
+import { emailSchema, nameSchema } from "./user-account-schema";
 
 const accountLogger = logger.createChildLogger("user-account-actions");
 

@@ -1,7 +1,7 @@
 import { getDb } from "@repo/core/database/setup";
 import type { InsertUser, SelectUser } from "@repo/core/database/types";
 import { eq } from "@repo/core/drizzle";
-import { auth_user } from "@repo/core/drizzle/auth-schema";
+import { auth_user } from "@repo/core/drizzle/schema";
 
 export async function retrieveUserFromDatabaseById(id: string): Promise<SelectUser | null> {
   const db = getDb();

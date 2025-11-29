@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { useRealtimeCampaign } from "@/hooks/use-realtime-campaign";
+import { useRealtimeCampaign } from "./hooks/use-realtime-campaign";
 import { liveCampaignQueryOptions } from "./public-live-campaign-loaders";
 import { LiveDonationsFeed, LiveProgressBar, LiveQrCode } from "./ui";
 

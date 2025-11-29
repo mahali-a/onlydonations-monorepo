@@ -13,7 +13,7 @@ import {
   sum,
 } from "@repo/core/drizzle";
 import { campaign, category, donation } from "@repo/core/drizzle/schema";
-import type { SearchFilters } from "./public-search-schemas";
+import type { SearchFilters } from "./public-search-schema";
 
 /**
  * Build conditions for filtering public campaigns

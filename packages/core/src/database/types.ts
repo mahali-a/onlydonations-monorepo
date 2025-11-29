@@ -1,13 +1,4 @@
 import type {
-  auth_account,
-  auth_session,
-  auth_user,
-  auth_verification,
-  invitation,
-  member,
-  organization,
-} from "@/drizzle/auth-schema";
-import type {
   campaign,
   campaignUpdate,
   category,
@@ -21,6 +12,15 @@ import type {
   webhookEvent,
   withdrawalAccount,
 } from "@/drizzle/schema";
+import type {
+  auth_account,
+  auth_session,
+  auth_user,
+  auth_verification,
+  invitation,
+  member,
+  organization,
+} from "@/drizzle/schema/auth.schema";
 
 export type InsertUser = typeof auth_user.$inferInsert;
 export type SelectUser = typeof auth_user.$inferSelect;

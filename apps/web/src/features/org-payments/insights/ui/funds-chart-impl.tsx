@@ -1,5 +1,5 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { formatMetricValue } from "@/lib/utils/dashboard-utils";
+import { formatMetricValue } from "@/lib/dashboard-utils";
 
 type FundsChartImplProps = {
   formattedData: Array<{

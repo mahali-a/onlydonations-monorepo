@@ -3,8 +3,8 @@ import {
   kycStatusQueryOptions,
   smileConfigQueryOptions,
   verificationJobsQueryOptions,
-} from "../user-kyc-loaders";
-import type { KycStatus } from "../user-kyc-models";
+} from "../kyc-loaders";
+import type { KycStatus } from "../kyc-models";
 import { KycStatusBadge } from "./kyc-status-badge";
 import { KycVerificationWidget } from "./kyc-verification-widget";
 

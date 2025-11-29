@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { retrieveCampaignWithCategoryFromDatabaseBySlug } from "./donate-models";
-import { donateLoaderSchema } from "./donate-schemas";
+import { donateLoaderSchema } from "./donate-schema";
 
 export const retrieveDonateDataFromServer = createServerFn({ method: "GET" })
   .inputValidator(donateLoaderSchema)

@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/d1";
-import * as authSchema from "@/drizzle/auth-schema";
 import * as schema from "@/drizzle/schema";
+import * as authSchema from "@/drizzle/schema/auth.schema";
 
 const allSchema = { ...authSchema, ...schema };
 

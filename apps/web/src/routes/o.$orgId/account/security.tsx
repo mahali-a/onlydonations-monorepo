@@ -1,12 +1,12 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import ms from "ms";
-import { SecuritySection } from "@/features/user-account-security";
+import { SecuritySection } from "@/features/user-account/security";
 import {
   retrieveLoginMethodFromServer,
   retrieveSessionsFromServer,
-} from "@/features/user-account-security/server";
-import { promiseHash } from "@/utils/promise-hash";
+} from "@/features/user-account/security/server";
+import { promiseHash } from "@/lib/promise-hash";
 
 const sessionsQueryOptions = queryOptions({
   queryKey: ["sessions"],

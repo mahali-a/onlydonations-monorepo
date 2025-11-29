@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
-import type { SmileWebhookPayload } from "@/features/user-kyc/user-kyc-models";
+import type { SmileWebhookPayload } from "@/features/user-account/kyc/kyc-models";
 import {
   retrieveSmileWebhookEventFromDatabaseByJobId,
   retrieveUserKycStatusFromDatabaseByUser,
@@ -11,8 +11,8 @@ import {
   updateSmileWebhookEventInDatabase,
   updateUserKycStatusInDatabase,
   updateVerificationJobInDatabase,
-} from "@/features/user-kyc/user-kyc-models";
-import { verifyWebhookSignature } from "@/features/user-kyc/user-kyc-smile-service";
+} from "@/features/user-account/kyc/kyc-models";
+import { verifyWebhookSignature } from "@/features/user-account/kyc/kyc-smile-service";
 import { logger } from "@/lib/logger";
 
 const webhookLogger = logger.createChildLogger("smile-webhook");

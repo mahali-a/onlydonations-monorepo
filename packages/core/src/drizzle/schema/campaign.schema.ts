@@ -1,7 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
-import { auth_user, organization } from "../auth-schema";
+import { auth_user, organization } from "./auth.schema";
 import { category } from "./category.schema";
 import { countries } from "./countries.schema";
 import { currencies } from "./currencies.schema";

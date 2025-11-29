@@ -16,7 +16,7 @@ import {
   saveDonationToDatabase,
   updateDonationPaymentTransactionInDatabaseById,
 } from "./donate-models";
-import { type DonateFormData, donateSchema } from "./donate-schemas";
+import { type DonateFormData, donateSchema } from "./donate-schema";
 
 const donationsLogger = logger.createChildLogger("donations-actions");
 

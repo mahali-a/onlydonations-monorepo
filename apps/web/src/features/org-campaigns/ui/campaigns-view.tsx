@@ -1,5 +1,5 @@
 import type { SelectCategory } from "@repo/core/database/types";
-import type { CampaignFilters } from "../org-campaigns-schemas";
+import type { CampaignFilters } from "../org-campaigns-schema";
 import { CampaignFiltersComponent } from "./campaigns-filters";
 import { CampaignsPagination } from "./campaigns-pagination";
 import { CampaignsDataTable } from "./campaigns-table";

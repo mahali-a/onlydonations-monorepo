@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { FundraiserCard } from "@/components/fundraiser-card";
+import { FundraiserCard } from "@/components/cards/fundraiser-card";
 import { Button } from "@/components/ui/button";
 import type { DiscoverCampaign } from "../public-discover-models";
 

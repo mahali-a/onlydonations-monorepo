@@ -4,7 +4,7 @@ import { redirect } from "@tanstack/react-router";
 import { createMiddleware } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { logger } from "@/lib/logger";
-import { findMembersByUserId } from "../middleware-models";
+import { retrieveMembersFromDatabaseByUserId } from "./models";
 
 const authMiddlewareLogger = logger.createChildLogger("auth-middleware");
 
@@ -100,7 +100,7 @@ export const membershipMiddleware = createMiddleware({ type: "function" })
     const organization = context.organization;
     const req = getRequest();
 
-    const memberships = await findMembersByUserId(user.id);
+    const memberships = await retrieveMembersFromDatabaseByUserId(user.id);
     const membership = memberships.find((m) => m.organizationId === organization.id);
 
     if (!membership) {

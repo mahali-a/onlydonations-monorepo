@@ -1,6 +1,6 @@
-export { generateKycVerificationTokenOnServer } from "./user-kyc-actions";
+export { generateKycVerificationTokenOnServer } from "./kyc-actions";
 export {
   retrieveKycStatusFromServer,
   retrieveSmileConfigFromServer,
   retrieveVerificationJobsFromServer,
-} from "./user-kyc-loaders";
+} from "./kyc-loaders";

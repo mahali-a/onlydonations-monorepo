@@ -3,9 +3,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/server/middleware/auth";
-import { revokeSessionSchema } from "./user-account-security-schemas";
+import { revokeSessionSchema } from "./security-schema";
 
-const securityLogger = logger.createChildLogger("user-account-security-actions");
+const securityLogger = logger.createChildLogger("security-actions");
 
 export const deleteSessionOnServer = createServerFn({ method: "POST" })
   .inputValidator((data) => {

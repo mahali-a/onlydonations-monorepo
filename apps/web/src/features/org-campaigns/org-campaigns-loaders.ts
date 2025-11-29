@@ -4,9 +4,9 @@ import ms from "ms";
 import { z } from "zod";
 import { fileService } from "@/lib/file-upload";
 import { logger } from "@/lib/logger";
+import { promiseHash } from "@/lib/promise-hash";
 import { requireOrganizationAccess } from "@/server/middleware/access-control";
 import { authMiddleware } from "@/server/middleware/auth";
-import { promiseHash } from "@/utils/promise-hash";
 import {
   retrieveCampaignForPreviewFromDatabaseById,
   retrieveCampaignsWithDonationStatsFromDatabaseByOrganizationAndFilters,
@@ -14,7 +14,7 @@ import {
   retrieveEnabledCategoriesFromDatabase,
   retrieveRejectionReasonFromDatabaseByCampaignId,
 } from "./org-campaigns-models";
-import { campaignFiltersSchema } from "./org-campaigns-schemas";
+import { campaignFiltersSchema } from "./org-campaigns-schema";
 
 const campaignsLogger = logger.createChildLogger("org-campaigns-loaders");
 

@@ -13,11 +13,11 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { retrieveAccountUserFromServer } from "@/features/user-account/server";
 import { authClient } from "@/lib/auth-client";
 import { logger } from "@/lib/logger";
+import { promiseHash } from "@/lib/promise-hash";
 import {
   retrieveOrganizationFromServerById,
   updateActiveOrganizationOnServer,
 } from "@/server/functions/organizations";
-import { promiseHash } from "@/utils/promise-hash";
 
 const orgLogger = logger.createChildLogger("org-route");
 

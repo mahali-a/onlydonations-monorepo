@@ -10,7 +10,7 @@ import {
   invitation,
   member,
   organization,
-} from "@/drizzle/auth-schema";
+} from "@/drizzle/schema/auth.schema";
 
 /**
  * Configuration for initializing auth with Drizzle adapter

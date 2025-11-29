@@ -14,7 +14,7 @@ import {
   sum,
 } from "@repo/core/drizzle";
 import { campaign, donation } from "@repo/core/drizzle/schema";
-import type { CreateDonation, DonationFilters } from "./org-donations-schemas";
+import type { CreateDonation, DonationFilters } from "./org-donations-schema";
 
 export type DonorRow = {
   id: string;

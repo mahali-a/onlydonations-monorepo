@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { updateUserNameOnServer } from "../server";
-import { nameSchema } from "../user-account-schemas";
+import { nameSchema } from "../user-account-schema";
 
 type NameFormProps = {
   defaultName?: string;

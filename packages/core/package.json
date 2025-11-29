@@ -15,10 +15,6 @@
       "default": "./dist/database/types.js",
       "types": "./dist/database/types.d.ts"
     },
-    "./zod-schema/*": {
-      "default": "./dist/zod-schema/*.js",
-      "types": "./dist/zod-schema/*.d.ts"
-    },
     "./queues/*": {
       "default": "./dist/queues/*.js",
       "types": "./dist/queues/*.d.ts"
@@ -27,9 +23,9 @@
       "default": "./dist/drizzle/schema/index.js",
       "types": "./dist/drizzle/schema/index.d.ts"
     },
-    "./drizzle/auth-schema": {
-      "default": "./dist/drizzle/auth-schema.js",
-      "types": "./dist/drizzle/auth-schema.d.ts"
+    "./drizzle/schema/*": {
+      "default": "./dist/drizzle/schema/*.js",
+      "types": "./dist/drizzle/schema/*.d.ts"
     },
     "./drizzle": {
       "default": "./dist/drizzle/index.js",
@@ -45,7 +41,7 @@
     "format:check": "biome format .",
     "check": "biome check --write .",
     "check:ci": "biome check .",
-    "better-auth:generate": "mkdir -p src/drizzle && npx @better-auth/cli@latest generate --config ./config/auth.ts --output ./src/drizzle/auth-schema.ts",
+    "better-auth:generate": "mkdir -p src/drizzle/schema && npx @better-auth/cli@latest generate --config ./config/auth.ts --output ./src/drizzle/schema/auth.schema.ts",
     "drizzle:generate": "drizzle-kit generate --config drizzle.config.ts",
     "drizzle:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "drizzle:pull": "drizzle-kit pull --config drizzle.config.ts"

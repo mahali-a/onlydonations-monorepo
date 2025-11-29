@@ -2,7 +2,7 @@ import { TrendingUp } from "lucide-react";
 import * as React from "react";
 import { lazy, Suspense } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatMetricValue } from "@/lib/utils/dashboard-utils";
+import { formatMetricValue } from "@/lib/dashboard-utils";
 
 const FundsChartImpl = lazy(() =>
   import("./funds-chart-impl").then((m) => ({ default: m.FundsChartImpl })),

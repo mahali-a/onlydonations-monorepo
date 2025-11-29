@@ -3,7 +3,7 @@
 import { lazy, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import type { ChartDataPoint } from "@/features/org-dashboard/org-dashboard-models";
-import { calculatePercentageChange, formatChartDate } from "@/lib/utils/dashboard-utils";
+import { calculatePercentageChange, formatChartDate } from "@/lib/dashboard-utils";
 
 const DonorGrowthChartImpl = lazy(() =>
   import("./donor-growth-chart-impl").then((m) => ({ default: m.DonorGrowthChartImpl })),

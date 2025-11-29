@@ -1,2 +1,2 @@
 export * from "./donate-component";
-export * from "./donate-schemas";
+export * from "./donate-schema";

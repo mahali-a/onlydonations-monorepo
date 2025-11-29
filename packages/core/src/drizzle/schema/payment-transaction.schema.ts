@@ -1,7 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
-import { organization } from "../auth-schema";
+import { organization } from "./auth.schema";
 import { currencies } from "./currencies.schema";
 
 const createId = () => nanoid(10);

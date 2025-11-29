@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatMetricValue } from "@/lib/utils/dashboard-utils";
+import { formatMetricValue } from "@/lib/dashboard-utils";
 import { FinancialMetrics } from "./ui/financial-metrics";
 
 function calculatePercentageChange(current: number, previous: number): number {

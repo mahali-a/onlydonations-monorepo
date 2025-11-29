@@ -1,17 +1,20 @@
 import type { SelectMember, SelectOrganization } from "@repo/core/database/types";
-import { findMembersByUserId, findOrganizationById } from "../middleware-models";
+import {
+  retrieveMembersFromDatabaseByUserId,
+  retrieveOrganizationFromDatabaseById,
+} from "./models";
 
 export async function requireOrganizationAccess(
   orgId: string,
   userId: string,
 ): Promise<{ organization: SelectOrganization; membership: SelectMember }> {
-  const organization = await findOrganizationById(orgId);
+  const organization = await retrieveOrganizationFromDatabaseById(orgId);
 
   if (!organization) {
     throw new Response("Organization not found", { status: 404 });
   }
 
-  const memberships = await findMembersByUserId(userId);
+  const memberships = await retrieveMembersFromDatabaseByUserId(userId);
   const membership = memberships.find((m) => m.organizationId === organization.id);
 
   if (!membership) {

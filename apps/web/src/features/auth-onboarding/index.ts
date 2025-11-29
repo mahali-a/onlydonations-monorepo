@@ -1,4 +1,4 @@
-export * from "./auth-onboarding-schemas";
+export * from "./auth-onboarding-schema";
 export * from "./auth-onboarding-utils";
 export * from "./ui/onboarding-layout";
 export * from "./ui/organization-form";

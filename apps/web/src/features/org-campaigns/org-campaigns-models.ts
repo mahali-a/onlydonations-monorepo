@@ -24,7 +24,7 @@ import {
   sum,
 } from "@repo/core/drizzle";
 import { campaign, category, contentModeration, donation } from "@repo/core/drizzle/schema";
-import { promiseHash } from "@/utils/promise-hash";
+import { promiseHash } from "@/lib/promise-hash";
 
 type CampaignFilters = {
   search?: string;

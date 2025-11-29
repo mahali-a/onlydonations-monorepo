@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Money } from "@/lib/money";
-import type { CampaignFilters } from "../org-campaigns-schemas";
+import type { CampaignFilters } from "../org-campaigns-schema";
 import { CampaignActionsMenu } from "./campaign-actions-menu";
 
 type CampaignWithStats = {
