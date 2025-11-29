@@ -1,6 +1,6 @@
-import type { Config } from "drizzle-kit";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import type { Config } from "drizzle-kit";
 
 /**
  * Find the local D1 database path from wrangler's state directory

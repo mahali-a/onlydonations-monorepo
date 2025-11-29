@@ -189,7 +189,7 @@ export const donationModel = {
         ),
       );
 
-    const stats = statsResult[0];
+    const stats = statsResult[0] ?? null;
     const totalDonors = stats?.totalDonors ?? 0;
     const donationCount = stats?.donationCount ?? 0;
     const totalAmount = stats?.totalAmount ?? 0;

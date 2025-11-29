@@ -1,8 +1,8 @@
-import { sendEmail } from "@repo/email/email/setup";
-import { emailQueueDataSchema } from "@repo/email/email/schema";
-import type { EmailTemplateType } from "@repo/email/email/types";
 import type { ConsumerResult, QueueConsumer } from "@repo/core/queues/types";
 import type { EmailQueueMessage } from "@repo/email/email/schema";
+import { emailQueueDataSchema } from "@repo/email/email/schema";
+import { sendEmail } from "@repo/email/email/setup";
+import type { EmailTemplateType } from "@repo/email/email/types";
 
 export const emailConsumer: QueueConsumer<EmailQueueMessage> = async (
   message,

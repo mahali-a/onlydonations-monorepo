@@ -15,7 +15,10 @@ function setSidebarCookie(value: boolean): void {
     try {
       // biome-ignore lint/suspicious/noDocumentCookie: required for sidebar state persistence
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${value}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}; SameSite=Lax`;
-    } catch {}
+    } catch {
+      // Cookie setting can fail in environments with disabled cookies or strict privacy settings
+      // This is expected behavior and not an error condition, so we silently handle it
+    }
   }
 }
 const SIDEBAR_WIDTH = "16rem";

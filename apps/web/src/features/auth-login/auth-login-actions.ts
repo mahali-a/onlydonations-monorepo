@@ -20,6 +20,8 @@ type SendLoginOtpOnServerInput = {
   honeypotData: Record<string, string>;
 };
 
+// Note: This is a public login endpoint, so it intentionally does not use authMiddleware.
+// sendVerificationOTP is a public API that doesn't require authentication.
 export const sendLoginOtpOnServer = createServerFn({ method: "POST" })
   .inputValidator((data: SendLoginOtpOnServerInput) => data)
   .handler(async ({ data }) => {

@@ -752,52 +752,13 @@ export interface GalleryBlock {
  */
 export interface ContactFormBlock {
   title?: string | null;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  formFields?:
-    | {
-        label: string;
-        /**
-         * Used for form submission (e.g., first_name, email, message)
-         */
-        name: string;
-        type: 'text' | 'email' | 'tel' | 'number' | 'textarea' | 'select' | 'checkbox' | 'radio';
-        required?: boolean | null;
-        placeholder?: string | null;
-        options?:
-          | {
-              label: string;
-              value: string;
-              id?: string | null;
-            }[]
-          | null;
-        rows?: number | null;
-        id?: string | null;
-      }[]
-    | null;
+  description?: string | null;
   submitButtonText?: string | null;
   successMessage?: string | null;
-  errorMessage?: string | null;
   /**
-   * Form submissions will be sent to this email
+   * Override recipient. Leave blank to use Settings contact email.
    */
-  recipientEmail: string;
-  layout?: ('single' | 'two') | null;
-  backgroundColor?: ('white' | 'gray-light' | 'green-light' | 'primary') | null;
-  maxWidth?: ('full' | 'large' | 'medium' | 'small') | null;
+  recipientEmail?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'contact-form';
@@ -1413,31 +1374,9 @@ export interface GalleryBlockSelect<T extends boolean = true> {
 export interface ContactFormBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
-  formFields?:
-    | T
-    | {
-        label?: T;
-        name?: T;
-        type?: T;
-        required?: T;
-        placeholder?: T;
-        options?:
-          | T
-          | {
-              label?: T;
-              value?: T;
-              id?: T;
-            };
-        rows?: T;
-        id?: T;
-      };
   submitButtonText?: T;
   successMessage?: T;
-  errorMessage?: T;
   recipientEmail?: T;
-  layout?: T;
-  backgroundColor?: T;
-  maxWidth?: T;
   id?: T;
   blockName?: T;
 }

@@ -1,8 +1,8 @@
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
 import { createBetterAuth } from "../src/auth/setup";
 import * as authSchema from "../src/drizzle/auth-schema";
 import * as schema from "../src/drizzle/schema";

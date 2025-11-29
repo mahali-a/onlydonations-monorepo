@@ -21,7 +21,9 @@ export const Route = createFileRoute("/app/")({
 
       if (organizations && organizations.length > 0) {
         const firstOrg = organizations[0];
-        throw redirect({ to: `/o/$orgId`, params: { orgId: firstOrg.id } });
+        if (firstOrg) {
+          throw redirect({ to: `/o/$orgId`, params: { orgId: firstOrg.id } });
+        }
       }
 
       throw redirect({

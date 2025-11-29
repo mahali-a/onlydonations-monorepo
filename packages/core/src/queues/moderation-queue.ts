@@ -1,5 +1,5 @@
-import type { ModerationQueueMessage, ModerationQueueData } from "./moderation-schema";
 import { nanoid } from "nanoid";
+import type { ModerationQueueData, ModerationQueueMessage } from "./moderation-schema";
 
 export class ModerationQueueProducer {
   constructor(private queue: Queue<ModerationQueueMessage>) {}

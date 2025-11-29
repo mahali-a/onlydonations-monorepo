@@ -1,8 +1,8 @@
-import type { EmailQueueMessage } from "@repo/email/email/schema";
-import { emailQueueDataSchema } from "@repo/email/email/schema";
 import type { ModerationQueueMessage } from "@repo/core/queues/moderation-schema";
 import { moderationQueueDataSchema } from "@repo/core/queues/moderation-schema";
 import type { ConsumerResult } from "@repo/core/queues/types";
+import type { EmailQueueMessage } from "@repo/email/email/schema";
+import { emailQueueDataSchema } from "@repo/email/email/schema";
 import { emailConsumer } from "./consumers/email.consumer";
 import { moderationConsumer } from "./consumers/moderation.consumer";
 

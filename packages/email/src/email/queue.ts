@@ -1,6 +1,6 @@
-import type { EmailQueueMessage } from "./schema";
-import type { EmailTemplateType, EmailTemplateData } from "./types";
 import { nanoid } from "nanoid";
+import type { EmailQueueMessage } from "./schema";
+import type { EmailTemplateData, EmailTemplateType } from "./types";
 
 /**
  * Type-safe email queue producer

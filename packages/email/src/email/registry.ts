@@ -1,19 +1,19 @@
 import type { ComponentType } from "react";
-import type { ChangeEmailData } from "@/templates/change-email-schema";
-import { changeEmailSchema } from "@/templates/change-email-schema";
-import ChangeEmailTemplate from "@/templates/change-email";
-import type { EmailOtpData } from "@/templates/email-otp-schema";
-import { emailOtpSchema } from "@/templates/email-otp-schema";
-import EmailOtpTemplate from "@/templates/email-otp";
+import CampaignApprovedTemplate from "@/templates/campaign-approved";
 import type { CampaignApprovedData } from "@/templates/campaign-approved-schema";
 import { campaignApprovedSchema } from "@/templates/campaign-approved-schema";
-import CampaignApprovedTemplate from "@/templates/campaign-approved";
+import CampaignRejectedTemplate from "@/templates/campaign-rejected";
 import type { CampaignRejectedData } from "@/templates/campaign-rejected-schema";
 import { campaignRejectedSchema } from "@/templates/campaign-rejected-schema";
-import CampaignRejectedTemplate from "@/templates/campaign-rejected";
+import ChangeEmailTemplate from "@/templates/change-email";
+import type { ChangeEmailData } from "@/templates/change-email-schema";
+import { changeEmailSchema } from "@/templates/change-email-schema";
+import DonationThankYouTemplate from "@/templates/donation-thank-you";
 import type { DonationThankYouData } from "@/templates/donation-thank-you-schema";
 import { donationThankYouSchema } from "@/templates/donation-thank-you-schema";
-import DonationThankYouTemplate from "@/templates/donation-thank-you";
+import EmailOtpTemplate from "@/templates/email-otp";
+import type { EmailOtpData } from "@/templates/email-otp-schema";
+import { emailOtpSchema } from "@/templates/email-otp-schema";
 
 type EmailTemplate<T> = {
   subject: string;

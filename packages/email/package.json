@@ -38,19 +38,18 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.22.0",
+
   "dependencies": {
     "@react-email/components": "^1.0.1",
     "nanoid": "^5.1.6",
     "react": "^19.2.0",
     "react-dom": "19.2.0",
-    "resend": "^6.4.2",
-    "zod": "^4.1.12"
+    "resend": "^6.5.2",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251115.0",
-    "@react-email/preview-server": "5.0.4",
-    "@types/react": "^19.2.5",
+    "@cloudflare/workers-types": "^4.20251128.0",
+    "@types/react": "^19.2.7",
     "react-email": "5.0.4",
     "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"

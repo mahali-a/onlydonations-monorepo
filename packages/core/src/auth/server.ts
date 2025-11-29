@@ -1,5 +1,6 @@
+import type { BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { createBetterAuth, type AuthEmailHandler } from "@/auth/setup";
+import { type AuthEmailHandler, createBetterAuth } from "@/auth/setup";
 import type { initDatabase } from "@/database/setup";
 import {
   auth_account,
@@ -10,7 +11,6 @@ import {
   member,
   organization,
 } from "@/drizzle/auth-schema";
-import type { BetterAuthOptions } from "better-auth";
 
 /**
  * Configuration for initializing auth with Drizzle adapter

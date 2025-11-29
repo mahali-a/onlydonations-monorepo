@@ -13,19 +13,12 @@ const contactFormSchema = z.object({
 
 export const submitContactForm = createServerFn({ method: "POST" })
   .inputValidator(contactFormSchema)
-  .handler(async ({ data }): Promise<{ success: boolean; error?: string }> => {
+  .handler(async (): Promise<{ success: boolean; error?: string }> => {
     try {
       // Data is already validated by inputValidator
-      const { name, email, message, recipientEmail } = data;
 
       // TODO: Implement email sending logic here
-      // For now, just log the submission
-      contactLogger.info("contact_form.submitted", {
-        from: email,
-        to: recipientEmail,
-        name,
-        messageLength: message.length,
-      });
+      // For now, just silently process the submission
 
       // You can integrate with an email service like:
       // - Resend (resend.com)

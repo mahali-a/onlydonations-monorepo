@@ -1,9 +1,9 @@
 import { env, WorkerEntrypoint } from "cloudflare:workers";
 import { initDatabase } from "@repo/core/database/setup";
+import type { EmailQueueMessage } from "@repo/email/email/schema";
 import { initEmail } from "@repo/email/email/setup";
 import { app } from "@/handlers";
 import { handleQueueMessage } from "@/queues";
-import type { EmailQueueMessage } from "@repo/email/email/schema";
 
 // Export Durable Objects
 export { CampaignTracker } from "@/durable-objects/campaign-tracker";

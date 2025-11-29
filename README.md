@@ -7,7 +7,7 @@ A monorepo SaaS application with user-facing frontend and data service backend.
 ## Setup
 
 ```bash
-pnpm run setup
+bun run setup
 ```
 
 This installs all dependencies and builds required packages.
@@ -16,24 +16,24 @@ This installs all dependencies and builds required packages.
 
 ### User Application
 ```bash
-pnpm run dev:user-application
+bun run dev:user-application
 ```
 
 ### Data Service
 ```bash
-pnpm run dev:data-service
+bun run dev:data-service
 ```
 
 ## Deployment
 
 ### User Application (Cloudflare)
 ```bash
-pnpm run deploy:user-application
+bun run deploy:user-application
 ```
 
 ### Data Service
 ```bash
-pnpm run deploy:data-service
+bun run deploy:data-service
 ```
 
 ## Working with Individual Apps

@@ -1,15 +1,14 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { vercelPostgresAdapter } from "@payloadcms/db-vercel-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { s3Storage } from "@payloadcms/storage-s3";
-import path from "node:path";
 import { buildConfig } from "payload";
-import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-
-import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Pages } from "./collections/Pages";
 import { Settings } from "./collections/Settings";
+import { Users } from "./collections/Users";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);

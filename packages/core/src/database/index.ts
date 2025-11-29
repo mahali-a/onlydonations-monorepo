@@ -1,2 +1,2 @@
-export { getDb } from "./setup";
 export * from "../drizzle/schema";
+export { getDb } from "./setup";

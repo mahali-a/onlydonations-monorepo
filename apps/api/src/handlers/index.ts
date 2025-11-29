@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import health from "./health";
-import webhooks from "./webhooks/paystack";
 import realtime from "./realtime";
+import webhooks from "./webhooks/paystack";
 
 export const app = new Hono<{ Bindings: Env }>();
 
