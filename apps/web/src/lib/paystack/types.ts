@@ -209,13 +209,24 @@ export type InitiateTransferParams = {
   currency?: "NGN" | "GHS" | "KES" | "ZAR";
 };
 
+export type TransferStatus =
+  | "pending"
+  | "success"
+  | "failed"
+  | "reversed"
+  | "otp"
+  | "abandoned"
+  | "blocked"
+  | "rejected"
+  | "received";
+
 export type TransferData = {
   id: number;
   transfer_code: string;
   reference: string;
   amount: number;
   currency: string;
-  status: "pending" | "success" | "failed" | "otp";
+  status: TransferStatus;
   reason: string | null;
   recipient: number;
   domain: string;

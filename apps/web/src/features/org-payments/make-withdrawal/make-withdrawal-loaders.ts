@@ -42,7 +42,7 @@ export const retrieveMakeWithdrawalDataFromServer = createServerFn({ method: "GE
 
     const organizationId = orgId;
 
-    makeWithdrawalLogger.error("loader.start", { organizationId });
+    makeWithdrawalLogger.info("loader.start", { organizationId });
 
     try {
       const { withdrawalAccounts, donations, completedWithdrawals, pendingWithdrawals, kycStatus } =

@@ -16,6 +16,7 @@ import {
 import {
   retrieveDonationFromDatabaseByReference,
   retrieveDonationWithCampaignFromDatabaseById,
+  retrievePaymentTransactionFromDatabaseByProcessorRef,
   retrieveWebhookEventFromDatabaseById,
   updateDonationStatusInDatabaseById,
   updatePaymentTransactionStatusInDatabaseById,
@@ -105,9 +106,15 @@ async function processPaystackWebhook(
       amount: number;
       currency: string;
       status: string;
-      gateway_response?: string;
+      gateway_response?: string | null;
+      transfer_code?: string;
+      reason?: string;
     };
   };
+
+  if (payload.event.startsWith("transfer.")) {
+    return await processPaystackTransferWebhook(webhookEventId, payload, startTime);
+  }
 
   const donation = await retrieveDonationFromDatabaseByReference(payload.data.reference);
 
@@ -199,6 +206,85 @@ async function processPaystackWebhook(
     await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
   } else {
     // Unknown event type - mark as processed
+    await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
+  }
+
+  return { status: "success", duration: Date.now() - startTime };
+}
+
+type PaystackTransferPayload = {
+  event: string;
+  id?: string;
+  data: {
+    reference: string;
+    amount: number;
+    currency: string;
+    status: string;
+    gateway_response?: string | null;
+    transfer_code?: string;
+    reason?: string;
+  };
+};
+
+async function processPaystackTransferWebhook(
+  webhookEventId: string,
+  payload: PaystackTransferPayload,
+  startTime: number,
+): Promise<ConsumerResult> {
+  const transaction = await retrievePaymentTransactionFromDatabaseByProcessorRef(
+    payload.data.reference,
+  );
+
+  if (!transaction) {
+    await updateWebhookEventStatusInDatabaseById(
+      webhookEventId,
+      "FAILED",
+      "Payment transaction not found",
+    );
+    return {
+      status: "failed",
+      reason: `Payment transaction not found for reference: ${payload.data.reference}`,
+      fatal: true,
+    };
+  }
+
+  const isFinalStatus = [
+    "SUCCESS",
+    "FAILED",
+    "REVERSED",
+    "ABANDONED",
+    "BLOCKED",
+    "REJECTED",
+  ].includes(transaction.status);
+  if (isFinalStatus) {
+    await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
+    return { status: "success", duration: Date.now() - startTime };
+  }
+
+  if (payload.event === "transfer.success") {
+    await updatePaymentTransactionStatusInDatabaseById(transaction.id, "SUCCESS", {
+      completedAt: new Date(),
+      processorTransactionId: payload.data.transfer_code || payload.data.reference,
+    });
+
+    await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
+  } else if (payload.event === "transfer.failed") {
+    const failureReason = payload.data.gateway_response || payload.data.reason || "Transfer failed";
+
+    await updatePaymentTransactionStatusInDatabaseById(transaction.id, "FAILED", {
+      statusMessage: failureReason,
+      processorTransactionId: payload.data.transfer_code || payload.data.reference,
+    });
+
+    await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
+  } else if (payload.event === "transfer.reversed") {
+    await updatePaymentTransactionStatusInDatabaseById(transaction.id, "REVERSED", {
+      statusMessage: "Transfer reversed - funds returned to balance",
+      processorTransactionId: payload.data.transfer_code || payload.data.reference,
+    });
+
+    await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
+  } else {
     await updateWebhookEventStatusInDatabaseById(webhookEventId, "PROCESSED");
   }
 

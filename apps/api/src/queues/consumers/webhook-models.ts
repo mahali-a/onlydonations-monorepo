@@ -1,4 +1,5 @@
 import { getDb } from "@repo/core/database/setup";
+import type { SelectPaymentTransaction } from "@repo/core/database/types";
 import { eq } from "@repo/core/drizzle";
 import { campaign, donation, paymentTransaction, webhookEvent } from "@repo/core/drizzle/schema";
 
@@ -97,7 +98,15 @@ export async function updateDonationStatusInDatabaseById(
  */
 export async function updatePaymentTransactionStatusInDatabaseById(
   id: string,
-  status: "SUCCESS" | "FAILED" | "PENDING",
+  status:
+    | "SUCCESS"
+    | "FAILED"
+    | "PENDING"
+    | "REVERSED"
+    | "OTP"
+    | "ABANDONED"
+    | "BLOCKED"
+    | "REJECTED",
   additionalData?: {
     completedAt?: Date;
     processorTransactionId?: string;
@@ -115,6 +124,24 @@ export async function updatePaymentTransactionStatusInDatabaseById(
       updatedAt: new Date(),
     })
     .where(eq(paymentTransaction.id, id));
+}
+
+/**
+ * Retrieve payment transaction from database by processor reference
+ * @param processorRef - The processor reference (e.g., withdrawal reference)
+ * @returns Payment transaction or null
+ */
+export async function retrievePaymentTransactionFromDatabaseByProcessorRef(
+  processorRef: string,
+): Promise<SelectPaymentTransaction | null> {
+  const db = getDb();
+  const result = await db
+    .select()
+    .from(paymentTransaction)
+    .where(eq(paymentTransaction.processorRef, processorRef))
+    .limit(1);
+
+  return result[0] || null;
 }
 
 /**

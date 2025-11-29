@@ -129,24 +129,53 @@ export const createWithdrawalRequestOnServer = createServerFn({ method: "POST" }
       currency: currency as "GHS" | "NGN",
     });
 
-    // Update transaction with transfer result
+    const paystackStatus = transferResult.data.status;
+    const mapPaystackStatusToInternal = (
+      status: string,
+    ): "PENDING" | "SUCCESS" | "FAILED" | "OTP" => {
+      switch (status) {
+        case "success":
+          return "SUCCESS";
+        case "failed":
+        case "reversed":
+        case "abandoned":
+        case "blocked":
+        case "rejected":
+          return "FAILED";
+        case "otp":
+          return "OTP";
+        default:
+          return "PENDING";
+      }
+    };
+
+    const internalStatus = mapPaystackStatusToInternal(paystackStatus);
+
     const updatedTransaction = await updatePaymentTransactionInDatabase(transaction.id, {
       processorTransactionId: transferResult.data.transfer_code,
-      status: transferResult.data.status === "success" ? "SUCCESS" : "PENDING",
+      status: internalStatus,
       fees: fees.totalFees,
-      completedAt: transferResult.data.status === "success" ? new Date() : undefined,
+      completedAt: internalStatus === "SUCCESS" ? new Date() : undefined,
+      statusMessage:
+        internalStatus === "FAILED"
+          ? `Transfer ${paystackStatus}: ${transferResult.data.reason || "No reason provided"}`
+          : internalStatus === "OTP"
+            ? "OTP verification required"
+            : undefined,
     });
 
-    makeWithdrawalLogger.error("request_withdrawal.success", {
+    makeWithdrawalLogger.info("request_withdrawal.success", {
       organizationId,
       transactionId: updatedTransaction?.id,
       amount: amountInMinorUnits,
       fees: fees.totalFees,
+      paystackStatus,
+      internalStatus,
     });
 
     return {
       success: true,
       transaction: updatedTransaction,
-      transferStatus: transferResult.data.status,
+      transferStatus: paystackStatus,
     };
   });

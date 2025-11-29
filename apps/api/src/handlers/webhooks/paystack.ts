@@ -7,16 +7,40 @@ import {
 
 const webhooks = new Hono<{ Bindings: Cloudflare.Env }>();
 
+type PaystackChargeData = {
+  reference: string;
+  amount: number;
+  currency: string;
+  status: string;
+  gateway_response?: string;
+};
+
+type PaystackTransferData = {
+  reference: string;
+  amount: number;
+  currency: string;
+  status: string;
+  transfer_code: string;
+  reason?: string;
+  gateway_response?: string | null;
+  fee_charged?: number;
+  recipient?: {
+    recipient_code: string;
+    name: string;
+    type: string;
+    details?: {
+      account_number?: string;
+      account_name?: string | null;
+      bank_code?: string;
+      bank_name?: string;
+    };
+  };
+};
+
 type PaystackEvent = {
   event: string;
   id?: string;
-  data: {
-    reference: string;
-    amount: number;
-    currency: string;
-    status: string;
-    gateway_response?: string;
-  };
+  data: PaystackChargeData | PaystackTransferData;
 };
 
 /**
