@@ -21,6 +21,7 @@
         "@repo/core": "workspace:*",
         "@repo/email": "workspace:*",
         "hono": "^4.10.7",
+        "zod": "^4.1.13",
       },
       "devDependencies": {
         "@cloudflare/vitest-pool-workers": "^0.10.11",

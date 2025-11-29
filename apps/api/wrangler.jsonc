@@ -49,14 +49,6 @@
       }
     ]
   },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": [
-        "CampaignTracker"
-      ]
-    }
-  ],
   "vars": {
     "EMAIL_FROM": "onlydonations@mahali.dev",
     "ENVIRONMENT": "production",

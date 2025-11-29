@@ -7,9 +7,12 @@ import { createEmailQueue } from "@repo/email/email/queue";
 import handler from "@tanstack/react-start/server-entry";
 import { createAuthEmailHandler } from "@/lib/auth-email-adapter";
 import { createAuthSMSHandler } from "@/lib/auth-sms-adapter";
+import { validateWebEnv } from "@/lib/env";
 
 export default {
   async fetch(request: Request, env: Env) {
+    validateWebEnv(env);
+
     const db = initDatabase(env.DB);
 
     const emailQueue = createEmailQueue(env.APP_QUEUE, {
@@ -22,7 +25,6 @@ export default {
 
     const moderationQueue = createModerationQueue(env.APP_QUEUE);
 
-    // Initialize global singleton (like database)
     initModerationQueue(moderationQueue);
 
     initAuth({

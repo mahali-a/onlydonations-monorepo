@@ -17,8 +17,8 @@ export const smsConsumer: QueueConsumer<SMSQueueMessage> = async (
       routes: "default:pilo",
       fallbackProvider: "pilo",
       pilo: {
-        apiKey: env.PILO_API_KEY,
-        senderId: env.PILO_SENDER_ID,
+        apiKey: env.PILO_SMS_API_KEY,
+        senderId: env.PILO_SMS_SENDER_ID,
       },
       telnyx: {
         apiKey: env.TELNYX_API_KEY,
