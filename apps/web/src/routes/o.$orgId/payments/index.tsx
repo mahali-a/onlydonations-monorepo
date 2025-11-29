@@ -34,6 +34,7 @@ export const Route = createFileRoute("/o/$orgId/payments/")({
         withdrawalAccounts={data.withdrawalAccounts}
         availableBalance={data.availableBalance}
         currency={data.currency}
+        verificationStatus={data.verificationStatus}
       />
     );
   },

@@ -1,2 +1,6 @@
 export { createWithdrawalRequestOnServer } from "./make-withdrawal-actions";
-export { retrieveMakeWithdrawalDataFromServer } from "./make-withdrawal-loaders";
+export {
+  type KycStatus,
+  retrieveMakeWithdrawalDataFromServer,
+  type WithdrawalVerificationStatus,
+} from "./make-withdrawal-loaders";

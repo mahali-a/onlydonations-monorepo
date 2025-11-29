@@ -2,21 +2,23 @@ import type { SelectWithdrawalAccount } from "@repo/core/database/types";
 import { Link, useParams } from "@tanstack/react-router";
 import { History } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PayoutAccountRequired, WithdrawalForm } from "./ui";
+import type { WithdrawalVerificationStatus } from "./make-withdrawal-loaders";
+import { WithdrawalForm, WithdrawalVerificationRequired } from "./ui";
 
 type MakeWithdrawalComponentProps = {
   withdrawalAccounts: SelectWithdrawalAccount[];
   availableBalance: number;
   currency: string;
+  verificationStatus: WithdrawalVerificationStatus;
 };
 
 export function MakeWithdrawalComponent({
   withdrawalAccounts,
   availableBalance,
   currency,
+  verificationStatus,
 }: MakeWithdrawalComponentProps) {
   const { orgId } = useParams({ from: "/o/$orgId/payments/" });
-  const hasPayoutAccounts = withdrawalAccounts.length > 0;
 
   return (
     <div className="space-y-6">
@@ -35,8 +37,8 @@ export function MakeWithdrawalComponent({
         </Link>
       </div>
 
-      {!hasPayoutAccounts ? (
-        <PayoutAccountRequired />
+      {!verificationStatus.allVerified ? (
+        <WithdrawalVerificationRequired verificationStatus={verificationStatus} />
       ) : (
         <WithdrawalForm
           payoutAccounts={withdrawalAccounts}
