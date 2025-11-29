@@ -708,3 +708,79 @@
   scrollbar-width: none;
   /* Firefox */
 }
+
+/* Marketing page animations */
+@keyframes updown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes updown2 {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes updownmore {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes updownBig {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes updownBig2 {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-25px);
+  }
+}
+
+@keyframes diagonalUpDown {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(10px, -10px);
+  }
+}
+
+@keyframes diagonalUpDown2 {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-10px, -10px);
+  }
+}
+
+.animate-updown {
+  animation: updown ease-out 1s infinite alternate;
+}
+
+.animate-updown2 {
+  animation: updown2 ease-out 1s infinite alternate;
+}
+
+.animate-updownmore {
+  animation: updownmore ease-out 1s infinite alternate;
+}

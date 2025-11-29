@@ -1,28 +1,22 @@
-// @ts-nocheck - Payload type definitions are complex and may not match exactly
-
-import type { Page } from "@repo/types/payload";
 import { createFileRoute } from "@tanstack/react-router";
-import { RenderBlocks } from "@/components/cms/render-blocks";
-import { retrieveCmsBaseUrlFromServer, retrievePageFromServerBySlug } from "@/server/functions/cms";
+import type { HomePageCampaign } from "@/features/home/types";
+import { HomeCampaignsPage } from "@/features/home/ui/home-page";
+import { retrieveFeaturedCampaignsFromServer } from "@/server/functions/home";
 
 export const Route = createFileRoute("/_public/")({
-  loader: async (): Promise<{ page: Page | null; cmsBaseUrl: string }> => {
-    const [page, cmsBaseUrl] = await Promise.all([
-      retrievePageFromServerBySlug({ data: { slug: "home" } }),
-      retrieveCmsBaseUrlFromServer(),
-    ]);
-
-    return { page: page as Page | null, cmsBaseUrl };
+  loader: async (): Promise<{ featuredCampaigns: HomePageCampaign[] }> => {
+    const campaigns = await retrieveFeaturedCampaignsFromServer();
+    return { featuredCampaigns: campaigns };
   },
   component: HomePage,
 });
 
 function HomePage() {
-  const { page, cmsBaseUrl } = Route.useLoaderData();
+  const { featuredCampaigns } = Route.useLoaderData();
 
   return (
     <div className="bg-background">
-      <RenderBlocks blocks={page?.blocks || []} cmsBaseUrl={cmsBaseUrl} />
+      <HomeCampaignsPage featuredCampaigns={featuredCampaigns} />
     </div>
   );
 }
