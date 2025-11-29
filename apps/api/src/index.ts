@@ -8,7 +8,7 @@ import { handleQueueMessage } from "@/queues";
 
 export { CampaignTracker } from "@/durable-objects/campaign-tracker";
 
-export default class DataService extends WorkerEntrypoint {
+export default class DataService extends WorkerEntrypoint<Cloudflare.Env> {
   fetch(request: Request) {
     validateApiEnv(env);
     initDatabase(env.DB);

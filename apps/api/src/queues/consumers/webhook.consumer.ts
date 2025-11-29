@@ -155,7 +155,9 @@ async function processPaystackWebhook(
     const donationData = await retrieveDonationWithCampaignFromDatabaseById(donation.id);
 
     if (donationData?.donorEmail && donationData.donorName) {
-      const emailQueue = createEmailQueue(env.APP_QUEUE, { defaultSource: "api" });
+      const emailQueue = createEmailQueue(env.APP_QUEUE, {
+        defaultSource: "api",
+      });
       const amount = (donationData.amount / 100).toFixed(2);
       const campaignUrl = `${env.WEB_BASE_URL}/f/${donationData.campaignSlug}`;
       const donationShareUrl = `${env.WEB_BASE_URL}/d/${donation.id}`;
@@ -180,7 +182,7 @@ async function processPaystackWebhook(
 
     // Broadcast to realtime
     if (donationData?.campaignId) {
-      ctx.waitUntil(broadcastDonationSuccess(env, donationData.campaignId, donation.id, ctx));
+      ctx.waitUntil(broadcastDonationSuccess(donationData.campaignId, donation.id, ctx));
     }
   } else if (payload.event === "charge.failed") {
     await updateDonationStatusInDatabaseById(donation.id, "FAILED", {

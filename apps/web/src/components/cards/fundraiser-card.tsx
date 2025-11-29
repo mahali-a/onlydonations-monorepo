@@ -49,7 +49,7 @@ export function FundraiserCard({
         </div>
       </div>
       <div className="mt-auto pt-4 space-y-2">
-        <Progress value={progress} className="h-1.5 bg-foreground/10" />
+        <Progress value={progress} className="h-1.5" />
         <div className="flex items-baseline gap-1">
           <span className="text-sm font-bold text-foreground">
             {Money.fromMinor(raised, currency).format({ decimals: 0 })}

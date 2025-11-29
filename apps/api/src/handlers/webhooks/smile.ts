@@ -5,7 +5,7 @@ import {
   saveSmileWebhookEventToDatabase,
 } from "@/queues/consumers/smile-models";
 
-const webhooks = new Hono<{ Bindings: Env }>();
+const webhooks = new Hono<{ Bindings: Cloudflare.Env }>();
 
 type SmileWebhookPayload = {
   job_id: string;

@@ -1,3 +1,5 @@
+import { env } from "cloudflare:workers";
+
 /**
  * Broadcast donation success to all connected clients via CampaignTracker Durable Object
  * Call this whenever a donation status changes to SUCCESS
@@ -8,7 +10,6 @@
  * @param ctx - Optional ExecutionContext for non-blocking broadcast
  */
 export async function broadcastDonationSuccess(
-  env: Env,
   campaignId: string,
   donationId: string,
   ctx?: ExecutionContext,
@@ -20,7 +21,10 @@ export async function broadcastDonationSuccess(
 
       await tracker.broadcastDonation(donationId, campaignId);
 
-      console.log("[Broadcast] Donation success sent", { campaignId, donationId });
+      console.log("[Broadcast] Donation success sent", {
+        campaignId,
+        donationId,
+      });
     } catch (error) {
       console.error("[Broadcast] Failed to send", {
         campaignId,

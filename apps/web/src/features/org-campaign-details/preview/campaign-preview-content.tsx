@@ -1,4 +1,4 @@
-import { Flag, Heart, ShieldCheck, TrendingUp } from "lucide-react";
+import { Flag, Heart, Share2, ShieldCheck, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -180,13 +180,13 @@ export function CampaignPreviewContent({
 
                   <div className="space-y-3">
                     <Button
-                      className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg font-bold"
+                      className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 font-semibold"
                       onClick={() => handleShare()}
                     >
                       Share
                     </Button>
                     <Button
-                      className="w-full rounded-full bg-primary/20 hover:bg-primary/30 text-primary py-6 text-lg font-bold"
+                      className="w-full rounded-full bg-primary/20 hover:bg-primary/30 text-primary py-5 font-semibold"
                       disabled={!isDonateEnabled}
                     >
                       Donate now
@@ -227,7 +227,7 @@ export function CampaignPreviewContent({
 
                   <div className="space-y-3">
                     <Button
-                      className="w-full rounded-xl py-7 text-lg font-bold"
+                      className="w-full rounded-xl py-5 font-semibold"
                       disabled={!isDonateEnabled}
                     >
                       Donate now
@@ -260,6 +260,36 @@ export function CampaignPreviewContent({
       <TrustBanner />
 
       {/* Similar Fundraisers removed for preview */}
+
+      {/* Mobile Bottom Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-4 lg:hidden">
+        <div className="mx-auto flex max-w-[1152px] items-center gap-3">
+          <div className="flex-1">
+            <div className="text-lg font-bold">{raisedAmount}</div>
+            <div className="text-xs text-muted-foreground">
+              {hasDonations ? `${donationCount} donations` : "Be the first to donate"}
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-12 w-12 rounded-full"
+            onClick={() => handleShare()}
+          >
+            <Share2 className="h-5 w-5" />
+            <span className="sr-only">Share</span>
+          </Button>
+          <Button
+            className="h-12 rounded-full px-6 text-base font-bold"
+            disabled={!isDonateEnabled}
+          >
+            Donate
+          </Button>
+        </div>
+      </div>
+
+      {/* Spacer for mobile bottom bar */}
+      <div className="h-24 lg:hidden" />
     </div>
   );
 }

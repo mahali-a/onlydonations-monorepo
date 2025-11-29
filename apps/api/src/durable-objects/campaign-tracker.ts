@@ -8,7 +8,7 @@ type RealtimeMessage =
  * CampaignTracker Durable Object
  * Manages WebSocket connections for real-time campaign updates using hibernation
  */
-export class CampaignTracker extends DurableObject<Env> {
+export class CampaignTracker extends DurableObject<Cloudflare.Env> {
   async fetch(request: Request): Promise<Response> {
     const upgradeHeader = request.headers.get("Upgrade");
 

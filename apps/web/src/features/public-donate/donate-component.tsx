@@ -345,7 +345,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
 
                 <form.Subscribe selector={(state) => [state.values.amount]}>
                   {([amount]) => (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-4 gap-2">
                       {presets.map((preset) => {
                         const isActive = pesewasToGhs(amount || 0) === preset;
                         return (
@@ -353,7 +353,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                             key={preset}
                             type="button"
                             onClick={() => handlePresetClick(preset)}
-                            className={`relative rounded-xl border py-4 text-center font-bold transition-colors ${
+                            className={`relative rounded-xl border py-3 text-center text-sm font-bold transition-colors ${
                               isActive
                                 ? "border-primary bg-primary/10 text-primary ring-1 ring-primary"
                                 : "border-gray-300 bg-white text-[#333] hover:border-gray-400"
@@ -367,9 +367,9 @@ export function DonateComponent({ data }: DonateComponentProps) {
                   )}
                 </form.Subscribe>
 
-                <div className="relative rounded-xl border border-gray-300 bg-white p-4 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                <div className="relative rounded-xl border border-gray-300 bg-white p-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
                   <div className="flex items-center justify-center">
-                    <span className="text-4xl font-bold text-[#333] mr-2">GHS</span>
+                    <span className="text-2xl font-bold text-[#333] mr-2">GHS</span>
                     <form.Field
                       name="amount"
                       validators={{
@@ -398,15 +398,12 @@ export function DonateComponent({ data }: DonateComponentProps) {
                               field.handleChange(pesewasValue);
                             }}
                             onBlur={field.handleBlur}
-                            className="w-full border-none bg-transparent p-0 text-right text-[60px] font-bold text-[#333] focus:ring-0 placeholder:text-gray-300 leading-none outline-none"
+                            className="w-full border-none bg-transparent p-0 text-right text-4xl font-bold text-[#333] focus:ring-0 placeholder:text-gray-300 leading-none outline-none"
                           />
                         </div>
                       )}
                     </form.Field>
-                    <span className="text-[60px] font-bold text-[#333] ml-1">.00</span>
-                  </div>
-                  <div className="absolute bottom-2 right-4 text-xs font-bold text-gray-500">
-                    GHS
+                    <span className="text-4xl font-bold text-[#333] ml-1">.00</span>
                   </div>
                 </div>
                 <form.Subscribe selector={(state) => [state.fieldMeta.amount?.errors]}>
@@ -446,7 +443,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                           onChange={(e) => field.handleChange(e.target.value)}
                           onBlur={field.handleBlur}
                           className={cn(
-                            "h-12 rounded-xl border-gray-300 text-base",
+                            "h-10",
                             field.state.meta.errors.length > 0 &&
                               "border-destructive focus-visible:ring-destructive",
                           )}
@@ -484,7 +481,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                           onChange={(e) => field.handleChange(e.target.value)}
                           onBlur={field.handleBlur}
                           className={cn(
-                            "h-12 rounded-xl border-gray-300 text-base",
+                            "h-10",
                             field.state.meta.errors.length > 0 &&
                               "border-destructive focus-visible:ring-destructive",
                           )}
@@ -511,7 +508,7 @@ export function DonateComponent({ data }: DonateComponentProps) {
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
                           onBlur={field.handleBlur}
-                          className="h-12 rounded-xl border-gray-300 text-base"
+                          className="h-10"
                         />
                       </Field>
                     )}
@@ -545,133 +542,126 @@ export function DonateComponent({ data }: DonateComponentProps) {
               </div>
 
               {/* Summary and Fees */}
-              <div className="mt-8 space-y-4 border-t border-gray-200 pt-6">
-                <form.Subscribe
-                  selector={(state) => [state.values.amount, state.values.coverFees] as const}
-                >
-                  {([amount, coverFees]) => {
-                    const parsedAmount = amount || 0;
-                    const feeCalculation =
-                      parsedAmount >= 100
-                        ? calculateFees(pesewasToGhs(parsedAmount), campaign.feeHandling, coverFees)
-                        : null;
+              <form.Subscribe
+                selector={(state) => [state.values.amount, state.values.coverFees] as const}
+              >
+                {([amount, coverFees]) => {
+                  const parsedAmount = amount || 0;
+                  const feeCalculation =
+                    parsedAmount >= 100
+                      ? calculateFees(pesewasToGhs(parsedAmount), campaign.feeHandling, coverFees)
+                      : null;
 
-                    if (!feeCalculation) return null;
+                  if (!feeCalculation) return null;
 
-                    return (
-                      <div className="space-y-4">
-                        <h2 className="text-lg font-bold">Your donation</h2>
+                  return (
+                    <div className="mt-8 space-y-4 border-t border-gray-200 pt-6">
+                      <h2 className="text-lg font-bold">Your donation</h2>
 
-                        <div className="flex justify-between text-sm text-gray-600">
-                          <span>Your donation</span>
-                          <span>
-                            {formatCurrency(
-                              ghsToPesewas(feeCalculation.donationAmount),
-                              selectedCurrency,
-                            )}
-                          </span>
-                        </div>
-
-                        {campaign.feeHandling !== "DONOR_ASK_COVER" &&
-                          feeCalculation.totalFees > 0 && (
-                            <div className="flex justify-between text-sm text-gray-600">
-                              <span>Fees</span>
-                              <span>
-                                {formatCurrency(
-                                  ghsToPesewas(feeCalculation.totalFees),
-                                  selectedCurrency,
-                                )}
-                              </span>
-                            </div>
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Your donation</span>
+                        <span>
+                          {formatCurrency(
+                            ghsToPesewas(feeCalculation.donationAmount),
+                            selectedCurrency,
                           )}
+                        </span>
+                      </div>
 
-                        {campaign.feeHandling === "DONOR_ASK_COVER" && (
-                          <form.Field name="coverFees">
-                            {(field) => (
-                              <div className="rounded-xl bg-gray-50 p-4">
-                                <div className="flex items-start gap-3">
-                                  <Checkbox
-                                    id={field.name}
-                                    checked={field.state.value}
-                                    onCheckedChange={(checked) =>
-                                      field.handleChange(checked as boolean)
-                                    }
-                                    className="mt-0.5 border-gray-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                                  />
-                                  <div className="space-y-1">
-                                    <Label
-                                      htmlFor={field.name}
-                                      className="text-sm font-medium cursor-pointer"
-                                    >
-                                      I'd like to cover the fees of{" "}
-                                      {formatCurrency(
-                                        ghsToPesewas(
-                                          feeCalculation.platformFee + feeCalculation.paymentFee,
-                                        ),
-                                        selectedCurrency,
-                                      )}{" "}
-                                      so the campaign gets more.
-                                    </Label>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </form.Field>
+                      {campaign.feeHandling !== "DONOR_ASK_COVER" &&
+                        feeCalculation.totalFees > 0 && (
+                          <div className="flex justify-between text-sm text-gray-600">
+                            <span>Fees</span>
+                            <span>
+                              {formatCurrency(
+                                ghsToPesewas(feeCalculation.totalFees),
+                                selectedCurrency,
+                              )}
+                            </span>
+                          </div>
                         )}
 
-                        <div className="flex justify-between text-xl font-bold text-[#333] pt-2">
-                          <span>Total due today</span>
-                          <span>
-                            {formatCurrency(
-                              ghsToPesewas(feeCalculation.donorPays),
-                              selectedCurrency,
-                            )}
-                          </span>
-                        </div>
-
-                        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                          {([canSubmit, isFormSubmitting]) => (
-                            <Button
-                              className="w-full rounded-full py-6 text-xl font-bold bg-primary text-primary-foreground shadow-none hover:bg-primary/90"
-                              disabled={!canSubmit || isFormSubmitting}
-                              type="submit"
-                            >
-                              {isFormSubmitting ? "Processing..." : "Donate now"}
-                            </Button>
+                      {campaign.feeHandling === "DONOR_ASK_COVER" && (
+                        <form.Field name="coverFees">
+                          {(field) => (
+                            <div className="rounded-xl bg-gray-50 p-4">
+                              <div className="flex items-start gap-3">
+                                <Checkbox
+                                  id={field.name}
+                                  checked={field.state.value}
+                                  onCheckedChange={(checked) =>
+                                    field.handleChange(checked as boolean)
+                                  }
+                                  className="mt-0.5 border-gray-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                />
+                                <div className="space-y-1">
+                                  <Label
+                                    htmlFor={field.name}
+                                    className="text-sm font-medium cursor-pointer"
+                                  >
+                                    Add{" "}
+                                    {formatCurrency(
+                                      ghsToPesewas(
+                                        feeCalculation.platformFee + feeCalculation.paymentFee,
+                                      ),
+                                      selectedCurrency,
+                                    )}{" "}
+                                    to cover fees and ensure 100% goes to the campaign.
+                                  </Label>
+                                </div>
+                              </div>
+                            </div>
                           )}
-                        </form.Subscribe>
+                        </form.Field>
+                      )}
 
-                        <p className="text-xs text-gray-500">
-                          By clicking Donate now, you agree to OnlyDonation's{" "}
-                          <button type="button" className="underline hover:no-underline">
-                            Terms of Service
-                          </button>{" "}
-                          and{" "}
-                          <button type="button" className="underline hover:no-underline">
-                            Privacy Notice
-                          </button>
-                          .
-                        </p>
+                      <div className="flex justify-between text-xl font-bold text-[#333] pt-2">
+                        <span>Total due today</span>
+                        <span>
+                          {formatCurrency(ghsToPesewas(feeCalculation.donorPays), selectedCurrency)}
+                        </span>
+                      </div>
 
-                        <div className="mt-6 flex items-start gap-3 rounded-xl border border-gray-200 p-4">
-                          <ShieldCheck className="h-6 w-6 flex-shrink-0 text-[#333]" />
-                          <div>
-                            <h3 className="font-bold text-sm">
-                              OnlyDonation protects your donation
-                            </h3>
-                            <p className="text-xs text-gray-500 mt-1">
-                              We guarantee you a full refund in the rare case that fraud occurs.{" "}
-                              <button type="button" className="underline hover:no-underline">
-                                See our Giving Guarantee.
-                              </button>
-                            </p>
-                          </div>
+                      <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                        {([canSubmit, isFormSubmitting]) => (
+                          <Button
+                            className="w-full rounded-full py-5 font-semibold"
+                            disabled={!canSubmit || isFormSubmitting}
+                            type="submit"
+                          >
+                            {isFormSubmitting ? "Processing..." : "Donate now"}
+                          </Button>
+                        )}
+                      </form.Subscribe>
+
+                      <p className="text-xs text-gray-500">
+                        By clicking Donate now, you agree to OnlyDonation's{" "}
+                        <button type="button" className="underline hover:no-underline">
+                          Terms of Service
+                        </button>{" "}
+                        and{" "}
+                        <button type="button" className="underline hover:no-underline">
+                          Privacy Notice
+                        </button>
+                        .
+                      </p>
+
+                      <div className="mt-6 flex items-start gap-3 rounded-xl border border-gray-200 p-4">
+                        <ShieldCheck className="h-6 w-6 flex-shrink-0 text-[#333]" />
+                        <div>
+                          <h3 className="font-bold text-sm">OnlyDonation protects your donation</h3>
+                          <p className="text-xs text-gray-500 mt-1">
+                            We guarantee you a full refund in the rare case that fraud occurs.{" "}
+                            <button type="button" className="underline hover:no-underline">
+                              See our Giving Guarantee.
+                            </button>
+                          </p>
                         </div>
                       </div>
-                    );
-                  }}
-                </form.Subscribe>
-              </div>
+                    </div>
+                  );
+                }}
+              </form.Subscribe>
             </form>
           </div>
         </main>

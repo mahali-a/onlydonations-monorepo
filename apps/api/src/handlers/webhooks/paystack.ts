@@ -5,7 +5,7 @@ import {
   saveWebhookEventToDatabase,
 } from "@/models/paystack-models";
 
-const webhooks = new Hono<{ Bindings: Env }>();
+const webhooks = new Hono<{ Bindings: Cloudflare.Env }>();
 
 type PaystackEvent = {
   event: string;

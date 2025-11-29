@@ -114,7 +114,7 @@ export function WithdrawalHistoryTable({ withdrawals }: WithdrawalHistoryTablePr
   ];
 
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div className="overflow-x-auto">
       <DataTable
         columns={columns}
         data={withdrawals}

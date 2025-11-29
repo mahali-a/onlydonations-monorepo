@@ -5,7 +5,7 @@ import realtime from "./realtime";
 import paystackWebhooks from "./webhooks/paystack";
 import smileWebhooks from "./webhooks/smile";
 
-export const app = new Hono<{ Bindings: Env }>();
+export const app = new Hono<{ Bindings: Cloudflare.Env }>();
 
 app.use(
   "*",

@@ -19,7 +19,6 @@ export const webEnvSchema = z.object({
   CMS_API_URL: z.url(),
   HONEYPOT_SECRET: z.string().min(16),
   BASE_URL: z.url(),
-  AXIOM_API_TOKEN: z.string().min(1),
 });
 
 export type WebEnv = z.infer<typeof webEnvSchema>;

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-const realtime = new Hono<{ Bindings: Env }>();
+const realtime = new Hono<{ Bindings: Cloudflare.Env }>();
 
 /**
  * WebSocket upgrade endpoint for campaign real-time updates

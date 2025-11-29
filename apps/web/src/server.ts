@@ -11,7 +11,9 @@ import { validateWebEnv } from "@/lib/env";
 
 export default {
   async fetch(request: Request, env: Env) {
-    validateWebEnv(env);
+    if (process.env.NODE_ENV === "production") {
+      validateWebEnv(env);
+    }
 
     const db = initDatabase(env.DB);
 
