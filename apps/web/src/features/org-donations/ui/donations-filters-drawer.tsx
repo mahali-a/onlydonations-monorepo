@@ -43,8 +43,8 @@ export function DonationsFiltersDrawer() {
   const [dateTo, setDateTo] = React.useState(search.dateTo ?? "");
   const [minAmount, setMinAmount] = React.useState(search.minAmount?.toString() ?? "");
   const [maxAmount, setMaxAmount] = React.useState(search.maxAmount?.toString() ?? "");
-  const [sortBy, setSortBy] = React.useState(search.sortBy ?? "createdAt");
-  const [sortOrder, setSortOrder] = React.useState(search.sortOrder ?? "desc");
+  const [sortBy, setSortBy] = React.useState<string>(search.sortBy ?? "createdAt");
+  const [sortOrder, setSortOrder] = React.useState<string>(search.sortOrder ?? "desc");
 
   // Sync with URL when drawer opens
   React.useEffect(() => {

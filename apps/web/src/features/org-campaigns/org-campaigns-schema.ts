@@ -1,4 +1,3 @@
-import { fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
 export const campaignStatusEnum = z.enum([
@@ -11,16 +10,16 @@ export const campaignStatusEnum = z.enum([
 ]);
 
 export const campaignFiltersSchema = z.object({
-  search: fallback(z.string(), ""),
+  search: z.string().default("").catch(""),
   status: campaignStatusEnum.optional(),
   categoryId: z.string().optional(),
-  sortBy: fallback(
-    z.enum(["title", "status", "goal", "created", "supporters", "raised"]),
-    "created",
-  ),
-  sortOrder: fallback(z.enum(["asc", "desc"]), "desc"),
-  page: fallback(z.number().int().min(1), 1),
-  limit: fallback(z.number().int().min(5).max(100), 10),
+  sortBy: z
+    .enum(["title", "status", "goal", "created", "supporters", "raised"])
+    .default("created")
+    .catch("created"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc").catch("desc"),
+  page: z.number().int().min(1).default(1).catch(1),
+  limit: z.number().int().min(5).max(100).default(10).catch(10),
 });
 
 export type CampaignFilters = z.infer<typeof campaignFiltersSchema>;

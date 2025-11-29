@@ -1,14 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { generateLoginHoneypotFromServer, LoginComponent } from "@/features/auth-login";
 
 const loginSearchSchema = z.object({
-  next: fallback(z.string(), "/app"),
+  next: z.string().default("/app").catch("/app"),
 });
 
 export const Route = createFileRoute("/_auth/login")({
-  validateSearch: zodValidator(loginSearchSchema),
+  validateSearch: loginSearchSchema,
   loader: async ({ context }) => {
     if (context.user) {
       throw redirect({ to: "/app" });

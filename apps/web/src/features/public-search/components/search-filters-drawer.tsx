@@ -53,7 +53,7 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
     search.categoryId,
   );
   const [closeToGoal, setCloseToGoal] = React.useState(search.closeToGoal ?? false);
-  const [timePeriod, setTimePeriod] = React.useState(search.timePeriod ?? "all");
+  const [timePeriod, setTimePeriod] = React.useState<string>(search.timePeriod ?? "all");
 
   // Sync with URL when drawer opens
   React.useEffect(() => {
@@ -67,16 +67,16 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
   const handleApply = () => {
     navigate({
       to: "/s",
-      search: (prev) => ({
-        query: prev?.query ?? "",
+      search: {
+        query: search?.query ?? "",
         categoryId: selectedCategory,
-        country: prev?.country,
+        country: search?.country,
         closeToGoal,
-        timePeriod,
-        page: prev?.page ?? 1,
-        limit: prev?.limit ?? 12,
-        sortBy: prev?.sortBy ?? "recent",
-      }),
+        timePeriod: timePeriod as SearchFilters["timePeriod"],
+        page: search?.page ?? 1,
+        limit: search?.limit ?? 12,
+        sortBy: search?.sortBy ?? "recent",
+      },
     });
     setOpen(false);
   };

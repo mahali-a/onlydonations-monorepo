@@ -1,13 +1,12 @@
 import { queryOptions } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import ms from "ms";
 import { z } from "zod";
 import { retrieveFinancialInsightsFromServer } from "@/features/org-payments/insights/server";
 
 const financeSearchSchema = z.object({
-  page: fallback(z.number().int().positive(), 1),
-  limit: fallback(z.number().int().positive(), 10),
+  page: z.number().int().positive().default(1).catch(1),
+  limit: z.number().int().positive().default(10).catch(10),
 });
 
 const financialInsightsQueryOptions = (orgId: string, page: number, limit: number) =>
@@ -19,7 +18,7 @@ const financialInsightsQueryOptions = (orgId: string, page: number, limit: numbe
   });
 
 export const Route = createFileRoute("/o/$orgId/finance")({
-  validateSearch: zodValidator(financeSearchSchema),
+  validateSearch: financeSearchSchema,
   loaderDeps: ({ search }) => ({
     page: search.page,
     limit: search.limit,

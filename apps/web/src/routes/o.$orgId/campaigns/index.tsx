@@ -1,6 +1,5 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
 import ms from "ms";
 import type { CampaignFilters } from "@/features/org-campaigns";
 import { CampaignsComponent, campaignFiltersSchema } from "@/features/org-campaigns";
@@ -14,7 +13,7 @@ const campaignsQueryOptions = (orgId: string, filters: CampaignFilters) =>
   });
 
 export const Route = createFileRoute("/o/$orgId/campaigns/")({
-  validateSearch: zodValidator(campaignFiltersSchema),
+  validateSearch: campaignFiltersSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ deps, context }) => {
     const orgId = context.organization?.id;

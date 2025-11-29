@@ -50,8 +50,8 @@ export function CampaignsFiltersDrawer({ categories }: CampaignsFiltersDrawerPro
   const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(
     search.categoryId,
   );
-  const [sortBy, setSortBy] = React.useState(search.sortBy ?? "created");
-  const [sortOrder, setSortOrder] = React.useState(search.sortOrder ?? "desc");
+  const [sortBy, setSortBy] = React.useState<string>(search.sortBy ?? "created");
+  const [sortOrder, setSortOrder] = React.useState<string>(search.sortOrder ?? "desc");
 
   // Sync with URL when drawer opens
   React.useEffect(() => {

@@ -1,8 +1,7 @@
-import { fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 
 export const donationFiltersSchema = z.object({
-  search: fallback(z.string(), ""),
+  search: z.string().default("").catch(""),
   status: z.enum(["PENDING", "SUCCESS", "FAILED"]).optional(),
   campaignId: z.string().optional(),
   isAnonymous: z.boolean().optional(),
@@ -10,13 +9,13 @@ export const donationFiltersSchema = z.object({
   dateTo: z.string().optional(),
   minAmount: z.number().min(0).optional(),
   maxAmount: z.number().min(0).optional(),
-  page: fallback(z.number().int().min(1), 1),
-  limit: fallback(z.number().int().min(5).max(100), 50),
-  sortBy: fallback(
-    z.enum(["donorName", "donorEmail", "amount", "status", "createdAt", "campaignTitle"]),
-    "createdAt",
-  ),
-  sortOrder: fallback(z.enum(["asc", "desc"]), "desc"),
+  page: z.number().int().min(1).default(1).catch(1),
+  limit: z.number().int().min(5).max(100).default(50).catch(50),
+  sortBy: z
+    .enum(["donorName", "donorEmail", "amount", "status", "createdAt", "campaignTitle"])
+    .default("createdAt")
+    .catch("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc").catch("desc"),
 });
 
 export type DonationFilters = z.infer<typeof donationFiltersSchema>;

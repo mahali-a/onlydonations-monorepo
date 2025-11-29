@@ -2,6 +2,7 @@ import type { SelectCategory } from "@repo/core/database/types";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
+import type { SearchFilters } from "../public-search-schema";
 
 const SearchFiltersDrawer = lazy(() =>
   import("./search-filters-drawer").then((m) => ({ default: m.SearchFiltersDrawer })),
@@ -29,18 +30,19 @@ export function FilterBar({ categories }: FilterBarProps) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    const currentSearch = search as Partial<SearchFilters>;
     navigate({
       to: "/s",
-      search: (prev) => ({
+      search: {
         query: query.trim(),
-        closeToGoal: prev?.closeToGoal ?? false,
-        timePeriod: prev?.timePeriod ?? "all",
-        page: prev?.page ?? 1,
-        limit: prev?.limit ?? 12,
-        sortBy: prev?.sortBy ?? "recent",
-        categoryId: prev?.categoryId,
-        country: prev?.country,
-      }),
+        closeToGoal: currentSearch.closeToGoal ?? false,
+        timePeriod: currentSearch.timePeriod ?? "all",
+        page: currentSearch.page ?? 1,
+        limit: currentSearch.limit ?? 12,
+        sortBy: currentSearch.sortBy ?? "recent",
+        categoryId: currentSearch.categoryId,
+        country: currentSearch.country,
+      },
     });
   };
 

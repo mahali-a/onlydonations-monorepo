@@ -2,26 +2,27 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import type { SearchFilters } from "../public-search-schema";
 
 export function SearchHero() {
   const navigate = useNavigate();
-  const search = useSearch({ from: "/_public/s" });
-  const [query, setQuery] = useState((search as { query?: string }).query || "");
+  const search = useSearch({ from: "/_public/s" }) as Partial<SearchFilters>;
+  const [query, setQuery] = useState(search.query || "");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     navigate({
       to: "/s",
-      search: (prev) => ({
+      search: {
         query: query.trim(),
-        closeToGoal: prev?.closeToGoal ?? false,
-        timePeriod: prev?.timePeriod ?? "all",
-        page: prev?.page ?? 1,
-        limit: prev?.limit ?? 12,
-        sortBy: prev?.sortBy ?? "recent",
-        categoryId: prev?.categoryId,
-        country: prev?.country,
-      }),
+        closeToGoal: search.closeToGoal ?? false,
+        timePeriod: search.timePeriod ?? "all",
+        page: search.page ?? 1,
+        limit: search.limit ?? 12,
+        sortBy: search.sortBy ?? "recent",
+        categoryId: search.categoryId,
+        country: search.country,
+      },
     });
   };
 

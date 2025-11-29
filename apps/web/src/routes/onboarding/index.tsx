@@ -1,6 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import ms from "ms";
 import { z } from "zod";
 import {
@@ -18,8 +17,8 @@ import {
 } from "@/features/auth-onboarding/server";
 
 const onboardingSearchSchema = z.object({
-  step: fallback(z.enum(["name", "phone", "organization"]), "name"),
-  next: fallback(z.string(), "/app"),
+  step: z.enum(["name", "phone", "organization"]).default("name").catch("name"),
+  next: z.string().default("/app").catch("/app"),
   change: z.string().optional(),
 });
 
@@ -30,7 +29,7 @@ const onboardingUserQueryOptions = queryOptions({
 });
 
 export const Route = createFileRoute("/onboarding/")({
-  validateSearch: zodValidator(onboardingSearchSchema),
+  validateSearch: onboardingSearchSchema,
   loaderDeps: ({ search }) => ({
     next: search.next,
     step: search.step,

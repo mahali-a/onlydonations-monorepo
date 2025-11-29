@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { OnboardingLayout, VerifyForm } from "@/features/auth-onboarding";
 import { createDefaultOrganizationOnServer } from "@/features/auth-onboarding/server";
@@ -7,11 +6,11 @@ import { authClient } from "@/lib/auth-client";
 
 const verifySearchSchema = z.object({
   phone: z.string(),
-  next: fallback(z.string(), "/app"),
+  next: z.string().default("/app").catch("/app"),
 });
 
 export const Route = createFileRoute("/onboarding/verify")({
-  validateSearch: zodValidator(verifySearchSchema),
+  validateSearch: verifySearchSchema,
   component: VerifyPage,
 });
 

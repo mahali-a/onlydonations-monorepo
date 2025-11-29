@@ -1,6 +1,5 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
 import { DonationsComponent } from "@/features/org-donations/org-donations-component";
 import { DonationsError } from "@/features/org-donations/org-donations-error";
 import type { DonationFilters } from "@/features/org-donations/org-donations-schema";
@@ -26,7 +25,7 @@ export const donationStatsQueryOptions = (orgId: string) =>
   });
 
 export const Route = createFileRoute("/o/$orgId/donations")({
-  validateSearch: zodValidator(donationFiltersSchema),
+  validateSearch: donationFiltersSchema,
   loader: ({ context, params }) => {
     context.queryClient.ensureQueryData(donationsQueryOptions(params.orgId));
     context.queryClient.ensureQueryData(donationStatsQueryOptions(params.orgId));
