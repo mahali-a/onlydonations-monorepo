@@ -4,17 +4,38 @@
  */
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "onlydonations-data-service",
+  "name": "onlydonations-api",
   "main": "./src/index.ts",
   "compatibility_date": "2025-09-02",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true
+    }
+  },
+
+  // ============================================
+  // TOP-LEVEL (local development)
+  // Used when running: wrangler dev
+  // ============================================
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "onlydonations-db-stg",
       "database_id": "8c78dc78-a524-4892-a982-4349bd556fde"
+    }
+  ],
+  "vars": {
+    "EMAIL_FROM": "onlydonations@mahali.dev",
+    "ENVIRONMENT": "development",
+    "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
+    "WEB_BASE_URL": "http://localhost:3000"
+  },
+  "r2_buckets": [
+    {
+      "binding": "ASSETS",
+      "bucket_name": "assets"
     }
   ],
   "queues": {
@@ -35,12 +56,6 @@
       }
     ]
   },
-  "r2_buckets": [
-    {
-      "binding": "ASSETS",
-      "bucket_name": "assets"
-    }
-  ],
   "durable_objects": {
     "bindings": [
       {
@@ -49,22 +64,124 @@
       }
     ]
   },
-  "vars": {
-    "EMAIL_FROM": "onlydonations@mahali.dev",
-    "ENVIRONMENT": "production",
-    "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
-    "WEB_BASE_URL": "https://stg.onlydonations.com"
-  },
-  "observability": {
-    "enabled": true,
-    "traces": {
-      "enabled": true
+
+  "env": {
+    // ============================================
+    // STAGING environment
+    // Deploy with: wrangler deploy --env staging
+    // Worker name: onlydonations-api-staging
+    // ============================================
+    "staging": {
+      "routes": [
+        {
+          "pattern": "api.stg.onlydonations.com",
+          "custom_domain": true
+        }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "onlydonations-db-stg",
+          "database_id": "8c78dc78-a524-4892-a982-4349bd556fde"
+        }
+      ],
+      "vars": {
+        "EMAIL_FROM": "onlydonations@mahali.dev",
+        "ENVIRONMENT": "staging",
+        "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
+        "WEB_BASE_URL": "https://stg.onlydonations.com"
+      },
+      "r2_buckets": [
+        {
+          "binding": "ASSETS",
+          "bucket_name": "assets"
+        }
+      ],
+      "queues": {
+        "producers": [
+          {
+            "binding": "APP_QUEUE",
+            "queue": "app-queue"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "app-queue",
+            "max_batch_size": 10,
+            "max_batch_timeout": 5,
+            "max_retries": 3,
+            "dead_letter_queue": "app-dlq",
+            "max_concurrency": 2
+          }
+        ]
+      },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "CAMPAIGN_TRACKER",
+            "class_name": "CampaignTracker"
+          }
+        ]
+      }
+    },
+
+    // ============================================
+    // PRODUCTION environment
+    // Deploy with: wrangler deploy --env production
+    // Worker name: onlydonations-api-production
+    // ============================================
+    "production": {
+      "routes": [
+        {
+          "pattern": "api.onlydonations.com",
+          "custom_domain": true
+        }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "onlydonations-db-prod",
+          "database_id": "723ce5eb-fb20-44bb-bad3-862f5059bf6d"
+        }
+      ],
+      "vars": {
+        "EMAIL_FROM": "hello@onlydonations.com",
+        "ENVIRONMENT": "production",
+        "R2_PUBLIC_URL": "https://assets.onlydonations.com",
+        "WEB_BASE_URL": "https://onlydonations.com"
+      },
+      "r2_buckets": [
+        {
+          "binding": "ASSETS",
+          "bucket_name": "assets-prod"
+        }
+      ],
+      "queues": {
+        "producers": [
+          {
+            "binding": "APP_QUEUE",
+            "queue": "app-queue-prod"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "app-queue-prod",
+            "max_batch_size": 10,
+            "max_batch_timeout": 5,
+            "max_retries": 3,
+            "dead_letter_queue": "app-dlq-prod",
+            "max_concurrency": 2
+          }
+        ]
+      },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "CAMPAIGN_TRACKER",
+            "class_name": "CampaignTracker"
+          }
+        ]
+      }
     }
-  },
-  "routes": [
-    {
-      "pattern": "api.stg.onlydonations.com",
-      "custom_domain": true
-    }
-  ]
+  }
 }

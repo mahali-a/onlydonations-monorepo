@@ -2,10 +2,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "onlydonations",
   "compatibility_date": "2025-09-02",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "main": "./src/server.ts",
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true
+    }
+  },
+
+  // ============================================
+  // TOP-LEVEL (local development)
+  // Used when running: vite dev
+  // ============================================
   "d1_databases": [
     {
       "binding": "DB",
@@ -15,26 +24,14 @@
     }
   ],
   "vars": {
-    "ENVIRONMENT": "production",
-    "API_BASE_URL": "https://api.stg.onlydonations.com",
-    "BASE_URL": "https://stg.onlydonations.com",
+    "ENVIRONMENT": "development",
+    "API_BASE_URL": "http://localhost:8787",
+    "BASE_URL": "http://localhost:3000",
     "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
     "SMILE_PARTNER_ID": "7634",
     "SMILE_ENVIRONMENT": "sandbox",
     "SMILE_CALLBACK_URL": "https://api.stg.onlydonations.com/webhooks/smile"
   },
-  "observability": {
-    "enabled": true,
-    "traces": {
-      "enabled": true
-    }
-  },
-  "routes": [
-    {
-      "pattern": "stg.onlydonations.com",
-      "custom_domain": true
-    }
-  ],
   "r2_buckets": [
     {
       "binding": "ASSETS",
@@ -52,7 +49,112 @@
   "kv_namespaces": [
     {
       "binding": "KV_CACHE",
-      "id": "a7009c46d5fe45f8bf26666b29949418",
+      "id": "a7009c46d5fe45f8bf26666b29949418"
     }
-  ]
+  ],
+
+  "env": {
+    // ============================================
+    // STAGING environment
+    // Build: CLOUDFLARE_ENV=staging vite build
+    // Deploy: wrangler deploy
+    // ============================================
+    "staging": {
+      "routes": [
+        {
+          "pattern": "stg.onlydonations.com",
+          "custom_domain": true
+        }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "onlydonations-db-stg",
+          "database_id": "8c78dc78-a524-4892-a982-4349bd556fde",
+          "migrations_dir": "migrations"
+        }
+      ],
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "API_BASE_URL": "https://api.stg.onlydonations.com",
+        "BASE_URL": "https://stg.onlydonations.com",
+        "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
+        "SMILE_PARTNER_ID": "7634",
+        "SMILE_ENVIRONMENT": "sandbox",
+        "SMILE_CALLBACK_URL": "https://api.stg.onlydonations.com/webhooks/smile"
+      },
+      "r2_buckets": [
+        {
+          "binding": "ASSETS",
+          "bucket_name": "assets"
+        }
+      ],
+      "queues": {
+        "producers": [
+          {
+            "binding": "APP_QUEUE",
+            "queue": "app-queue"
+          }
+        ]
+      },
+      "kv_namespaces": [
+        {
+          "binding": "KV_CACHE",
+          "id": "a7009c46d5fe45f8bf26666b29949418"
+        }
+      ]
+    },
+
+    // ============================================
+    // PRODUCTION environment
+    // Build: CLOUDFLARE_ENV=production vite build
+    // Deploy: wrangler deploy
+    // Worker name: onlydonations-production
+    // ============================================
+    "production": {
+      "routes": [
+        {
+          "pattern": "onlydonations.com",
+          "custom_domain": true
+        }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "onlydonations-db-prod",
+          "database_id": "723ce5eb-fb20-44bb-bad3-862f5059bf6d",
+          "migrations_dir": "migrations"
+        }
+      ],
+      "vars": {
+        "ENVIRONMENT": "production",
+        "API_BASE_URL": "https://api.onlydonations.com",
+        "BASE_URL": "https://onlydonations.com",
+        "R2_PUBLIC_URL": "https://assets.onlydonations.com",
+        "SMILE_PARTNER_ID": "7634",
+        "SMILE_ENVIRONMENT": "production",
+        "SMILE_CALLBACK_URL": "https://api.onlydonations.com/webhooks/smile"
+      },
+      "r2_buckets": [
+        {
+          "binding": "ASSETS",
+          "bucket_name": "assets-prod"
+        }
+      ],
+      "queues": {
+        "producers": [
+          {
+            "binding": "APP_QUEUE",
+            "queue": "app-queue-prod"
+          }
+        ]
+      },
+      "kv_namespaces": [
+        {
+          "binding": "KV_CACHE",
+          "id": "5efadbcb97f2455f81c9758f41fb783b"
+        }
+      ]
+    }
+  }
 }

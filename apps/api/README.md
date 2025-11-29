@@ -1,26 +1,65 @@
-# Worker Publisher
+# OnlyDonations API
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/worker-publisher-template)
+Cloudflare Worker API service with Hono, queue consumers, and durable objects.
 
-<!-- dash-content-start -->
+## 🌍 Environments
 
-A Cloudflare Worker that creates and deploys Workers to a Dispatch Namespace via the Cloudflare SDK.
+This project uses Wrangler environments for staging and production deployments.
 
-## How it works
+### Environment Overview
 
-- Automatically creates a Workers for Platforms dispatch namespace
-- Uses Cloudflare SDK to deploy Workers to the namespace
-- Each deployed Worker gets its own /{worker-name} path
-- Main Worker acts as a router, forwarding requests to deployed Workers
-- Each deployed Worker runs in its own isolated environment
+| Environment | Worker Name                     | Domain                        | Database              |
+|-------------|---------------------------------|-------------------------------|-----------------------|
+| Development | (local)                         | `localhost:8787`              | `onlydonations-db-stg`|
+| Staging     | `onlydonations-api-staging`     | `api.stg.onlydonations.com`   | `onlydonations-db-stg`|
+| Production  | `onlydonations-api-production`  | `api.onlydonations.com`       | `onlydonations-db-prod`|
 
-You can modify this and use it to deploy static sites or full stack applications at scale, build a vibe coding platform, deploy personalized AI agents ... the possibilities are endless!
+### Deployment Commands
 
-<!-- dash-content-end -->
+```bash
+# Local development (uses top-level config)
+bun run dev
 
-## Setup
+# Deploy to STAGING
+bun run deploy:staging
+# Or: wrangler deploy --env staging
 
-After you click "Deploy to Cloudflare", you'll be prompted for:
+# Deploy to PRODUCTION
+bun run deploy:production
+# Or: wrangler deploy --env production
+```
 
-- `CLOUDFLARE_ACCOUNT_ID` - Your Cloudflare account ID
-- `CLOUDFLARE_API_TOKEN` - Your Cloudflare API token with Workers:Edit permission
+### Setting Secrets
+
+Secrets must be set per environment:
+
+```bash
+# Staging secrets
+npx wrangler secret put RESEND_API_KEY --env staging
+npx wrangler secret put PAYSTACK_SECRET_KEY --env staging
+
+# Production secrets
+npx wrangler secret put RESEND_API_KEY --env production
+npx wrangler secret put PAYSTACK_SECRET_KEY --env production
+```
+
+### Local Development Secrets
+
+For local development, put secrets in `.dev.vars` (not committed to git):
+
+```bash
+# Copy the example file
+cp .dev.vars.example .dev.vars
+
+# Edit .dev.vars with your values
+```
+
+**Note**: The API uses Wrangler directly (not Vite), so it uses `.dev.vars` for secrets instead of `.env.local`.
+
+## Features
+
+- **Hono** - Lightweight web framework
+- **Queue Consumers** - Background job processing
+- **Durable Objects** - Stateful campaign tracking
+- **D1 Database** - SQLite at the edge
+- **R2 Storage** - Object storage for assets

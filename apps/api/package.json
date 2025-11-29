@@ -10,6 +10,8 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "echo 'No tests yet'",

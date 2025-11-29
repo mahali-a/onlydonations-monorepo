@@ -14,9 +14,82 @@ pnpm dev
 # Build for production
 pnpm build
 
-# Deploy to Cloudflare
+# Deploy to Cloudflare (staging)
 pnpm deploy
 ```
+
+## 🌍 Environments
+
+This project uses Cloudflare Vite plugin with Wrangler environments for staging and production deployments.
+
+### Environment Overview
+
+| Environment | Worker Name                  | Domain                    | Database              |
+|-------------|------------------------------|---------------------------|-----------------------|
+| Development | (local)                      | `localhost:3000`          | `onlydonations-db-stg`|
+| Staging     | `onlydonations-staging`      | `stg.onlydonations.com`   | `onlydonations-db-stg`|
+| Production  | `onlydonations-production`   | `onlydonations.com`       | `onlydonations-db-prod`|
+
+### How It Works (Cloudflare Vite Plugin)
+
+The Vite plugin selects environments at **build time** via `CLOUDFLARE_ENV`:
+- `.env.staging` sets `CLOUDFLARE_ENV=staging`
+- `.env.production` sets `CLOUDFLARE_ENV=production`
+
+When you run `vite build --mode staging`, Vite loads `.env.staging` which sets `CLOUDFLARE_ENV=staging`, and the build output is configured for the staging environment.
+
+### Deployment Commands
+
+```bash
+# Local development (uses top-level config)
+bun run dev
+
+# Build & deploy to STAGING
+bun run deploy:staging
+# Or manually: vite build --mode staging && wrangler deploy
+
+# Build & deploy to PRODUCTION
+bun run deploy:production
+# Or manually: vite build --mode production && wrangler deploy
+
+# Run migrations (staging)
+npx wrangler d1 migrations apply DB --env staging --remote
+
+# Run migrations (production)
+npx wrangler d1 migrations apply DB --env production --remote
+```
+
+### Setting Secrets
+
+Secrets must be set per environment:
+
+```bash
+# Staging secrets
+npx wrangler secret put BETTER_AUTH_SECRET --env staging
+npx wrangler secret put PAYSTACK_SECRET_KEY --env staging
+
+# Production secrets
+npx wrangler secret put BETTER_AUTH_SECRET --env production
+npx wrangler secret put PAYSTACK_SECRET_KEY --env production
+```
+
+### Local Development Secrets
+
+For local development, put secrets in `.env.local` (not committed to git):
+
+```bash
+# Copy the example file
+cp .env.example .env.local
+
+# Edit .env.local with your values
+```
+
+**File precedence** (most specific wins):
+- `.env.local` - Local secrets (never committed)
+- `.env.<mode>` - Mode-specific config (e.g., `.env.staging` sets `CLOUDFLARE_ENV`)
+- `.env` - Shared defaults
+
+**Important**: The `.env.staging` and `.env.production` files only contain `CLOUDFLARE_ENV` and are safe to commit. All secrets go in `.env.local`.
 
 ## 📦 Development Workflow
 

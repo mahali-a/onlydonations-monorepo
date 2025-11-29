@@ -1,0 +1,24 @@
+# Local Development Secrets for API
+# Copy this file to .dev.vars and fill in the values
+# Do NOT commit .dev.vars to git
+
+# Email
+RESEND_API_KEY=re_xxxxxxxxx
+
+# Payments
+PAYSTACK_SECRET_KEY=sk_test_xxx
+
+# AI
+OPENAI_API_KEY=sk-xxx
+
+# SMS (optional - configure one provider)
+PILO_SMS_API_KEY=
+PILO_SMS_SENDER_ID=
+TELNYX_API_KEY=
+TELNYX_FROM_NUMBER=
+
+# KYC
+SMILE_API_KEY=your-smile-api-key
+
+# Observability (optional)
+AXIOM_API_TOKEN=
