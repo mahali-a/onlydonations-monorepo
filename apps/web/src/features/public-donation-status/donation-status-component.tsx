@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { useRealtimeCampaign } from "@/features/public-live-campaign/hooks/use-realtime-campaign";
 import { postDonationMessage } from "./donation-status-actions";
 
 type DonationStatusProps = {
@@ -17,6 +18,7 @@ type DonationStatusProps = {
     isAnonymous: boolean;
     createdAt: Date;
     updatedAt: Date;
+    campaignId: string;
     campaignTitle: string;
     campaignSlug: string;
     isRecentlyUpdated: boolean;
@@ -30,6 +32,15 @@ export function DonationStatus({ data }: DonationStatusProps) {
   const [hasPostedMessage, setHasPostedMessage] = useState(false);
   const [isPendingModeration, setIsPendingModeration] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
+
+  // Connect to WebSocket for real-time donation status updates
+  // Only enable polling when status is PENDING (waiting for payment confirmation)
+  useRealtimeCampaign({
+    campaignId: data.campaignId,
+    slug: data.campaignSlug,
+    donationId: data.id,
+    enabled: data.status === "PENDING",
+  });
 
   const hasExistingMessage = !!data.donorMessage;
 

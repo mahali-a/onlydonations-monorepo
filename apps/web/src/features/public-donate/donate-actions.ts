@@ -1,9 +1,9 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import { nanoid } from "nanoid";
 import { savePaymentTransactionToDatabase } from "@/features/org-payments/server";
 import { calculateFees } from "@/lib/fees/calculator";
 import { Honeypot, SpamError } from "@/lib/honeypot";
+import { nanoid, urlId } from "@/lib/id";
 import { logger } from "@/lib/logger";
 import { PaystackService } from "@/lib/paystack";
 import { optionalSessionMiddleware } from "@/server/middleware/auth";
@@ -159,7 +159,7 @@ async function initializePayment(
   } = params;
 
   const reference = `${DONATION_REFERENCE_PREFIX}${nanoid()}`;
-  const donationId = nanoid();
+  const donationId = urlId();
   const paymentTransactionId = nanoid();
   const amountInMinorUnits = Math.round(amountToCharge * MINOR_UNITS_MULTIPLIER);
   const { donorId } = params;

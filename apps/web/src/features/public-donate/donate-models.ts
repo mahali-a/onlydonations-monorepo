@@ -119,6 +119,7 @@ export async function retrieveDonationFromDatabaseByIdWithCampaign(donationId: s
       isAnonymous: donation.isAnonymous,
       createdAt: donation.createdAt,
       updatedAt: donation.updatedAt,
+      campaignId: campaign.id,
       campaignTitle: campaign.title,
       campaignSlug: campaign.slug,
     })
