@@ -17,6 +17,7 @@
   "vars": {
     "ENVIRONMENT": "production",
     "API_BASE_URL": "https://api.stg.onlydonations.com",
+    "BASE_URL": "https://stg.onlydonations.com",
     "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
     "SMILE_PARTNER_ID": "7634",
     "SMILE_ENVIRONMENT": "sandbox",
