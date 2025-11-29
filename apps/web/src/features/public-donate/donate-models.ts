@@ -24,6 +24,9 @@ export async function retrieveCampaignWithCategoryFromDatabaseBySlug(slug: strin
       donateButtonText: campaign.donateButtonText,
       categoryId: campaign.categoryId,
       categoryName: category.name,
+      seoTitle: campaign.seoTitle,
+      seoDescription: campaign.seoDescription,
+      seoImage: campaign.seoImage,
       totalRaised:
         sql<number>`COALESCE((SELECT SUM(${donation.amount}) FROM ${donation} WHERE ${donation.campaignId} = ${campaign.id} AND ${donation.status} = 'SUCCESS'), 0)`.as(
           "totalRaised",
@@ -207,6 +210,9 @@ export async function retrieveDonationWithCampaignFromDatabaseById(donationId: s
       campaignTitle: campaign.title,
       campaignSlug: campaign.slug,
       campaignCoverImage: campaign.coverImage,
+      campaignSeoTitle: campaign.seoTitle,
+      campaignSeoDescription: campaign.seoDescription,
+      campaignSeoImage: campaign.seoImage,
     })
     .from(donation)
     .innerJoin(campaign, eq(donation.campaignId, campaign.id))

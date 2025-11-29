@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { retrieveDonationWithCampaignFromDatabaseById } from "@/features/public-donate/donate-models";
+import { fileService } from "@/lib/file-upload";
 import { logger } from "@/lib/logger";
 import { Money } from "@/lib/money";
 
@@ -42,6 +43,15 @@ export const getShareableDonation = createServerFn({ method: "GET" })
         decimals: 2,
       });
 
+      const campaignCoverImage = donationData.campaignCoverImage
+        ? fileService.transformKeysToUrls({ coverImage: donationData.campaignCoverImage })
+            .coverImage
+        : donationData.campaignCoverImage;
+
+      const campaignSeoImage = donationData.campaignSeoImage
+        ? fileService.transformKeysToUrls({ seoImage: donationData.campaignSeoImage }).seoImage
+        : donationData.campaignSeoImage;
+
       shareableDonationLogger.info("shareable_donation.retrieved", {
         donationId,
         campaignSlug: donationData.campaignSlug,
@@ -50,6 +60,8 @@ export const getShareableDonation = createServerFn({ method: "GET" })
       return {
         ...donationData,
         formattedAmount,
+        campaignCoverImage,
+        campaignSeoImage,
       };
     } catch (error) {
       shareableDonationLogger.error("shareable_donation.error", {

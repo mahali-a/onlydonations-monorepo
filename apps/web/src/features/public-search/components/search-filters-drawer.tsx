@@ -21,6 +21,7 @@ import type { SearchFilters } from "../public-search-schema";
 
 interface SearchFiltersDrawerProps {
   categories: SelectCategory[];
+  isScrolled?: boolean;
 }
 
 const TIME_PERIODS = [
@@ -43,7 +44,7 @@ const MOCK_CATEGORIES = [
   { id: "community", name: "Community" },
 ];
 
-export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
+export function SearchFiltersDrawer({ categories, isScrolled = false }: SearchFiltersDrawerProps) {
   const navigate = useNavigate();
   const search = useSearch({ from: "/_public/s" }) as Partial<SearchFilters>;
   const [open, setOpen] = React.useState(false);
@@ -88,6 +89,12 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
   };
 
   const displayCategories = categories.length > 0 ? categories : MOCK_CATEGORIES;
+  const [showAllCategories, setShowAllCategories] = React.useState(false);
+  const INITIAL_CATEGORIES_LIMIT = 8;
+  const visibleCategories = showAllCategories
+    ? displayCategories
+    : displayCategories.slice(0, INITIAL_CATEGORIES_LIMIT);
+  const hasMoreCategories = displayCategories.length > INITIAL_CATEGORIES_LIMIT;
 
   const hasActiveFilters =
     !!search.categoryId || search.closeToGoal || (search.timePeriod && search.timePeriod !== "all");
@@ -95,29 +102,56 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
   return (
     <Drawer direction="left" open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            "rounded-full h-9 px-4 text-sm font-medium gap-2 transition-colors",
-            hasActiveFilters
-              ? "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/90"
-              : "hover:bg-accent hover:border-accent-foreground/20",
-          )}
-        >
-          Filters
-          {hasActiveFilters && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-bold text-black">
-              {
-                [
-                  !!search.categoryId,
-                  search.closeToGoal,
-                  search.timePeriod && search.timePeriod !== "all",
-                ].filter(Boolean).length
-              }
-            </span>
-          )}
-          {!hasActiveFilters && <SlidersHorizontal className="h-4 w-4" />}
-        </Button>
+        {isScrolled ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "rounded-full h-9 w-9 transition-colors relative",
+              hasActiveFilters
+                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90"
+                : "hover:bg-accent",
+            )}
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            {hasActiveFilters && (
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                {
+                  [
+                    !!search.categoryId,
+                    search.closeToGoal,
+                    search.timePeriod && search.timePeriod !== "all",
+                  ].filter(Boolean).length
+                }
+              </span>
+            )}
+            <span className="sr-only">Filters</span>
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            className={cn(
+              "rounded-full h-9 px-4 text-sm font-medium gap-2 transition-colors",
+              hasActiveFilters
+                ? "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/90"
+                : "hover:bg-accent hover:border-accent-foreground/20",
+            )}
+          >
+            Filters
+            {hasActiveFilters && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-bold text-black">
+                {
+                  [
+                    !!search.categoryId,
+                    search.closeToGoal,
+                    search.timePeriod && search.timePeriod !== "all",
+                  ].filter(Boolean).length
+                }
+              </span>
+            )}
+            {!hasActiveFilters && <SlidersHorizontal className="h-4 w-4" />}
+          </Button>
+        )}
       </DrawerTrigger>
       <DrawerContent className="h-full w-[300px] sm:w-[400px] rounded-none border-r">
         <DrawerHeader className="flex flex-row items-center justify-between border-b px-6 py-4">
@@ -146,15 +180,15 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
             <h3 className="font-semibold">Category</h3>
             <p className="text-sm text-muted-foreground">Choose one or more</p>
             <div className="flex flex-wrap gap-2">
-              {displayCategories.map((category) => (
+              {visibleCategories.map((category) => (
                 <Badge
                   key={category.id}
                   variant={selectedCategory === category.id ? "default" : "outline"}
                   className={cn(
-                    "cursor-pointer rounded-full px-4 py-1.5 text-sm font-normal hover:bg-secondary/80 transition-colors",
+                    "cursor-pointer rounded-full px-4 py-1.5 text-sm font-normal transition-colors",
                     selectedCategory === category.id
-                      ? "hover:bg-primary/90"
-                      : "border-input text-foreground bg-background",
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:opacity-90"
+                      : "border-input text-foreground bg-background hover:bg-accent hover:border-primary/50",
                   )}
                   onClick={() =>
                     setSelectedCategory(selectedCategory === category.id ? undefined : category.id)
@@ -164,12 +198,15 @@ export function SearchFiltersDrawer({ categories }: SearchFiltersDrawerProps) {
                 </Badge>
               ))}
             </div>
-            <Button
-              variant="link"
-              className="px-0 mt-2 text-sm h-auto font-medium underline decoration-1 underline-offset-4 hover:text-primary"
-            >
-              Show more
-            </Button>
+            {hasMoreCategories && (
+              <Button
+                variant="link"
+                className="px-0 mt-2 text-sm h-auto font-medium underline decoration-1 underline-offset-4 hover:text-primary"
+                onClick={() => setShowAllCategories(!showAllCategories)}
+              >
+                {showAllCategories ? "Show less" : "Show more"}
+              </Button>
+            )}
           </div>
 
           {/* Close to goal */}

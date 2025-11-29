@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, Outlet, useLocation, useParams } from "@tanstack/react-router";
 import confetti from "canvas-confetti";
-import { Copy, Eye } from "lucide-react";
+import { Eye, Link as LinkIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -166,7 +166,7 @@ export function CampaignDetailsLayout() {
   };
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 pt-6 w-full h-full space-y-6 bg-background">
+    <div className="container mx-auto  pt-6 w-full h-full space-y-6 bg-background">
       <div className="w-full flex flex-col md:flex-row items-start md:items-center gap-4 md:justify-between">
         <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
           <p className="text-xl font-medium">{campaign.title}</p>
@@ -193,7 +193,7 @@ export function CampaignDetailsLayout() {
               onClick={onCopyLink}
               className="rounded-r-none border-r"
             >
-              <Copy className="h-4 w-4" />
+              <LinkIcon className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"

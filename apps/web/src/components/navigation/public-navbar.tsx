@@ -1,8 +1,7 @@
 import type { Setting } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, Menu, Search } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, ChevronRight, Search } from "lucide-react";
 import { Navlogo } from "@/components/icons/nav-logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,16 +11,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
+import { MobileNav } from "./mobile-nav";
 
 interface PublicNavbarProps {
   settings: Setting | null;
 }
 
 export function PublicNavbar({ settings }: PublicNavbarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const { data: session, isPending: isSessionPending } = authClient.useSession();
 
@@ -48,7 +46,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
     if (link.hasDropdown && link.dropdownItems) {
       return (
         <DropdownMenu key={link.id}>
-          <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors cursor-pointer">
+          <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 transition-colors cursor-pointer">
             {link.label}
             <ChevronDown className="h-4 w-4" />
           </DropdownMenuTrigger>
@@ -83,7 +81,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
       <Link
         key={link.id}
         to={link.url || "/"}
-        className="text-sm font-medium hover:text-primary transition-colors no-underline"
+        className="text-sm font-medium hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 transition-colors no-underline"
       >
         {link.label}
       </Link>
@@ -92,104 +90,117 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
 
   return (
     <header className="w-full border-b border-border/30 bg-background">
-      <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
-        {/* Mobile menu trigger - shown on mobile */}
-        <div className="md:hidden">
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-80">
-              <div className="flex flex-col gap-6 pt-6">
-                <Link
-                  to="/"
-                  className="flex items-center space-x-2 no-underline"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <Navlogo className="h-6 w-auto text-foreground" />
-                </Link>
-
-                <nav className="flex flex-col gap-4">
-                  {navigationLinks.map((link) => (
-                    <div key={link.id} className="flex flex-col gap-2">
-                      {link.hasDropdown && link.dropdownItems ? (
-                        <>
-                          <span className="text-sm font-medium text-muted-foreground">
-                            {link.label}
-                          </span>
-                          <div className="flex flex-col gap-1 pl-4">
-                            {link.dropdownItems.map((item) => (
-                              <Link
-                                key={item.id}
-                                to={item.url || "/"}
-                                className="text-sm hover:text-primary transition-colors no-underline py-1"
-                                onClick={() => setMobileOpen(false)}
-                              >
-                                {item.label}
-                              </Link>
-                            ))}
-                          </div>
-                        </>
-                      ) : (
-                        <Link
-                          to={link.url || "/"}
-                          className="text-sm font-medium hover:text-primary transition-colors no-underline"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {link.label}
-                        </Link>
-                      )}
-                    </div>
-                  ))}
-                </nav>
-
-                <div className="flex flex-col gap-2 pt-4 border-t">
-                  {isLoading ? (
-                    <>
-                      <Skeleton className="h-10 w-full" />
-                      <Skeleton className="h-10 w-full" />
-                    </>
-                  ) : session && orgId ? (
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                      onClick={async () => {
-                        setMobileOpen(false);
-                        await authClient.signOut();
-                        navigate({ to: "/" });
-                      }}
-                    >
-                      Sign Out
-                    </Button>
-                  ) : (
-                    <>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => {
-                          setMobileOpen(false);
-                          navigate({ to: "/login", search: { next: "/app" } });
-                        }}
-                      >
-                        Sign In
-                      </Button>
-                      <Button
-                        className="w-full"
-                        onClick={() => {
-                          setMobileOpen(false);
-                          navigate({ to: "/onboarding", search: { step: "name", next: "/app" } });
-                        }}
-                      >
-                        Get Started
-                      </Button>
-                    </>
-                  )}
+      <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6 relative">
+        {/* Mobile menu */}
+        <MobileNav
+          logo={
+            session && orgId ? (
+              <div className="flex w-full flex-col items-center gap-3 py-4 px-4">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage
+                    src={user?.image || undefined}
+                    alt={user?.name || "User"}
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+                    {fallbackText}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-center">
+                  <p className="font-semibold text-lg">{user?.name || "User"}</p>
+                  <Link
+                    to={`/o/$orgId/account`}
+                    params={{ orgId }}
+                    className="text-sm text-muted-foreground flex items-center justify-center gap-1 hover:text-foreground transition-colors no-underline"
+                  >
+                    Profile <ChevronRight className="h-3 w-3" />
+                  </Link>
                 </div>
               </div>
-            </SheetContent>
-          </Sheet>
+            ) : (
+              <Link to="/" className="flex items-center space-x-2 no-underline py-2">
+                <Navlogo className="h-6 w-auto text-foreground" />
+              </Link>
+            )
+          }
+          links={[
+            ...[...leftNavItems, ...rightNavItems]
+              .filter((link): link is typeof link & { id: string } => !!link.id)
+              .map((link) => ({
+                id: link.id,
+                label: link.label,
+                url: link.url || "/",
+                hasDropdown: link.hasDropdown ?? false,
+                dropdownItems: link.dropdownItems
+                  ?.filter((item): item is typeof item & { id: string } => !!item.id)
+                  .map((item) => ({
+                    id: item.id,
+                    label: item.label,
+                    url: item.url || "/",
+                    description: item.description ?? undefined,
+                  })),
+              })),
+          ]}
+          footer={
+            <div className="flex flex-col gap-4 pt-4">
+              <Button asChild size="sm" className="w-full">
+                <Link to="/login" search={{ next: "/app" }}>
+                  Start fundraider
+                </Link>
+              </Button>
+
+              {!session && (
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => navigate({ to: "/login", search: { next: "/app" } })}
+                >
+                  Sign In
+                </Button>
+              )}
+
+              {session && (
+                <Button
+                  variant="ghost"
+                  className="w-full text-muted-foreground hover:text-foreground"
+                  onClick={async () => {
+                    await authClient.signOut();
+                    navigate({ to: "/" });
+                  }}
+                >
+                  Sign Out
+                </Button>
+              )}
+            </div>
+          }
+        />
+
+        {/* Mobile: Logo centered */}
+        <Link
+          to="/"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors no-underline md:hidden"
+        >
+          <Navlogo className="h-6 w-auto text-foreground" />
+        </Link>
+
+        {/* Mobile: Search icon on the right */}
+        <div className="md:hidden">
+          <Button variant="ghost" size="icon" asChild>
+            <Link
+              to="/s"
+              search={{
+                query: "",
+                closeToGoal: false,
+                timePeriod: "all",
+                page: 1,
+                limit: 12,
+                sortBy: "recent",
+              }}
+            >
+              <Search className="h-5 w-5" />
+              <span className="sr-only">Search</span>
+            </Link>
+          </Button>
         </div>
 
         {/* Desktop layout: Logo absolutely centered */}
@@ -206,7 +217,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                 limit: 12,
                 sortBy: "recent",
               }}
-              className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors no-underline"
+              className="flex items-center gap-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 transition-colors no-underline"
             >
               <Search className="h-4 w-4" />
               Search
@@ -356,11 +367,11 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Button asChild size="sm">
+                  {/* <Button asChild size="sm">
                     <Link to="/login" search={{ next: "/app" }}>
                       Start fundraider
                     </Link>
-                  </Button>
+                  </Button> */}
                 </>
               ) : (
                 <>
@@ -371,19 +382,16 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
                   >
                     Sign In
                   </Button>
-                  <Button asChild size="sm">
+                  {/* <Button asChild size="sm">
                     <Link to="/login" search={{ next: "/app" }}>
                       Start fundraider
                     </Link>
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </div>
           </div>
         </div>
-
-        {/* Mobile: Just show logo on right side */}
-        <div className="md:hidden" />
       </div>
     </header>
   );

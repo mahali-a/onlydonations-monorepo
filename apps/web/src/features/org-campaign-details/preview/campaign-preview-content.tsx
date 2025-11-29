@@ -110,14 +110,12 @@ export function CampaignPreviewContent({
               </Button>
             </div>
 
-            <div className="rounded-xl bg-purple-100 p-6 dark:bg-purple-950">
-              <h3 className="mb-2 text-xl font-bold text-purple-900 dark:text-purple-100">
-                Give GHS 20- and be a founding donor
-              </h3>
-              <p className="mb-6 text-purple-800 dark:text-purple-200">
+            <div className="rounded-xl bg-secondary text-secondary-foreground p-6">
+              <h3 className="mb-2 text-xl font-bold">Give GHS 50- and be a founding donor</h3>
+              <p className="mb-6 opacity-90">
                 Your donation starts {organizer}'s journey to success by inspiring others to help.
               </p>
-              <Button className="rounded-full bg-purple-700 hover:bg-purple-800 text-white dark:bg-purple-600 dark:hover:bg-purple-700">
+              <Button className="rounded-full bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90">
                 Donate
               </Button>
             </div>

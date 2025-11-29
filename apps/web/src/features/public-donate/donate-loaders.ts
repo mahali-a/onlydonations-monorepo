@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { fileService } from "@/lib/file-upload";
 import { retrieveCampaignWithCategoryFromDatabaseBySlug } from "./donate-models";
 import { donateLoaderSchema } from "./donate-schema";
 
@@ -21,7 +22,9 @@ export const retrieveDonateDataFromServer = createServerFn({ method: "GET" })
       throw new Response("Campaign has ended", { status: 403 });
     }
 
+    const transformedCampaign = fileService.transformKeysToUrls(campaignData);
+
     return {
-      campaign: campaignData,
+      campaign: transformedCampaign,
     };
   });

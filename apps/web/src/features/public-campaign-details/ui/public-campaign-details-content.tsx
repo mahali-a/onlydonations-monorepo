@@ -138,7 +138,7 @@ export function CampaignDetailContent({
 
               {!hasDonations && (
                 <div className="rounded-xl bg-secondary text-secondary-foreground p-6">
-                  <h3 className="mb-2 text-xl font-bold">Give GHS 20 and be a founding donor</h3>
+                  <h3 className="mb-2 text-xl font-bold">Give GHS 50- and be a founding donor</h3>
                   <p className="mb-6 opacity-90">
                     Your donation starts {organizer}'s journey to success by inspiring others to
                     help.

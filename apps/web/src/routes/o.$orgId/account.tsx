@@ -17,7 +17,7 @@ function AccountLayout() {
       : "account";
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 pt-6 w-full h-full space-y-6 bg-background">
+    <div className="container mx-auto  pt-6 w-full h-full space-y-6 bg-background">
       <div className="w-full flex flex-col md:flex-row items-start md:items-center gap-4 md:justify-between">
         <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
           <h1 className="text-2xl font-bold tracking-tight">Account & Security</h1>

@@ -35,7 +35,7 @@ export function Dashboard({
   const metrics = useDashboardMetrics(allTimeStats, currentMonthTotal, previousMonthTotal);
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 pt-6 w-full space-y-6 bg-background pb-8 overflow-x-auto">
+    <div className="container mx-auto  pt-6 w-full space-y-6 bg-background pb-8 overflow-x-auto">
       <WelcomeHeader userName={user?.name} />
 
       <MetricsGrid metrics={metrics} />

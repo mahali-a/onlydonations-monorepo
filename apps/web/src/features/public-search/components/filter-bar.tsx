@@ -51,7 +51,7 @@ export function FilterBar({ categories }: FilterBarProps) {
       <div className="container mx-auto px-4 py-3 flex items-center relative h-14">
         <div className="z-20">
           <Suspense fallback={<div className="w-10 h-10" />}>
-            <SearchFiltersDrawer categories={categories} />
+            <SearchFiltersDrawer categories={categories} isScrolled={isScrolled} />
           </Suspense>
         </div>
 

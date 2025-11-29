@@ -5,6 +5,7 @@ import { DonateComponent } from "@/features/public-donate/donate-component";
 import { DonateError } from "@/features/public-donate/donate-error";
 import { DonateNotFound } from "@/features/public-donate/donate-not-found";
 import { retrieveDonateDataFromServer } from "@/features/public-donate/server";
+import { getCampaignSeo } from "@/lib/campaign-seo";
 
 const donateQueryOptions = (slug: string) =>
   queryOptions({
@@ -26,6 +27,27 @@ export const Route = createFileRoute("/f/$slug/donate")({
     if (!data) {
       throw notFound();
     }
+
+    return data;
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData?.campaign) {
+      return {
+        meta: [{ title: "Donate" }],
+      };
+    }
+
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/f/${loaderData.campaign.slug}/donate`
+        : undefined;
+
+    return {
+      meta: getCampaignSeo(loaderData.campaign, {
+        titlePrefix: "Donate to ",
+        url,
+      }),
+    };
   },
   component: () => {
     const { slug } = Route.useParams();

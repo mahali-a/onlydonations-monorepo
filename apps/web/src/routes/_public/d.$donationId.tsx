@@ -5,6 +5,7 @@ import ms from "ms";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getShareableDonation } from "@/features/public-donation-status/shareable-donation-loaders";
+import { seo } from "@/lib/seo";
 
 const shareableDonationQueryOptions = (donationId: string) =>
   queryOptions({
@@ -32,39 +33,45 @@ export const Route = createFileRoute("/_public/d/$donationId")({
     return data;
   },
   component: ShareableDonationPage,
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: `${loaderData?.isAnonymous ? "Someone" : loaderData?.donorName || "A donor"} donated ${loaderData?.currency} ${loaderData?.formattedAmount} to ${loaderData?.campaignTitle}`,
-      },
-      {
-        name: "description",
-        content: loaderData?.donorMessage
-          ? loaderData.donorMessage
-          : `Join the effort and support ${loaderData?.campaignTitle}`,
-      },
-      {
-        property: "og:title",
-        content: `${loaderData?.isAnonymous ? "Someone" : loaderData?.donorName || "A donor"} donated to ${loaderData?.campaignTitle}`,
-      },
-      {
-        property: "og:description",
-        content: loaderData?.donorMessage
-          ? loaderData.donorMessage
-          : `${loaderData?.currency} ${loaderData?.formattedAmount} donated. Join the effort!`,
-      },
-      {
-        property: "og:image",
-        content:
-          loaderData?.campaignCoverImage ||
-          "https://assets.stg.onlydonations.com/public/og-image.png",
-      },
-      {
-        name: "twitter:card",
-        content: "summary_large_image",
-      },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {
+        meta: [{ title: "Donation" }],
+      };
+    }
+
+    const donorName = loaderData.isAnonymous ? "Someone" : loaderData.donorName || "A donor";
+
+    const title = `${donorName} donated ${loaderData.currency} ${loaderData.formattedAmount} to ${loaderData.campaignTitle}`;
+    const description = loaderData.donorMessage
+      ? loaderData.donorMessage
+      : `Join the effort and support ${loaderData.campaignTitle}`;
+
+    const image =
+      loaderData.campaignSeoImage ||
+      loaderData.campaignCoverImage ||
+      "https://assets.onlydonations.com/public/og-image.png";
+
+    const url =
+      typeof window !== "undefined" ? `${window.location.origin}/d/${loaderData.id}` : undefined;
+
+    const metaTags = seo({
+      title,
+      description,
+      image,
+    });
+
+    if (url) {
+      metaTags.push({
+        property: "og:url",
+        content: url,
+      });
+    }
+
+    return {
+      meta: metaTags,
+    };
+  },
 });
 
 function ShareableDonationPage() {

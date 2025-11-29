@@ -7,6 +7,7 @@ import {
   similarCampaignsQueryOptions,
 } from "@/features/public-campaign-details/server";
 import { CampaignDetailContent } from "@/features/public-campaign-details/ui/public-campaign-details-content";
+import { getCampaignSeo } from "@/lib/campaign-seo";
 
 const publicCampaignQueryOptions = (slug: string) =>
   queryOptions({
@@ -33,6 +34,26 @@ export const Route = createFileRoute("/_public/f/$slug/")({
       similarCampaignsQueryOptions(data.campaign.category.id, data.campaign.id),
     );
     context.queryClient.ensureQueryData(donationsWithMessagesQueryOptions(data.campaign.id));
+
+    return data;
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData?.campaign) {
+      return {
+        meta: [{ title: "Campaign" }],
+      };
+    }
+
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/f/${loaderData.campaign.slug}`
+        : undefined;
+
+    return {
+      meta: getCampaignSeo(loaderData.campaign, {
+        url,
+      }),
+    };
   },
 
   component: CampaignDetailRoute,
