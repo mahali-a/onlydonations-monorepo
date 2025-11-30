@@ -6,7 +6,7 @@ import {
   organization,
   phoneNumber,
 } from "better-auth/plugins";
-import { reactStartCookies } from "better-auth/react-start";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
 
 /**
  * Email handler callback type for auth-related emails
@@ -63,16 +63,6 @@ export function createBetterAuth(config: CreateAuthConfig): ReturnType<typeof be
       modelName: "auth_user",
       changeEmail: {
         enabled: true,
-        sendChangeEmailVerification: async ({ user, newEmail, url }) => {
-          if (config.emailHandler) {
-            await config.emailHandler("change-email", {
-              email: user.email,
-              newEmail,
-              url,
-              userId: user.id,
-            });
-          }
-        },
       },
     },
     session: {
@@ -83,6 +73,22 @@ export function createBetterAuth(config: CreateAuthConfig): ReturnType<typeof be
     },
     account: {
       modelName: "auth_account",
+      storeAccountCookie: true,
+    },
+    experimental: {
+      joins: true,
+    },
+    emailVerification: {
+      sendVerificationEmail: async ({ user, url, token }, request) => {
+        if (config.emailHandler) {
+          await config.emailHandler("change-email", {
+            email: user.email,
+            url,
+            token,
+            userId: user.id,
+          });
+        }
+      },
     },
     plugins: [
       emailOTP({
@@ -122,7 +128,7 @@ export function createBetterAuth(config: CreateAuthConfig): ReturnType<typeof be
       lastLoginMethod({
         storeInDatabase: true,
       }),
-      reactStartCookies(),
+      tanstackStartCookies(),
     ],
   });
 }

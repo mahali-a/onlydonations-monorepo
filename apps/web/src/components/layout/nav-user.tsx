@@ -1,7 +1,17 @@
 import { IconDotsVertical, IconLogout, IconUserCircle } from "@tabler/icons-react";
 import * as React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { ThemeToggle } from "../theme/theme-toggle";
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 export function NavUser({
   user,
@@ -11,7 +21,7 @@ export function NavUser({
   user: {
     name: string;
     email: string;
-    avatar: string;
+    avatar?: string;
   };
   onAccountClick?: () => void;
   onLogoutClick?: () => void;
@@ -40,7 +50,14 @@ export function NavUser({
             aria-expanded={isOpen}
             aria-haspopup="true"
           >
-            <img className="h-8 w-8 rounded-lg object-cover" alt={user.name} src={user.avatar} />
+            <Avatar className="h-8 w-8 rounded-lg">
+              {user.avatar && (
+                <AvatarImage className="object-cover" alt={user.name} src={user.avatar} />
+              )}
+              <AvatarFallback className="rounded-lg text-xs">
+                {getInitials(user.name)}
+              </AvatarFallback>
+            </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
               <span className="truncate text-muted-foreground text-xs">{user.email}</span>
@@ -58,11 +75,14 @@ export function NavUser({
               />
               <div className="absolute bottom-full left-0 z-50 mb-1 w-56 rounded-lg bg-popover p-1 shadow-md">
                 <div className="flex items-center gap-2 px-3 py-2 text-left text-sm">
-                  <img
-                    className="h-8 w-8 rounded-lg object-cover"
-                    alt={user.name}
-                    src={user.avatar}
-                  />
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    {user.avatar && (
+                      <AvatarImage className="object-cover" alt={user.name} src={user.avatar} />
+                    )}
+                    <AvatarFallback className="rounded-lg text-xs">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
                     <span className="truncate text-muted-foreground text-xs">{user.email}</span>

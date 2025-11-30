@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import ms from "ms";
 import { z } from "zod";
@@ -84,6 +84,7 @@ function OnboardingPage() {
   const search = Route.useSearch();
   const { step = "name" } = search;
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleProfileSubmit = async (values: {
     firstName: string;
@@ -92,6 +93,8 @@ function OnboardingPage() {
   }) => {
     const result = await updateUserProfileOnServer({ data: values });
     if (result.success) {
+      // Invalidate cache so the loader fetches fresh user data
+      await queryClient.invalidateQueries({ queryKey: ["onboarding-user"] });
       navigate({ to: "/onboarding", search: { step: "phone", next: "/app" } });
     }
     return null;

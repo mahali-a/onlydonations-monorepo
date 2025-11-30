@@ -62,7 +62,7 @@ export function AppSidebar({
   user?: {
     name: string;
     email: string;
-    avatar: string;
+    avatar?: string;
   };
   onAccountClick?: () => void;
   onLogoutClick?: () => void;
@@ -92,7 +92,6 @@ export function AppSidebar({
             user || {
               name: "User",
               email: "user@example.com",
-              avatar: "/placeholder.svg",
             }
           }
         />

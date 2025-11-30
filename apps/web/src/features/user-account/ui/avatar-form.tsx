@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ type AvatarFormProps = {
 
 export function AvatarForm({ currentAvatar, userName = "User" }: AvatarFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(currentAvatar || null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -39,6 +41,7 @@ export function AvatarForm({ currentAvatar, userName = "User" }: AvatarFormProps
           };
         }
 
+        await queryClient.invalidateQueries({ queryKey: ["account-user"] });
         router.invalidate();
         return null;
       },
