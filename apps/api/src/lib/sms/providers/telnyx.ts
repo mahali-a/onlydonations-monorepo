@@ -1,7 +1,7 @@
 import { SMSError } from "../errors";
 import {
   SMSErrorCode,
-  SMSProvider as SMSProviderConst,
+  type SMSProviderConfigs,
   type SMSRequest,
   type SMSResult,
   type TelnyxConfig,
@@ -10,25 +10,13 @@ import type { SMSProvider } from "./provider";
 
 const TELNYX_API_BASE = "https://api.telnyx.com/v2";
 
-/**
- * Map HTTP status codes to SMS error codes
- */
 function mapHttpStatusToErrorCode(status: number) {
-  if (status === 401 || status === 403) {
-    return SMSErrorCode.INVALID_API_KEY;
-  }
-  if (status === 400) {
-    return SMSErrorCode.INVALID_PARAMS;
-  }
-  if (status === 422) {
-    return SMSErrorCode.INVALID_RECIPIENT;
-  }
+  if (status === 401 || status === 403) return SMSErrorCode.INVALID_API_KEY;
+  if (status === 400) return SMSErrorCode.INVALID_PARAMS;
+  if (status === 422) return SMSErrorCode.INVALID_RECIPIENT;
   return SMSErrorCode.NETWORK_ERROR;
 }
 
-/**
- * Telnyx API response type
- */
 type TelnyxSendResponse = {
   data: {
     id: string;
@@ -38,20 +26,11 @@ type TelnyxSendResponse = {
 };
 
 type TelnyxErrorResponse = {
-  errors: Array<{
-    code: string;
-    title: string;
-    detail: string;
-  }>;
+  errors: Array<{ code: string; title: string; detail: string }>;
 };
 
-/**
- * Telnyx SMS Provider
- *
- * Sends SMS via Telnyx API (international provider)
- */
 export class TelnyxProvider implements SMSProvider {
-  readonly type = SMSProviderConst.TELNYX;
+  readonly type = "telnyx" as const;
 
   constructor(private readonly config: TelnyxConfig) {}
 
@@ -81,12 +60,9 @@ export class TelnyxProvider implements SMSProvider {
           detail: errorDetail,
         });
 
-        // Map HTTP status to error codes
-        const errorCode = mapHttpStatusToErrorCode(response.status);
-
         return {
           success: false,
-          code: errorCode,
+          code: mapHttpStatusToErrorCode(response.status),
           message: errorDetail,
           provider: this.type,
           retryable: response.status >= 500,
@@ -99,14 +75,11 @@ export class TelnyxProvider implements SMSProvider {
         success: true,
         id: data.data.id,
         provider: this.type,
-        cost: parseFloat(data.data.cost.amount),
+        cost: Number.parseFloat(data.data.cost.amount),
       };
     } catch (error) {
       const smsError = SMSError.fromUnknown(error, this.type);
-      console.error("[Telnyx] Request failed", {
-        to: request.to,
-        error: smsError.message,
-      });
+      console.error("[Telnyx] Request failed", { to: request.to, error: smsError.message });
 
       return {
         success: false,
@@ -117,4 +90,9 @@ export class TelnyxProvider implements SMSProvider {
       };
     }
   }
+}
+
+export function createTelnyxProvider(configs: SMSProviderConfigs): SMSProvider | null {
+  if (!configs.telnyx) return null;
+  return new TelnyxProvider(configs.telnyx);
 }

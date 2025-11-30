@@ -1,8 +1,5 @@
 import type { SMSErrorCodeType, SMSProviderType } from "./types";
 
-/**
- * Non-retryable error codes - these indicate permanent failures
- */
 const NON_RETRYABLE_CODES: SMSErrorCodeType[] = [
   "INVALID_CONFIG",
   "PROVIDER_NOT_CONFIGURED",
@@ -15,9 +12,6 @@ const NON_RETRYABLE_CODES: SMSErrorCodeType[] = [
   "INSUFFICIENT_BALANCE",
 ];
 
-/**
- * SMS-specific error class
- */
 export class SMSError extends Error {
   readonly code: SMSErrorCodeType;
   readonly provider?: SMSProviderType;
@@ -31,14 +25,10 @@ export class SMSError extends Error {
     this.retryable = !NON_RETRYABLE_CODES.includes(code);
   }
 
-  /**
-   * Create error from unknown catch
-   */
   static fromUnknown(error: unknown, provider?: SMSProviderType): SMSError {
     if (error instanceof SMSError) {
       return error;
     }
-
     const message = error instanceof Error ? error.message : "Unknown error";
     return new SMSError("UNKNOWN", message, provider);
   }

@@ -1,167 +1,87 @@
-import { PiloProvider } from "./providers/pilo";
 import type { SMSProvider } from "./providers/provider";
-import { TelnyxProvider } from "./providers/telnyx";
-import { matchProvider, parseRoutingRules } from "./router";
+import { createProvider } from "./registry";
+import { matchProviderChain } from "./router";
 import {
-  type RoutingRule,
-  type SMSConfig,
+  type SMSClientConfig,
   SMSErrorCode,
-  SMSProvider as SMSProviderConst,
   type SMSProviderType,
   type SMSRequest,
   type SMSResult,
 } from "./types";
 
-/**
- * SMS Client
- *
- * Main entry point for sending SMS messages. Handles:
- * - Provider routing based on phone number prefix
- * - Automatic fallback on failure
- * - Provider instance caching
- */
 export class SMSClient {
-  private readonly providers: Map<SMSProviderType, SMSProvider>;
-  private readonly rules: RoutingRule[];
-  private readonly fallbackProvider: SMSProviderType;
+  private readonly providers = new Map<SMSProviderType, SMSProvider>();
+  private readonly config: SMSClientConfig;
 
-  constructor(config: SMSConfig) {
-    this.rules = parseRoutingRules(config.routes);
-    this.fallbackProvider = config.fallbackProvider;
-    this.providers = this.initializeProviders(config);
+  constructor(config: SMSClientConfig) {
+    this.config = config;
   }
 
-  /**
-   * Initialize provider instances (cached for reuse)
-   */
-  private initializeProviders(config: SMSConfig): Map<SMSProviderType, SMSProvider> {
-    const providers = new Map<SMSProviderType, SMSProvider>();
-
-    if (config.pilo) {
-      providers.set(SMSProviderConst.PILO, new PiloProvider(config.pilo));
+  private async getProvider(type: SMSProviderType): Promise<SMSProvider | null> {
+    if (this.providers.has(type)) {
+      return this.providers.get(type) ?? null;
     }
 
-    if (config.telnyx) {
-      providers.set(SMSProviderConst.TELNYX, new TelnyxProvider(config.telnyx));
+    const provider = await createProvider(type, this.config.providers);
+    if (provider) {
+      this.providers.set(type, provider);
     }
 
-    return providers;
+    return provider;
   }
 
-  /**
-   * Get provider instance by type
-   */
-  private getProvider(type: SMSProviderType): SMSProvider | undefined {
-    return this.providers.get(type);
-  }
-
-  /**
-   * Send an SMS message
-   *
-   * Routes to appropriate provider based on phone number prefix,
-   * with automatic fallback on failure.
-   */
   async send(request: SMSRequest): Promise<SMSResult> {
-    // Determine primary provider
-    const primaryType = matchProvider(request.to, this.rules) ?? this.fallbackProvider;
-    const primary = this.getProvider(primaryType);
+    const chain = matchProviderChain(request.to, this.config.routing);
+    let lastResult: SMSResult | null = null;
 
-    if (!primary) {
-      console.error("[SMSClient] Primary provider not configured", {
-        provider: primaryType,
-        to: request.to,
-      });
-      return {
-        success: false,
-        code: SMSErrorCode.PROVIDER_NOT_CONFIGURED,
-        message: `Provider '${primaryType}' is not configured`,
-        provider: primaryType,
-        retryable: false,
-      };
-    }
+    for (const providerType of chain) {
+      const provider = await this.getProvider(providerType);
 
-    // Try primary provider
-    const result = await primary.send(request);
+      if (!provider) {
+        console.error(`[SMSClient] Provider '${providerType}' not configured, skipping`);
+        continue;
+      }
 
-    if (result.success) {
-      return result;
-    }
+      const result = await provider.send(request);
 
-    // If primary failed and is retryable, try fallback
-    if (result.retryable && this.fallbackProvider !== primaryType) {
-      return this.tryFallback(request, primaryType);
-    }
+      if (result.success) {
+        return result;
+      }
 
-    return result;
-  }
+      lastResult = result;
 
-  /**
-   * Try fallback provider after primary failure
-   */
-  private async tryFallback(
-    request: SMSRequest,
-    failedProvider: SMSProviderType,
-  ): Promise<SMSResult> {
-    const fallback = this.getProvider(this.fallbackProvider);
+      if (!result.retryable) {
+        return result;
+      }
 
-    if (!fallback) {
-      console.error("[SMSClient] Fallback provider not configured", {
-        fallback: this.fallbackProvider,
-        to: request.to,
-      });
-      return {
-        success: false,
-        code: SMSErrorCode.PROVIDER_NOT_CONFIGURED,
-        message: `Fallback provider '${this.fallbackProvider}' is not configured`,
-        provider: this.fallbackProvider,
-        retryable: false,
-      };
-    }
-
-    const result = await fallback.send(request);
-
-    if (!result.success) {
-      console.error("[SMSClient] Fallback also failed", {
-        primary: failedProvider,
-        fallback: this.fallbackProvider,
+      console.error(`[SMSClient] Provider '${providerType}' failed, trying next in chain`, {
         to: request.to,
         code: result.code,
+        message: result.message,
       });
     }
 
-    return result;
-  }
+    const fallbackType = this.config.routing.fallback;
+    if (!chain.includes(fallbackType)) {
+      const fallback = await this.getProvider(fallbackType);
 
-  /**
-   * Send a verification code SMS
-   */
-  async sendVerification(phone: string, code: string): Promise<SMSResult> {
-    return this.send({
-      to: phone,
-      message: `Your verification code is: ${code}`,
-    });
-  }
-
-  /**
-   * Check balance for a specific provider
-   */
-  async checkBalance(providerType: SMSProviderType): Promise<{
-    balance: number;
-    units: number;
-  } | null> {
-    const provider = this.getProvider(providerType);
-
-    if (!provider?.checkBalance) {
-      return null;
+      if (fallback) {
+        console.error(`[SMSClient] Chain exhausted, trying global fallback '${fallbackType}'`);
+        return fallback.send(request);
+      }
     }
 
-    return provider.checkBalance();
+    return (
+      lastResult ?? {
+        success: false,
+        code: SMSErrorCode.PROVIDER_NOT_CONFIGURED,
+        message: "No providers available for this destination",
+        retryable: false,
+      }
+    );
   }
 }
 
-/**
- * Create an SMS client instance
- */
-export function createSMSClient(config: SMSConfig): SMSClient {
+export function createSMSClient(config: SMSClientConfig): SMSClient {
   return new SMSClient(config);
 }

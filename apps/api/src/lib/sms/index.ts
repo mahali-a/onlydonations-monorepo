@@ -1,14 +1,20 @@
 export { createSMSClient, SMSClient } from "./client";
+export { getSmsRoutingConfig, smsRoutingConfig } from "./config";
 export { SMSError } from "./errors";
+export { createProvider, getRegisteredProviders, isProviderRegistered } from "./registry";
 export {
-  type BalanceInfo,
   type PiloConfig,
-  type SMSConfig,
+  type PreludeConfig,
+  SMS_PROVIDERS,
+  type SMSClientConfig,
   SMSErrorCode,
   type SMSErrorCodeType,
-  SMSProvider,
+  type SMSProviderConfigs,
   type SMSProviderType,
   type SMSRequest,
   type SMSResult,
+  type SMSRoutingConfig,
+  smsRoutingConfigSchema,
   type TelnyxConfig,
+  type ZendConfig,
 } from "./types";

@@ -1,11 +1,10 @@
 import { SMSError } from "../errors";
 import {
-  type BalanceInfo,
   type PiloConfig,
   PiloResponseCode,
   SMSErrorCode,
   type SMSErrorCodeType,
-  SMSProvider as SMSProviderConst,
+  type SMSProviderConfigs,
   type SMSRequest,
   type SMSResult,
 } from "../types";
@@ -13,9 +12,6 @@ import type { SMSProvider } from "./provider";
 
 const PILO_API_BASE = "https://api.pilosms.com/v1";
 
-/**
- * Pilo API response types
- */
 type PiloSendResponse = {
   status: number;
   detail: string;
@@ -24,19 +20,6 @@ type PiloSendResponse = {
   duplicates: { count: number; list: unknown[] };
 };
 
-type PiloBalanceResponse = {
-  balance: number;
-  units: number;
-  last_topup: {
-    date: string;
-    amount: string;
-    status: string;
-  };
-};
-
-/**
- * Map Pilo response codes to our error codes
- */
 function mapPiloErrorCode(code: number): SMSErrorCodeType {
   switch (code) {
     case PiloResponseCode.MISSING_PARAMS:
@@ -56,13 +39,8 @@ function mapPiloErrorCode(code: number): SMSErrorCodeType {
   }
 }
 
-/**
- * Pilo SMS Provider
- *
- * Sends SMS via PiloSMS API (Ghana-focused provider)
- */
 export class PiloProvider implements SMSProvider {
-  readonly type = SMSProviderConst.PILO;
+  readonly type = "pilo" as const;
 
   constructor(private readonly config: PiloConfig) {}
 
@@ -71,7 +49,7 @@ export class PiloProvider implements SMSProvider {
       const formData = new FormData();
       formData.append("sender", this.config.senderId);
       formData.append("message", request.message);
-      formData.append("receipients", request.to); // Pilo's typo
+      formData.append("receipients", request.to);
 
       const response = await fetch(`${PILO_API_BASE}/send-message?apikey=${this.config.apiKey}`, {
         method: "POST",
@@ -79,10 +57,7 @@ export class PiloProvider implements SMSProvider {
       });
 
       if (!response.ok) {
-        console.error("[PiloSMS] HTTP error", {
-          status: response.status,
-          to: request.to,
-        });
+        console.error("[PiloSMS] HTTP error", { status: response.status, to: request.to });
         return {
           success: false,
           code: SMSErrorCode.NETWORK_ERROR,
@@ -116,14 +91,11 @@ export class PiloProvider implements SMSProvider {
         code: errorCode,
         message: data.detail,
         provider: this.type,
-        retryable: false, // Pilo errors are generally not retryable
+        retryable: false,
       };
     } catch (error) {
       const smsError = SMSError.fromUnknown(error, this.type);
-      console.error("[PiloSMS] Request failed", {
-        to: request.to,
-        error: smsError.message,
-      });
+      console.error("[PiloSMS] Request failed", { to: request.to, error: smsError.message });
 
       return {
         success: false,
@@ -134,26 +106,9 @@ export class PiloProvider implements SMSProvider {
       };
     }
   }
+}
 
-  async checkBalance(): Promise<BalanceInfo> {
-    const response = await fetch(`${PILO_API_BASE}/check-balance?apikey=${this.config.apiKey}`);
-
-    if (!response.ok) {
-      throw new SMSError(SMSErrorCode.NETWORK_ERROR, `HTTP ${response.status}`, this.type);
-    }
-
-    const data = (await response.json()) as PiloBalanceResponse;
-
-    return {
-      balance: data.balance,
-      units: data.units,
-      lastTopup: data.last_topup
-        ? {
-            date: data.last_topup.date,
-            amount: data.last_topup.amount,
-            status: data.last_topup.status,
-          }
-        : undefined,
-    };
-  }
+export function createPiloProvider(configs: SMSProviderConfigs): SMSProvider | null {
+  if (!configs.pilo) return null;
+  return new PiloProvider(configs.pilo);
 }

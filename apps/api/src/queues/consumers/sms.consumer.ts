@@ -3,6 +3,7 @@ import type { SMSQueueMessage } from "@repo/core/queues/sms-schema";
 import { smsQueueDataSchema } from "@repo/core/queues/sms-schema";
 import type { ConsumerResult, QueueConsumer } from "@repo/core/queues/types";
 import { createSMSClient } from "@/lib/sms/client";
+import { getSmsRoutingConfig } from "@/lib/sms/config";
 
 export const smsConsumer: QueueConsumer<SMSQueueMessage> = async (
   message,
@@ -14,15 +15,18 @@ export const smsConsumer: QueueConsumer<SMSQueueMessage> = async (
     const data = smsQueueDataSchema.parse(message.body.data);
 
     const smsClient = createSMSClient({
-      routes: "default:pilo",
-      fallbackProvider: "pilo",
-      pilo: {
-        apiKey: env.PILO_SMS_API_KEY,
-        senderId: env.PILO_SMS_SENDER_ID,
-      },
-      telnyx: {
-        apiKey: env.TELNYX_API_KEY,
-        fromNumber: env.TELNYX_FROM_NUMBER,
+      routing: getSmsRoutingConfig(),
+      providers: {
+        zend: { apiKey: env.ZEND_API_KEY },
+        pilo: {
+          apiKey: env.PILO_SMS_API_KEY,
+          senderId: env.PILO_SMS_SENDER_ID,
+        },
+        telnyx: {
+          apiKey: env.TELNYX_API_KEY,
+          fromNumber: env.TELNYX_FROM_NUMBER,
+        },
+        prelude: { apiToken: env.PRELUDE_API_TOKEN },
       },
     });
 

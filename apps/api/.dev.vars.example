@@ -11,11 +11,19 @@ PAYSTACK_SECRET_KEY=sk_test_xxx
 # AI
 OPENAI_API_KEY=sk-xxx
 
-# SMS (optional - configure one provider)
+# SMS Provider Configuration
+# Routing is configured in: apps/api/src/lib/sms/config.ts
+# Default: Ghana (+233) → Zend|Pilo, Canada (+1) → Telnyx, Others → Prelude
+
+# Ghana providers
+ZEND_API_KEY=
 PILO_SMS_API_KEY=
 PILO_SMS_SENDER_ID=
+
+# International providers
 TELNYX_API_KEY=
 TELNYX_FROM_NUMBER=
+PRELUDE_API_TOKEN=
 
 # KYC
 SMILE_API_KEY=your-smile-api-key

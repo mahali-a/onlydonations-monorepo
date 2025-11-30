@@ -27,6 +27,7 @@
     "wrangler": "^4.51.0"
   },
   "dependencies": {
+    "@prelude.so/sdk": "^0.9.0",
     "@repo/core": "workspace:*",
     "@repo/email": "workspace:*",
     "hono": "^4.10.7",

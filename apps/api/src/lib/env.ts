@@ -9,11 +9,15 @@ export const apiEnvSchema = z.object({
   PAYSTACK_SECRET_KEY: z.string(),
   OPENAI_API_KEY: z.string(),
   RESEND_API_KEY: z.string(),
-  PILO_SMS_API_KEY: z.string().min(1),
-  PILO_SMS_SENDER_ID: z.string().min(1),
   SMILE_API_KEY: z.string().min(1),
-  TELNYX_API_KEY: z.string().min(1),
-  TELNYX_FROM_NUMBER: z.string().min(1),
+
+  // SMS Provider Configuration
+  PILO_SMS_API_KEY: z.string().optional(),
+  PILO_SMS_SENDER_ID: z.string().optional(),
+  ZEND_API_KEY: z.string().optional(),
+  TELNYX_API_KEY: z.string().optional(),
+  TELNYX_FROM_NUMBER: z.string().optional(),
+  PRELUDE_API_TOKEN: z.string().optional(),
 });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;
