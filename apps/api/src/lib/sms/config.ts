@@ -6,7 +6,7 @@ export const smsRoutingConfig: SMSRoutingConfig = {
     "+1": ["telnyx"],
     default: ["prelude"],
   },
-  fallback: "telnyx",
+  fallback: "prelude",
 };
 
 export function getSmsRoutingConfig(): SMSRoutingConfig {

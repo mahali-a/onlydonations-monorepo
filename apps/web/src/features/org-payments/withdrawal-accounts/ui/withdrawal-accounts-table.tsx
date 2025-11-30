@@ -3,7 +3,6 @@ import { useParams, useRouter } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import {
@@ -38,17 +37,6 @@ const getAccountTypeLabel = (accountType: string) => {
   }
 };
 
-const getAccountTypeBadgeVariant = (accountType: string): "default" | "secondary" | "outline" => {
-  switch (accountType) {
-    case "mobile_money":
-      return "default";
-    case "ghipss":
-      return "secondary";
-    default:
-      return "outline";
-  }
-};
-
 const maskAccountNumber = (accountNumber: string) => {
   if (accountNumber.length <= 4) return accountNumber;
   return "*".repeat(accountNumber.length - 4) + accountNumber.slice(-4);
@@ -68,11 +56,7 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
     {
       accessorKey: "accountType",
       header: "Account Type",
-      cell: ({ row }) => (
-        <Badge variant={getAccountTypeBadgeVariant(row.getValue("accountType") as string)}>
-          {getAccountTypeLabel(row.getValue("accountType") as string)}
-        </Badge>
-      ),
+      cell: ({ row }) => <p>{getAccountTypeLabel(row.getValue("accountType") as string)}</p>,
       meta: {
         className: "min-w-[130px] sm:min-w-[150px]",
       },
@@ -139,7 +123,7 @@ export function WithdrawalAccountsTable({ accounts }: WithdrawalAccountsTablePro
   ];
 
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div className="overflow-x-auto">
       <DataTable columns={columns} data={accounts} emptyMessage="No withdrawal accounts found." />
     </div>
   );

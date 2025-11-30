@@ -1,10 +1,11 @@
-import { useRouteContext } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { accountUserQueryOptions } from "./server";
 import { AvatarForm } from "./ui/avatar-form";
 import { EmailForm } from "./ui/email-form";
 import { NameForm } from "./ui/name-form";
 
 export function UserAccountComponent() {
-  const { user } = useRouteContext({ strict: false });
+  const { data: user } = useSuspenseQuery(accountUserQueryOptions);
 
   return (
     <div className="space-y-6">

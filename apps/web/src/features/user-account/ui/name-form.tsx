@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ type NameFormProps = {
 };
 
 export function NameForm({ defaultName = "" }: NameFormProps) {
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm({
     defaultValues: {
@@ -31,7 +32,8 @@ export function NameForm({ defaultName = "" }: NameFormProps) {
           };
         }
 
-        router.invalidate();
+        await queryClient.invalidateQueries({ queryKey: ["account-user"] });
+        toast.success("Name updated successfully");
         return null;
       },
     },

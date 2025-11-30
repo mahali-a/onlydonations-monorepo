@@ -1,7 +1,16 @@
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
+import { Loader2 } from "lucide-react";
 import * as TanstackQuery from "./integrations/tanstack-query/root-provider";
 import { routeTree } from "./routeTree.gen";
+
+function DefaultPendingComponent() {
+  return (
+    <div className="flex h-full min-h-32 w-full items-center justify-center">
+      <Loader2 className="size-6 animate-spin text-muted-foreground" />
+    </div>
+  );
+}
 
 export const getRouter = () => {
   const rqContext = TanstackQuery.getContext();
@@ -12,6 +21,8 @@ export const getRouter = () => {
     defaultPreload: "intent",
     defaultPreloadDelay: 0,
     defaultPreloadStaleTime: 30 * 1000,
+    defaultPendingComponent: DefaultPendingComponent,
+    defaultPendingMinMs: 100,
     Wrap: (props: { children: React.ReactNode }) => {
       return <TanstackQuery.Provider {...rqContext}>{props.children}</TanstackQuery.Provider>;
     },

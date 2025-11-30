@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
   Outlet,
@@ -6,11 +6,12 @@ import {
   useLocation,
   useNavigate,
 } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 import ms from "ms";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { retrieveAccountUserFromServer } from "@/features/user-account/server";
+import { accountUserQueryOptions } from "@/features/user-account/server";
 import { authClient } from "@/lib/auth-client";
 import { logger } from "@/lib/logger";
 import { promiseHash } from "@/lib/promise-hash";
@@ -28,20 +29,19 @@ const organizationQueryOptions = (orgId: string) =>
     staleTime: ms("30 minutes"),
   });
 
-const userQueryOptions = queryOptions({
-  queryKey: ["account-user"],
-  queryFn: () => retrieveAccountUserFromServer(),
-  staleTime: ms("30 minutes"),
-});
-
 export const Route = createFileRoute("/o/$orgId")({
+  pendingComponent: () => (
+    <div className="flex h-screen w-full items-center justify-center">
+      <Loader2 className="size-8 animate-spin text-muted-foreground" />
+    </div>
+  ),
   beforeLoad: async ({ params, context }) => {
     try {
       const { organizationData, user } = await promiseHash({
         organizationData: context.queryClient.ensureQueryData(
           organizationQueryOptions(params.orgId),
         ),
-        user: context.queryClient.ensureQueryData(userQueryOptions),
+        user: context.queryClient.ensureQueryData(accountUserQueryOptions),
       });
 
       await updateActiveOrganizationOnServer({
@@ -65,7 +65,9 @@ export const Route = createFileRoute("/o/$orgId")({
   },
   loader: async ({ context, params }) => {
     if (!context.organization) {
-      orgLogger.warn("Organization not found or access denied", { orgId: params.orgId });
+      orgLogger.warn("Organization not found or access denied", {
+        orgId: params.orgId,
+      });
       throw redirect({ to: "/" });
     }
 
@@ -78,7 +80,7 @@ function OrganizationLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { orgId } = Route.useParams();
-  const { user } = Route.useRouteContext();
+  const { data: user } = useSuspenseQuery(accountUserQueryOptions);
 
   const isPreviewPage = location.pathname.includes("/campaign-previews/");
 
@@ -122,7 +124,7 @@ function OrganizationLayout() {
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
+          <div className="@container/main flex flex-1 flex-col gap-2 sm:px-8 xl:px-0">
             <Outlet />
           </div>
         </div>

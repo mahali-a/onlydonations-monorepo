@@ -240,7 +240,7 @@ export function PublicNavbar({ settings }: PublicNavbarProps) {
             {/* Auth buttons */}
             <div className="flex items-center gap-3">
               {isLoading ? (
-                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-8 w-32" />
               ) : session && orgId ? (
                 <>
                   <DropdownMenu>

@@ -8,7 +8,7 @@ export function createAuthSMSHandler(queue: SMSQueueProducer) {
 
     await queue.send({
       to: phoneNumber,
-      message: `Your verification code is: ${code}. It expires in 15 minutes.`,
+      message: `Your onlydonations verification code is: ${code}. It expires in 15 minutes.`,
       metadata: {
         type: "verification",
       },

@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ type EmailFormProps = {
 };
 
 export function EmailForm({ defaultEmail = "" }: EmailFormProps) {
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm({
     defaultValues: {
@@ -31,7 +32,8 @@ export function EmailForm({ defaultEmail = "" }: EmailFormProps) {
           };
         }
 
-        router.invalidate();
+        await queryClient.invalidateQueries({ queryKey: ["account-user"] });
+        toast.success("Verification email sent");
         return null;
       },
     },
