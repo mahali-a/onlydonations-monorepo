@@ -13,7 +13,7 @@ export function CTABlock({ block }: { block: CTABlockType }) {
 
   return (
     <section className={cn("py-12 md:py-16", getBgColorClass(block.backgroundColor))}>
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         <div className={cn("flex flex-col gap-6 max-w-3xl mx-auto", alignmentClass)}>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{block.title}</h2>
           {block.description && (

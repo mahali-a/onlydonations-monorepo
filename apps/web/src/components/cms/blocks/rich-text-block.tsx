@@ -30,7 +30,7 @@ export function RichTextBlock({ block }: { block: RichTextBlockType }) {
         } as React.CSSProperties
       }
     >
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         <div className={cn(maxWidthClass, alignmentClass)}>
           <RichText content={block.content} />
         </div>

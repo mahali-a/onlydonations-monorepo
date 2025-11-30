@@ -50,7 +50,7 @@ export function GalleryBlock({
 
   return (
     <section className="py-12 md:py-16">
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         {(block.title || block.description) && (
           <div className="text-center mb-10">
             {block.title && (

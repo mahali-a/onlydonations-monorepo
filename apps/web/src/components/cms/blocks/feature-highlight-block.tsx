@@ -29,7 +29,7 @@ export function FeatureHighlightBlock({
 
   return (
     <section className={cn("py-12 md:py-16", getBgColorClass(block.backgroundColor))}>
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         {(block.title || block.description) && (
           <div className="text-center mb-10">
             {block.title && (

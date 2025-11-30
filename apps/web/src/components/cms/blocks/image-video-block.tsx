@@ -48,7 +48,7 @@ export function ImageVideoBlock({
         } as React.CSSProperties
       }
     >
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         <figure className={cn(widthClass, alignmentClass)}>
           {block.mediaType === "image" && imageUrl && (
             <>

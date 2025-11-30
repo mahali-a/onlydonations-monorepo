@@ -14,7 +14,7 @@ export function ThreeColumnCardBlock({ block }: { block: ThreeColumnCardBlockTyp
 
   return (
     <section className={cn("py-12 md:py-16", getBgColorClass(block.backgroundColor))}>
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         {(block.title || block.subtitle) && (
           <div className="text-center mb-10">
             {block.title && (

@@ -51,7 +51,7 @@ export function ContactFormBlock({ block, contactEmail }: ContactFormBlockProps)
   if (submitStatus === "success") {
     return (
       <section className="py-12 md:py-16">
-        <div className="container px-4">
+        <div className="container px-4 mx-auto">
           <div className="max-w-2xl mx-auto">
             <div className="bg-green-50 dark:bg-green-950 text-green-800 dark:text-green-200 p-6 rounded-lg text-center">
               <p className="text-lg font-medium">{block.successMessage}</p>
@@ -64,7 +64,7 @@ export function ContactFormBlock({ block, contactEmail }: ContactFormBlockProps)
 
   return (
     <section className="py-12 md:py-16">
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           {(block.title || block.description) && (

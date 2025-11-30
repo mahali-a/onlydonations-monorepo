@@ -10,7 +10,7 @@ function BlocksShowcasePage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="bg-muted/30 py-12 border-b">
-        <div className="container px-4">
+        <div className="container px-4 mx-auto">
           <h1 className="text-4xl font-bold tracking-tight mb-4">CMS Block Showcase</h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
             A comprehensive gallery of all available CMS blocks. Use this page to verify block
@@ -19,7 +19,7 @@ function BlocksShowcasePage() {
         </div>
       </div>
 
-      <div className="container px-4 py-12 space-y-20">
+      <div className="container px-4 mx-auto py-12 space-y-20">
         {DEMO_BLOCKS.map((demo) => (
           <div
             key={demo.block.blockType}

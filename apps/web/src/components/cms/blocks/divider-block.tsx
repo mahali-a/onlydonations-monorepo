@@ -29,7 +29,7 @@ export function DividerBlock({ block }: { block: DividerBlockType }) {
         } as React.CSSProperties
       }
     >
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         <hr className={cn(styleClass, colorClass)} />
       </div>
     </div>

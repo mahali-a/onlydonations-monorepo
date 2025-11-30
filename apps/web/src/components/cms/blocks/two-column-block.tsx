@@ -57,7 +57,7 @@ export function TwoColumnBlock({
 
   return (
     <section className={cn("py-12 md:py-16", getBgColorClass(block.backgroundColor))}>
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         <div
           className={cn(
             "grid gap-8 items-center",

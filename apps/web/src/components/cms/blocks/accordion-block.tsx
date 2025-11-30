@@ -30,7 +30,7 @@ export function AccordionBlock({
 
   return (
     <section className={cn("py-12 md:py-16", getBgColorClass(block.backgroundColor))}>
-      <div className="container px-4">
+      <div className="container px-4 mx-auto">
         <div className={cn(maxWidthClass, "mx-auto")}>
           {(block.title || block.description) && (
             <div className="text-center mb-8">
