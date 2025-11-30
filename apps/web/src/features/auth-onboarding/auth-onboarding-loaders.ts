@@ -65,28 +65,17 @@ export const retrieveOnboardingUserFromServer = createServerFn({ method: "GET" }
 
     const stepFromUser = getNextOnboardingStep(user);
 
+    // Step 1: Name is required first
     if (stepFromUser === "name") {
       return { user, requiredStep: "name" as OnboardingStep };
     }
 
+    // Step 2: Phone verification is required after name
     if (stepFromUser === "phone") {
-      try {
-        // @ts-expect-error - Better Auth type inference limitation
-        const organizations = await auth.api.listOrganizations({
-          headers: req.headers,
-        });
-
-        if (organizations && organizations.length > 0) {
-          return { user, requiredStep: null };
-        }
-
-        return { user, requiredStep: "phone" as OnboardingStep };
-      } catch (error) {
-        onboardingLogger.error("Failed to fetch organizations", error);
-        return { user, requiredStep: "phone" as OnboardingStep };
-      }
+      return { user, requiredStep: "phone" as OnboardingStep };
     }
 
+    // Step 3: Check if user has any organizations
     try {
       // @ts-expect-error - Better Auth type inference limitation
       const organizations = await auth.api.listOrganizations({

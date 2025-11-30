@@ -23,14 +23,17 @@ type VerifyFormProps = {
 export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps) {
   const [timeLeft, setTimeLeft] = useState(600);
   const [isResending, setIsResending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const form = useForm({
     defaultValues: defaultVerifyForm,
     validators: {
       onSubmitAsync: async ({ value }) => {
+        setIsVerifying(true);
         const result = await onSubmit(value);
 
         if (result?.error) {
+          setIsVerifying(false);
           return {
             fields: {
               code: result.error,
@@ -38,6 +41,7 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
           };
         }
 
+        // Keep isVerifying true - navigation will unmount the component
         return null;
       },
     },
@@ -134,13 +138,14 @@ export function VerifyForm({ phoneNumber, onSubmit, onResend }: VerifyFormProps)
         >
           {([canSubmit, isSubmitting, code]) => {
             const codeLength = typeof code === "string" ? code.length : 0;
+            const showLoading = isSubmitting || isVerifying;
             return (
               <Button
                 type="submit"
                 className="w-full"
-                disabled={Boolean(!canSubmit || isSubmitting || codeLength !== 6)}
+                disabled={Boolean(!canSubmit || showLoading || codeLength !== 6)}
               >
-                {isSubmitting ? "Verifying..." : "Verify"}
+                {showLoading ? "Verifying..." : "Verify"}
               </Button>
             );
           }}
