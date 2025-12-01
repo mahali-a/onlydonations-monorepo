@@ -31,7 +31,7 @@ function BlocksShowcasePage() {
                 {demo.block.blockType}
               </span>
             </div>
-            <div className="bg-white mx-auto dark:bg-black">
+            <div className="bg-white mx-auto">
               <RenderBlocks blocks={[demo.block]} cmsBaseUrl="" />
             </div>
           </div>

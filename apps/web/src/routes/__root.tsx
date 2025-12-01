@@ -169,7 +169,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   var defaultTheme = 'system';
                   
                   var pathParts = window.location.pathname.split('/');
-                  var hasOrgId = pathParts.length > 2 && pathParts[1] === 'app' && pathParts[2];
+                  var hasOrgId = pathParts.length > 2 && pathParts[1] === 'o' && pathParts[2];
                   
                   if (!hasOrgId) {
                     document.documentElement.classList.add('light');

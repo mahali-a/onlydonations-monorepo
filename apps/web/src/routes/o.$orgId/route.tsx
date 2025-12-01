@@ -124,7 +124,7 @@ function OrganizationLayout() {
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2 sm:px-8 xl:px-0">
+          <div className="@container/main flex flex-1 flex-col gap-2 px-8 xl:px-4">
             <Outlet />
           </div>
         </div>
