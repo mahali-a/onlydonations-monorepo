@@ -86,7 +86,7 @@ export function NewCampaignDialog({ categories }: NewCampaignDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button data-track="create_campaign_dialog_opened" data-organization-id={params.orgId}>
           <Plus className="h-4 w-4" />
           New Campaign
         </Button>
@@ -140,7 +140,12 @@ export function NewCampaignDialog({ categories }: NewCampaignDialogProps) {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={mutation.isPending}>
+            <Button
+              type="submit"
+              disabled={mutation.isPending}
+              data-track="campaign_created"
+              data-organization-id={params.orgId}
+            >
               {mutation.isPending ? "Creating..." : "Create Campaign"}
             </Button>
           </DialogFooter>

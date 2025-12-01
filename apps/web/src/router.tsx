@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/tanstackstart-react";
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { Loader2 } from "lucide-react";
@@ -32,6 +33,23 @@ export const getRouter = () => {
     router,
     queryClient: rqContext.queryClient,
   });
+
+  const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+  if (!router.isServer && sentryDsn && import.meta.env.PROD) {
+    Sentry.init({
+      dsn: sentryDsn,
+      environment: import.meta.env.MODE,
+      enableLogs: true,
+      sendDefaultPii: true,
+      integrations: [
+        Sentry.tanstackRouterBrowserTracingIntegration(router),
+        Sentry.replayIntegration(),
+      ],
+      tracesSampleRate: 1.0,
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
+    });
+  }
 
   return router;
 };

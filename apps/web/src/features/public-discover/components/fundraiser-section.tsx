@@ -24,6 +24,9 @@ export function FundraiserSection({ title, campaigns, categorySlug }: Fundraiser
             variant="ghost"
             className="text-primary hover:text-primary/80 hover:bg-transparent p-0 font-semibold"
             asChild
+            data-track="see_all_category_clicked"
+            data-category-slug={categorySlug}
+            data-section-title={title}
           >
             <Link to="/discover/$category" params={{ category: categorySlug }}>
               See all <ArrowRight className="ml-2 h-4 w-4" />
@@ -33,7 +36,18 @@ export function FundraiserSection({ title, campaigns, categorySlug }: Fundraiser
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {campaigns.map((campaign) => (
-          <Link key={campaign.id} to="/f/$slug" params={{ slug: campaign.slug }} className="block">
+          <Link
+            key={campaign.id}
+            to="/f/$slug"
+            params={{ slug: campaign.slug }}
+            className="block"
+            data-track="campaign_card_clicked"
+            data-campaign-id={campaign.id}
+            data-campaign-slug={campaign.slug}
+            data-campaign-title={campaign.title}
+            data-category={campaign.categoryName}
+            data-source="discover"
+          >
             <FundraiserCard
               image={campaign.coverImage || "/placeholder-campaign.jpg"}
               title={campaign.title}

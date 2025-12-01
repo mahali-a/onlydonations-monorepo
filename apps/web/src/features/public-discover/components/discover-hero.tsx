@@ -17,6 +17,8 @@ export function DiscoverHero() {
             <Button
               size="lg"
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-full px-8"
+              data-track="start_fundraiser_clicked"
+              data-source="discover_hero"
             >
               Start a fundraiser
             </Button>

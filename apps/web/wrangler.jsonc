@@ -4,11 +4,15 @@
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "./src/server.ts",
+  "upload_source_maps": true,
   "observability": {
     "enabled": true,
     "traces": {
       "enabled": true
     }
+  },
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
   },
 
   // ============================================
@@ -30,7 +34,9 @@
     "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
     "SMILE_PARTNER_ID": "7634",
     "SMILE_ENVIRONMENT": "sandbox",
-    "SMILE_CALLBACK_URL": "https://api.stg.onlydonations.com/webhooks/smile"
+    "SMILE_CALLBACK_URL": "https://api.stg.onlydonations.com/webhooks/smile",
+    "OPENPANEL_CLIENT_ID": "f55b21ad-1d40-4007-8156-b75293c324bf",
+    "VITE_SENTRY_DSN": ""
   },
   "r2_buckets": [
     {
@@ -67,6 +73,9 @@
           "custom_domain": true
         }
       ],
+      "version_metadata": {
+        "binding": "CF_VERSION_METADATA"
+      },
       "d1_databases": [
         {
           "binding": "DB",
@@ -82,7 +91,9 @@
         "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
         "SMILE_PARTNER_ID": "7634",
         "SMILE_ENVIRONMENT": "sandbox",
-        "SMILE_CALLBACK_URL": "https://api.stg.onlydonations.com/webhooks/smile"
+        "SMILE_CALLBACK_URL": "https://api.stg.onlydonations.com/webhooks/smile",
+        "OPENPANEL_CLIENT_ID": "f55b21ad-1d40-4007-8156-b75293c324bf",
+        "VITE_SENTRY_DSN": "https://a8151468e68a6764db5b5dceff8fa9d5@o4510456258101248.ingest.de.sentry.io/4510456382226512"
       },
       "r2_buckets": [
         {
@@ -119,6 +130,9 @@
           "custom_domain": true
         }
       ],
+      "version_metadata": {
+        "binding": "CF_VERSION_METADATA"
+      },
       "d1_databases": [
         {
           "binding": "DB",
@@ -134,7 +148,9 @@
         "R2_PUBLIC_URL": "https://assets.onlydonations.com",
         "SMILE_PARTNER_ID": "7634",
         "SMILE_ENVIRONMENT": "production",
-        "SMILE_CALLBACK_URL": "https://api.onlydonations.com/webhooks/smile"
+        "SMILE_CALLBACK_URL": "https://api.onlydonations.com/webhooks/smile",
+        "OPENPANEL_CLIENT_ID": "f55b21ad-1d40-4007-8156-b75293c324bf",
+        "VITE_SENTRY_DSN": "https://a8151468e68a6764db5b5dceff8fa9d5@o4510456258101248.ingest.de.sentry.io/4510456382226512"
       },
       "r2_buckets": [
         {

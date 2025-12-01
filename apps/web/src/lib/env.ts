@@ -17,6 +17,7 @@ export const webEnvSchema = z.object({
   CMS_API_URL: z.url(),
   HONEYPOT_SECRET: z.string().min(16),
   BASE_URL: z.url(),
+  OPENPANEL_CLIENT_ID: z.string().min(1),
 });
 
 export type WebEnv = z.infer<typeof webEnvSchema>;

@@ -123,6 +123,9 @@ export function LoginComponent({ next, honeypotProps }: LoginComponentProps) {
                         onClick={handleGoogleLogin}
                         variant={lastMethod === "google" ? "secondary" : "outline"}
                         className="relative w-full justify-center"
+                        data-track="login_initiated"
+                        data-method="google"
+                        data-source="login_page"
                       >
                         <GoogleIcon className="w-4" />
                         Continue with Google
@@ -217,6 +220,9 @@ export function LoginComponent({ next, honeypotProps }: LoginComponentProps) {
                               variant={lastMethod === "email-otp" ? "default" : "outline"}
                               className="relative w-full"
                               disabled={!canSubmit || isSubmitting}
+                              data-track="login_initiated"
+                              data-method="email_otp"
+                              data-source="login_page"
                             >
                               {isSubmitting ? "Sending..." : "Continue"}
                             </Button>

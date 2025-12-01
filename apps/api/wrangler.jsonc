@@ -10,11 +10,15 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "upload_source_maps": true,
   "observability": {
     "enabled": true,
     "traces": {
       "enabled": true
     }
+  },
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
   },
   // ============================================
   // TOP-LEVEL (local development)
@@ -31,7 +35,8 @@
     "EMAIL_FROM": "send@onlydonations.com",
     "ENVIRONMENT": "development",
     "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
-    "WEB_BASE_URL": "http://localhost:3000"
+    "WEB_BASE_URL": "http://localhost:3000",
+    "SENTRY_DSN": ""
   },
   "r2_buckets": [
     {
@@ -93,11 +98,15 @@
           "database_id": "8c78dc78-a524-4892-a982-4349bd556fde"
         }
       ],
+      "version_metadata": {
+        "binding": "CF_VERSION_METADATA"
+      },
       "vars": {
         "EMAIL_FROM": "send@onlydonations.com",
         "ENVIRONMENT": "staging",
         "R2_PUBLIC_URL": "https://assets.stg.onlydonations.com",
-        "WEB_BASE_URL": "https://stg.onlydonations.com"
+        "WEB_BASE_URL": "https://stg.onlydonations.com",
+        "SENTRY_DSN": "https://a8151468e68a6764db5b5dceff8fa9d5@o4510456258101248.ingest.de.sentry.io/4510456382226512"
       },
       "r2_buckets": [
         {
@@ -159,11 +168,15 @@
           "database_id": "723ce5eb-fb20-44bb-bad3-862f5059bf6d"
         }
       ],
+      "version_metadata": {
+        "binding": "CF_VERSION_METADATA"
+      },
       "vars": {
         "EMAIL_FROM": "send@onlydonations.com",
         "ENVIRONMENT": "production",
         "R2_PUBLIC_URL": "https://assets.onlydonations.com",
-        "WEB_BASE_URL": "https://onlydonations.com"
+        "WEB_BASE_URL": "https://onlydonations.com",
+        "SENTRY_DSN": "https://a8151468e68a6764db5b5dceff8fa9d5@o4510456258101248.ingest.de.sentry.io/4510456382226512"
       },
       "r2_buckets": [
         {

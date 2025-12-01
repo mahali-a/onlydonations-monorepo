@@ -130,6 +130,10 @@ export function CampaignDetailContent({
                   size="sm"
                   className={`gap-2 ${isLiked ? "text-red-500 hover:text-red-600" : "text-muted-foreground"}`}
                   onClick={() => setIsLiked(!isLiked)}
+                  data-track="campaign_reacted"
+                  data-campaign-id={campaign.id}
+                  data-campaign-slug={campaign.slug}
+                  data-liked={!isLiked}
                 >
                   <Heart className={`h-5 w-5 ${isLiked ? "fill-current" : ""}`} />
                   <span>React</span>
@@ -147,6 +151,9 @@ export function CampaignDetailContent({
                     className="rounded-full bg-secondary-foreground text-secondary hover:bg-secondary-foreground/90"
                     disabled={!isDonateEnabled}
                     asChild
+                    data-track="first_donor_cta_clicked"
+                    data-campaign-id={campaign.id}
+                    data-campaign-slug={campaign.slug}
                   >
                     <Link
                       to="/f/$slug/donate"
@@ -213,6 +220,10 @@ export function CampaignDetailContent({
                       <Button
                         className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 font-semibold"
                         onClick={() => handleShare()}
+                        data-track="campaign_shared"
+                        data-campaign-id={campaign.id}
+                        data-campaign-slug={campaign.slug}
+                        data-source="campaign_sidebar_no_donations"
                       >
                         Share
                       </Button>
@@ -220,6 +231,10 @@ export function CampaignDetailContent({
                         className="w-full rounded-full bg-primary/20 hover:bg-primary/30 text-primary py-5 font-semibold"
                         disabled={!isDonateEnabled}
                         asChild
+                        data-track="donate_button_clicked"
+                        data-campaign-id={campaign.id}
+                        data-campaign-slug={campaign.slug}
+                        data-source="campaign_sidebar_no_donations"
                       >
                         <Link
                           to="/f/$slug/donate"
@@ -269,6 +284,10 @@ export function CampaignDetailContent({
                         className="w-full rounded-xl py-5 font-semibold"
                         disabled={!isDonateEnabled}
                         asChild
+                        data-track="donate_button_clicked"
+                        data-campaign-id={campaign.id}
+                        data-campaign-slug={campaign.slug}
+                        data-source="campaign_sidebar"
                       >
                         <Link
                           to="/f/$slug/donate"
@@ -296,6 +315,10 @@ export function CampaignDetailContent({
                           variant="ghost"
                           className="mt-4 w-full font-semibold"
                           onClick={() => setIsDonationsModalOpen(true)}
+                          data-track="donations_modal_opened"
+                          data-campaign-id={campaign.id}
+                          data-campaign-slug={campaign.slug}
+                          data-total-donations={campaign.donationCount}
                         >
                           See all
                         </Button>
@@ -342,6 +365,10 @@ export function CampaignDetailContent({
               size="icon"
               className="h-12 w-12 rounded-full"
               onClick={() => handleShare()}
+              data-track="campaign_shared"
+              data-campaign-id={campaign.id}
+              data-campaign-slug={campaign.slug}
+              data-source="campaign_mobile_bar"
             >
               <Share2 className="h-5 w-5" />
               <span className="sr-only">Share</span>
@@ -361,6 +388,10 @@ export function CampaignDetailContent({
               className="h-10 rounded-full px-5 text-sm font-medium"
               disabled={!isDonateEnabled}
               asChild
+              data-track="donate_button_clicked"
+              data-campaign-id={campaign.id}
+              data-campaign-slug={campaign.slug}
+              data-source="campaign_mobile_bar"
             >
               <Link
                 to="/f/$slug/donate"

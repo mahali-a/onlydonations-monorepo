@@ -30,6 +30,7 @@
     "@prelude.so/sdk": "^0.9.0",
     "@repo/core": "workspace:*",
     "@repo/email": "workspace:*",
+    "@sentry/cloudflare": "^10.27.0",
     "hono": "^4.10.7",
     "zod": "^4.1.13"
   }

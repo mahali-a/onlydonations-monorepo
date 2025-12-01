@@ -181,6 +181,12 @@ export function DonateComponent({ data }: DonateComponentProps) {
                             key={preset}
                             type="button"
                             onClick={() => handlePresetClick(preset)}
+                            data-track="donation_amount_selected"
+                            data-amount={preset}
+                            data-currency="GHS"
+                            data-selection-type="preset"
+                            data-campaign-id={campaign.id}
+                            data-campaign-slug={campaign.slug}
                             className={`relative rounded-xl border py-3 text-center text-sm font-bold transition-colors ${
                               isActive
                                 ? "border-primary bg-primary/10 text-primary ring-1 ring-primary"
@@ -458,6 +464,9 @@ export function DonateComponent({ data }: DonateComponentProps) {
                             className="w-full rounded-full py-5 font-semibold"
                             disabled={!canSubmit || isFormSubmitting}
                             type="submit"
+                            data-track="donation_initiated"
+                            data-campaign-id={campaign.id}
+                            data-campaign-slug={campaign.slug}
                           >
                             {isFormSubmitting ? "Processing..." : "Donate now"}
                           </Button>

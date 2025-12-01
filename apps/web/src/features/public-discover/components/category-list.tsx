@@ -60,6 +60,10 @@ export function CategoryList({ categories }: CategoryListProps) {
               to="/discover/$category"
               params={{ category: category.name.toLowerCase() }}
               className="flex flex-col items-center justify-center p-4 rounded-xl border bg-card hover:bg-accent/50 hover:border-accent-foreground/20 transition-colors cursor-pointer group"
+              data-track="category_clicked"
+              data-category-id={category.id}
+              data-category-name={category.name}
+              data-source="discover"
             >
               <IconComponent className="h-8 w-8 mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
               <span className="text-sm font-medium text-foreground">{category.name}</span>

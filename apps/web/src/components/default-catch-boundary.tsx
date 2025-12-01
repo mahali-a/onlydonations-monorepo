@@ -1,7 +1,8 @@
+import * as Sentry from "@sentry/tanstackstart-react";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Link, rootRouteId, useMatch, useRouter } from "@tanstack/react-router";
 import { AlertTriangle, ArrowLeft, Bug, ChevronDown, Home, Mail, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,10 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
     select: (state) => state.id === rootRouteId,
   });
   const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
 
   errorLogger.error("Caught error in boundary", error);
 

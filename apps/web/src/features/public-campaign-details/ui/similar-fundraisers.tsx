@@ -118,6 +118,11 @@ function SimilarCampaignCard({ campaign }: { campaign: SimilarCampaign }) {
       to="/f/$slug"
       params={{ slug: campaign.slug }}
       className="group min-w-[280px] max-w-[280px] snap-start rounded-xl bg-transparent transition-transform hover:-translate-y-1 cursor-pointer block"
+      data-track="similar_campaign_clicked"
+      data-campaign-id={campaign.id}
+      data-campaign-slug={campaign.slug}
+      data-category={campaign.categoryName}
+      data-source="similar_fundraisers"
     >
       <div className="aspect-[1.6] w-full overflow-hidden rounded-xl bg-white/10 relative">
         <img

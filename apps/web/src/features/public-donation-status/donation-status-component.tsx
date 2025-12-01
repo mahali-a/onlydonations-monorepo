@@ -194,6 +194,12 @@ export function DonationStatus({ data }: DonationStatusProps) {
                     <Button
                       onClick={handleShare}
                       className="w-full bg-[#02a95c] hover:bg-[#02a95c]/90 text-white font-semibold rounded-full flex items-center gap-2"
+                      data-track="donation_shared"
+                      data-donation-id={data.id}
+                      data-campaign-id={data.campaignId}
+                      data-campaign-slug={data.campaignSlug}
+                      data-amount={data.amount}
+                      data-currency={data.currency}
                     >
                       <Share2 className="h-4 w-4" />
                       Share Your Impact
@@ -226,6 +232,9 @@ export function DonationStatus({ data }: DonationStatusProps) {
                         onClick={handlePostMessage}
                         disabled={!message.trim() || isSubmitting}
                         className="bg-[#02a95c] hover:bg-[#02a95c]/90 text-white font-semibold rounded-full px-6"
+                        data-track="support_message_posted"
+                        data-donation-id={data.id}
+                        data-campaign-id={data.campaignId}
                       >
                         {isSubmitting ? "Posting..." : "Post Message"}
                       </Button>
@@ -292,6 +301,9 @@ export function DonationStatus({ data }: DonationStatusProps) {
                   <Button
                     asChild
                     className="w-full bg-[#02a95c] hover:bg-[#02a95c]/90 text-white font-semibold rounded-full py-6 text-lg"
+                    data-track="donation_retry_clicked"
+                    data-donation-id={data.id}
+                    data-campaign-slug={data.campaignSlug}
                   >
                     <Link to="/f/$slug/donate" params={{ slug: data.campaignSlug }}>
                       Try Again
@@ -302,7 +314,15 @@ export function DonationStatus({ data }: DonationStatusProps) {
 
               {/* Footer */}
               <div className="pt-6 border-t border-gray-200 w-full">
-                <Button asChild variant="ghost" className="text-gray-500 hover:text-gray-700">
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="text-gray-500 hover:text-gray-700"
+                  data-track="return_to_campaign_clicked"
+                  data-donation-id={data.id}
+                  data-campaign-slug={data.campaignSlug}
+                  data-donation-status={data.status}
+                >
                   <Link to="/f/$slug" params={{ slug: data.campaignSlug }}>
                     Return to Fundraiser
                   </Link>

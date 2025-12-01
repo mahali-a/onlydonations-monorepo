@@ -55,7 +55,13 @@ export function AccountDialog({ children }: AccountDialogProps) {
               </span>
               <ThemeToggle />
             </div>
-            <Button onClick={signOut} variant="outline" size="lg" className="w-full gap-2">
+            <Button
+              onClick={signOut}
+              variant="outline"
+              size="lg"
+              className="w-full gap-2"
+              data-track="user_signed_out"
+            >
               <LogOut className="h-5 w-5" />
               Sign Out
             </Button>

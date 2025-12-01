@@ -21,7 +21,7 @@ export function SearchResults({ campaigns }: SearchResultsProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {campaigns.map((campaign) => (
+      {campaigns.map((campaign, index) => (
         <motion.div
           key={campaign.id}
           initial={{ opacity: 0, y: 20 }}
@@ -29,7 +29,16 @@ export function SearchResults({ campaigns }: SearchResultsProps) {
           transition={{ duration: 0.3 }}
           className="h-full"
         >
-          <Link to="/f/$slug" params={{ slug: campaign.slug }} className="block h-full">
+          <Link
+            to="/f/$slug"
+            params={{ slug: campaign.slug }}
+            className="block h-full"
+            data-track="search_result_clicked"
+            data-campaign-id={campaign.id}
+            data-campaign-slug={campaign.slug}
+            data-position={index}
+            data-source="search"
+          >
             <FundraiserCard
               image={campaign.coverImage}
               title={campaign.title}
