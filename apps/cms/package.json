@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" bun run --bun next build",
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --port=3005",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
@@ -16,9 +16,9 @@
     "lint:ci": "biome check .",
     "check:ci": "biome ci .",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation bun run --bun next start",
-    "test": "bun run test:int && bun run test:e2e",
-    "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation\" bunx playwright test",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "test": "pnpm run test:int && pnpm run test:e2e",
+    "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation\" npx playwright test",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
@@ -27,7 +27,7 @@
     "@payloadcms/db-vercel-postgres": "3.64.0",
     "@payloadcms/next": "3.64.0",
     "@payloadcms/richtext-lexical": "3.64.0",
-    "@payloadcms/storage-s3": "^3.65.0",
+    "@payloadcms/storage-s3": "3.64.0",
     "@payloadcms/ui": "3.64.0",
     "cross-env": "^10.1.0",
     "dotenv": "16.4.7",

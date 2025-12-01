@@ -1,1 +1,1 @@
-bunx biome check --staged . && bun run typecheck
+npx biome check --staged . && pnpm run typecheck

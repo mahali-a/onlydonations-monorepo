@@ -8,24 +8,24 @@ This file guides agentic coding systems (Claude, Cursor, Copilot, etc.) when wor
 
 ```bash
 # Single test file (from package directory)
-bun test -- path/to/test.test.ts    # Run one test file
-bun test -- --watch                 # Run tests in watch mode
+pnpm test -- path/to/test.test.ts    # Run one test file
+pnpm test -- --watch                 # Run tests in watch mode
 
 # Full monorepo
-bun run build                        # Build all packages
-bun run test                         # Test all packages
-bun run typecheck                    # TypeScript checks
-bun run lint                         # Fix lint issues
-bun run check                        # Lint + format
+pnpm run build                        # Build all packages
+pnpm run test                         # Test all packages
+pnpm run typecheck                    # TypeScript checks
+pnpm run lint                         # Fix lint issues
+pnpm run check                        # Lint + format
 ```
 
 ### Development
 
 ```bash
-bun run setup                        # Initial setup (required first)
-bun run dev:web                      # Dev: web app (port 3000)
-bun run dev:api                      # Dev: API (Hono + Workers)
-bun run build:core                   # Rebuild core package (needed after changes)
+pnpm run setup                        # Initial setup (required first)
+pnpm run dev:web                      # Dev: web app (port 3000)
+pnpm run dev:api                      # Dev: API (Hono + Workers)
+pnpm run build:core                   # Rebuild core package (needed after changes)
 ```
 
 ## Code Style
@@ -47,7 +47,7 @@ bun run build:core                   # Rebuild core package (needed after change
 
 - **Formatter**: Biome (2 spaces, 100 char line width, double quotes)
 - **Trailing commas**: All (enforced)
-- **No unused vars/imports**: Strictly enforced, auto-fix with `bun run lint`
+- **No unused vars/imports**: Strictly enforced, auto-fix with `pnpm run lint`
 
 # Facade Functions
 
@@ -87,8 +87,8 @@ FacadeConstraints {
 
 Before committing:
 
-- [ ] `bun run build` succeeds
-- [ ] `bun run lint` passes
+- [ ] `pnpm run build` succeeds
+- [ ] `pnpm run lint` passes
 - [ ] No server-only code in client bundles
 - [ ] All auth server functions have middleware
 - [ ] No nested server function calls

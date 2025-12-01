@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "husky install",
-    "setup": "bun i && bun run build",
-    "setup:clean": "rm -rf node_modules bun.lock && bun run setup",
+    "setup": "pnpm install && pnpm run build",
+    "setup:clean": "rm -rf node_modules pnpm-lock.yaml && pnpm run setup",
     "build": "turbo build",
     "build:api": "turbo build --filter=api",
     "build:web": "turbo build --filter=web",
@@ -15,17 +15,17 @@
     "dev:api": "turbo dev --filter=api",
     "dev:web": "turbo dev --filter=web",
     "dev:cms": "turbo dev --filter=cms",
-    "deploy": "bun run deploy:web && bun run deploy:api && bun run deploy:cms",
-    "deploy:api": "bun run build:api && cd apps/api && bun run deploy",
-    "deploy:web": "bun run build:web && cd apps/web && bun run deploy",
-    "deploy:cms": "bun run build:cms && cd apps/cms && bun run deploy",
-    "db:generate": "bun --filter @repo/core drizzle:generate",
+    "deploy": "pnpm run deploy:web && pnpm run deploy:api && pnpm run deploy:cms",
+    "deploy:api": "pnpm run build:api && cd apps/api && pnpm run deploy",
+    "deploy:web": "pnpm run build:web && cd apps/web && pnpm run deploy",
+    "deploy:cms": "pnpm run build:cms && cd apps/cms && pnpm run deploy",
+    "db:generate": "pnpm --filter @repo/core drizzle:generate",
     "db:migrate:local": "cd apps/web && wrangler d1 migrations apply onlydonations-db-stg --local",
     "db:migrate:stg": "cd apps/web && wrangler d1 migrations apply onlydonations-db-stg --remote --env staging",
     "db:migrate:prod": "cd apps/web && wrangler d1 migrations apply onlydonations-db-prod --remote --env production",
-    "db:migrate": "bun run db:migrate:local",
-    "db:auth:generate": "bun --filter @repo/core better-auth:generate",
-    "db:setup": "bun run db:auth:generate && bun run db:generate && bun run db:migrate:local",
+    "db:migrate": "pnpm run db:migrate:local",
+    "db:auth:generate": "pnpm --filter @repo/core better-auth:generate",
+    "db:setup": "pnpm run db:auth:generate && pnpm run db:generate && pnpm run db:migrate:local",
     "format": "turbo format",
     "format:check": "turbo format:check",
     "lint": "turbo lint",
@@ -37,13 +37,7 @@
     "knip": "knip"
   },
   "license": "ISC",
-  "packageManager": "bun@1.2.15",
-  "trustedDependencies": [
-    "better-sqlite3",
-    "sharp",
-    "esbuild",
-    "unrs-resolver"
-  ],
+  "packageManager": "pnpm@9.15.0",
   "devDependencies": {
     "@biomejs/biome": "^2.3.8",
     "@types/node": "^22.19.1",
@@ -52,9 +46,5 @@
     "knip": "^5.70.2",
     "turbo": "^2.6.1",
     "typescript": "^5.9.3"
-  },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ]
+  }
 }
