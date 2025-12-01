@@ -20,6 +20,7 @@ import { ThemeProvider } from "@/components/theme";
 import { authClient } from "@/lib/auth-client";
 import { logger } from "@/lib/logger";
 import { clearUserIdentity, getOpenPanel, identifyUser } from "@/lib/openpanel";
+import { usePageViewTracker } from "@/lib/page-view-tracker";
 import { seo } from "@/lib/seo";
 import { retrieveSettingsFromServer } from "@/server/functions/cms";
 import { retrieveOpenPanelClientId } from "@/server/functions/openpanel";
@@ -118,14 +119,12 @@ function RootComponent() {
   const { openPanelClientId } = Route.useLoaderData();
   const { data: session } = authClient.useSession();
 
-  // Initialize OpenPanel
   useEffect(() => {
     if (openPanelClientId) {
       getOpenPanel(openPanelClientId);
     }
   }, [openPanelClientId]);
 
-  // Identify user when session changes
   useEffect(() => {
     if (session?.user && !session.user.isAnonymous) {
       identifyUser({
@@ -138,6 +137,8 @@ function RootComponent() {
       clearUserIdentity();
     }
   }, [session]);
+
+  usePageViewTracker();
 
   return (
     <RootDocument>

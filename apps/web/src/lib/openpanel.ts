@@ -7,7 +7,7 @@ export function getOpenPanel(clientId: string): OpenPanel {
     opInstance = new OpenPanel({
       clientId,
       apiUrl: "https://openpanel-api.mahali.dev",
-      trackScreenViews: true,
+      trackScreenViews: false,
       trackOutgoingLinks: true,
       trackAttributes: true,
     });
@@ -15,18 +15,10 @@ export function getOpenPanel(clientId: string): OpenPanel {
   return opInstance;
 }
 
-/**
- * Get the current OpenPanel instance.
- * Returns null if not initialized yet.
- */
 export function getOp(): OpenPanel | null {
   return opInstance;
 }
 
-/**
- * Identify a user in OpenPanel.
- * Call this when a user logs in or their profile is updated.
- */
 export function identifyUser(user: {
   id: string;
   email?: string | null;
@@ -48,26 +40,16 @@ export function identifyUser(user: {
   });
 }
 
-/**
- * Clear the current user identity.
- * Call this when a user logs out.
- */
 export function clearUserIdentity() {
   if (!opInstance) return;
   opInstance.clear();
 }
 
-/**
- * Track a custom event.
- */
 export function trackEvent(name: string, properties?: Record<string, unknown>) {
   if (!opInstance) return;
   opInstance.track(name, properties);
 }
 
-/**
- * Get the device ID for revenue tracking.
- */
 export async function fetchDeviceId(): Promise<string | null> {
   if (!opInstance) return null;
   return opInstance.fetchDeviceId();
