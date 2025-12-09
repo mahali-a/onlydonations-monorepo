@@ -1,16 +1,5 @@
-import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
+import { isValidPhoneNumber } from "libphonenumber-js";
 import { z } from "zod";
-
-function normalizeGhanaPhone(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.startsWith("233")) {
-    return `+${digits}`;
-  }
-  if (digits.startsWith("0")) {
-    return `+233${digits.slice(1)}`;
-  }
-  return `+233${digits}`;
-}
 
 export const profileSchema = z.object({
   firstName: z
@@ -28,16 +17,8 @@ export const phoneSchema = z.object({
   phoneNumber: z
     .string()
     .min(1, "Phone number is required")
-    .refine(
-      (val) => {
-        const normalized = normalizeGhanaPhone(val);
-        return isValidPhoneNumber(normalized, "GH");
-      },
-      { message: "Please enter a valid Ghana phone number" },
-    )
-    .transform((val) => {
-      const normalized = normalizeGhanaPhone(val);
-      return parsePhoneNumber(normalized, "GH")?.format("E.164") ?? normalized;
+    .refine((val) => isValidPhoneNumber(val), {
+      message: "Please enter a valid phone number",
     }),
 });
 

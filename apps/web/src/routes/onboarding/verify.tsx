@@ -22,6 +22,7 @@ function VerifyPage() {
     const { error } = await authClient.phoneNumber.verify({
       phoneNumber: phone,
       code: values.code,
+      updatePhoneNumber: true,
     });
 
     if (error) {

@@ -4,7 +4,10 @@ import { getRequest } from "@tanstack/react-start/server";
 import { nanoid } from "nanoid";
 import { logger } from "@/lib/logger";
 import { authMiddleware } from "@/server/middleware/auth";
-import { updateOnboardingUserInDatabase } from "./auth-onboarding-models";
+import {
+  retrieveUserFromDatabaseByPhoneNumber,
+  updateOnboardingUserInDatabase,
+} from "./auth-onboarding-models";
 import { organizationSchema, phoneSchema, profileSchema } from "./auth-onboarding-schema";
 
 const onboardingLogger = logger.createChildLogger("auth-onboarding-actions");
@@ -25,11 +28,21 @@ export const updateUserProfileOnServer = createServerFn({ method: "POST" })
     const user = context.user;
     const name = `${data.firstName} ${data.lastName}`;
 
-    await updateOnboardingUserInDatabase(user.id, {
-      name,
-    });
+    try {
+      await updateOnboardingUserInDatabase(user.id, {
+        name,
+      });
 
-    return { success: true };
+      return { success: true };
+    } catch (error) {
+      onboardingLogger.error("Failed to update user profile", error, {
+        userId: user.id,
+      });
+      return {
+        success: false,
+        error: "Failed to update profile. Please try again.",
+      };
+    }
   });
 
 export const updateUserPhoneOnServer = createServerFn({ method: "POST" })
@@ -39,55 +52,83 @@ export const updateUserPhoneOnServer = createServerFn({ method: "POST" })
     const user = context.user;
     const auth = getAuth();
 
-    await updateOnboardingUserInDatabase(user.id, {
-      phoneNumber: data.phoneNumber,
-      phoneNumberVerified: false,
-    });
+    try {
+      const existingUser = await retrieveUserFromDatabaseByPhoneNumber(data.phoneNumber);
+      if (existingUser && existingUser.id !== user.id) {
+        return {
+          success: false,
+          error: "This phone number is already registered to another account",
+        };
+      }
 
-    // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
-    await auth.api.sendPhoneNumberOTP({
-      body: {
+      // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
+      await auth.api.sendPhoneNumberOTP({
+        body: {
+          phoneNumber: data.phoneNumber,
+        },
+      });
+
+      return { success: true, phoneNumber: data.phoneNumber };
+    } catch (error) {
+      onboardingLogger.error("Failed to update phone number", error, {
+        userId: user.id,
         phoneNumber: data.phoneNumber,
-      },
-    });
-
-    return { success: true, phoneNumber: data.phoneNumber };
+      });
+      return {
+        success: false,
+        error: "Failed to update phone number. Please try again.",
+      };
+    }
   });
 
 export const createOrganizationOnServer = createServerFn({ method: "POST" })
   .inputValidator(organizationSchema)
   .middleware([authMiddleware])
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const auth = getAuth();
     const req = getRequest();
 
-    const baseSlug = sanitizeSlug(data.organizationName);
-    const slug = `${baseSlug}-${nanoid(6)}`;
+    try {
+      const baseSlug = sanitizeSlug(data.organizationName);
+      const slug = `${baseSlug}-${nanoid(6)}`;
 
-    // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
-    const organization = await auth.api.createOrganization({
-      body: {
-        name: data.organizationName,
-        slug,
-      },
-      headers: req.headers,
-    });
+      // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
+      const organization = await auth.api.createOrganization({
+        body: {
+          name: data.organizationName,
+          slug,
+        },
+        headers: req.headers,
+      });
 
-    if (!organization) {
-      throw new Error("Failed to create organization");
+      if (!organization) {
+        return {
+          success: false,
+          error: "Failed to create organization. Please try again.",
+        };
+      }
+
+      // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
+      await auth.api.setActiveOrganization({
+        body: { organizationId: organization.id },
+        headers: req.headers,
+      });
+
+      return {
+        success: true,
+        slug: organization.slug,
+        organizationId: organization.id,
+      };
+    } catch (error) {
+      onboardingLogger.error("Failed to create organization", error, {
+        userId: context.user.id,
+        organizationName: data.organizationName,
+      });
+      return {
+        success: false,
+        error: "Failed to create organization. Please try again.",
+      };
     }
-
-    // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
-    await auth.api.setActiveOrganization({
-      body: { organizationId: organization.id },
-      headers: req.headers,
-    });
-
-    return {
-      success: true,
-      slug: organization.slug,
-      organizationId: organization.id,
-    };
   });
 
 export const createDefaultOrganizationOnServer = createServerFn({ method: "POST" })
@@ -111,7 +152,10 @@ export const createDefaultOrganizationOnServer = createServerFn({ method: "POST"
       });
 
       if (!organization) {
-        throw new Error("Failed to create organization");
+        return {
+          success: false,
+          error: "Failed to create organization. Please try again.",
+        };
       }
 
       // @ts-expect-error - Better Auth type inference limitation: when auth client is created with parametrized configuration, TypeScript loses the inferred type of API methods. This method exists at runtime and is correctly implemented.
@@ -131,7 +175,7 @@ export const createDefaultOrganizationOnServer = createServerFn({ method: "POST"
       });
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: "Failed to create organization. Please try again.",
       };
     }
   });

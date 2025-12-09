@@ -1,16 +1,23 @@
 import { useForm } from "@tanstack/react-form";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { getE164Number, PhoneInput, type PhoneInputValue } from "@/components/ui/phone-input";
+import { defaultCountry } from "@/lib/countries";
 
 type PhoneFormData = {
   phoneNumber: string;
 };
 
-const defaultPhoneForm: PhoneFormData = {
-  phoneNumber: "",
+type PhoneFormValues = {
+  phone: PhoneInputValue;
+};
+
+const defaultPhoneForm: PhoneFormValues = {
+  phone: {
+    country: defaultCountry,
+    nationalNumber: "",
+  },
 };
 
 type PhoneFormProps = {
@@ -18,25 +25,13 @@ type PhoneFormProps = {
   onSkip?: () => void;
 };
 
-function normalizeGhanaPhone(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.startsWith("233")) {
-    return `+${digits}`;
-  }
-  if (digits.startsWith("0")) {
-    return `+233${digits.slice(1)}`;
-  }
-  return `+233${digits}`;
-}
-
 export function PhoneForm({ onSubmit, onSkip }: PhoneFormProps) {
   const form = useForm({
     defaultValues: defaultPhoneForm,
     validators: {
       onSubmitAsync: async ({ value }) => {
-        // Normalize before submitting
-        const normalized = normalizeGhanaPhone(value.phoneNumber);
-        const result = await onSubmit({ phoneNumber: normalized });
+        const e164 = getE164Number(value.phone);
+        const result = await onSubmit({ phoneNumber: e164 });
 
         if (result?.error) {
           return {
@@ -60,31 +55,30 @@ export function PhoneForm({ onSubmit, onSkip }: PhoneFormProps) {
     >
       <form.Subscribe selector={(state) => [state.errorMap]}>
         {([errorMap]) =>
-          errorMap?.onSubmit ? (
-            <div className="text-left text-sm text-destructive">{errorMap.onSubmit.toString()}</div>
+          errorMap?.onSubmit?.form ? (
+            <div className="text-left text-sm text-destructive">{errorMap.onSubmit.form}</div>
           ) : null
         }
       </form.Subscribe>
 
       <form.Field
-        name="phoneNumber"
+        name="phone"
         validators={{
           onChange: ({ value }) => {
-            if (!value) return "Phone number is required";
+            if (!value.nationalNumber) return "Phone number is required";
 
-            // Only allow digits
-            const digits = value.replace(/\D/g, "");
-            if (digits.length < 9) {
-              return "Please enter your 9-digit phone number";
+            const digits = value.nationalNumber.replace(/\D/g, "");
+            if (digits.length < 6) {
+              return "Phone number is too short";
             }
-            if (digits.length > 10) {
+            if (digits.length > 15) {
               return "Phone number is too long";
             }
 
-            // Validate with libphonenumber
-            const normalized = normalizeGhanaPhone(value);
-            if (!isValidPhoneNumber(normalized, "GH")) {
-              return "Please enter a valid Ghana phone number";
+            // Validate with libphonenumber using the selected country
+            const e164 = getE164Number(value);
+            if (!isValidPhoneNumber(e164, value.country.code)) {
+              return `Please enter a valid ${value.country.name} phone number`;
             }
 
             return undefined;
@@ -96,35 +90,18 @@ export function PhoneForm({ onSubmit, onSkip }: PhoneFormProps) {
             <Label className="text-sm font-medium text-foreground" htmlFor="phoneNumber">
               Phone Number
             </Label>
-            <div className="flex">
-              <div className="flex h-10 items-center rounded-l-md border border-r-0 bg-muted px-3 text-sm text-muted-foreground">
-                +233
-              </div>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                inputMode="numeric"
-                value={field.state.value}
-                onChange={(e) => {
-                  // Only allow digits and limit length
-                  const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-                  field.handleChange(digits);
-                }}
-                onBlur={field.handleBlur}
-                className={cn(
-                  "h-10 rounded-l-none",
-                  field.state.meta.errors.length > 0 &&
-                    "border-destructive focus-visible:ring-destructive",
-                )}
-                placeholder="24 123 4567"
-                maxLength={10}
-              />
-            </div>
+            <PhoneInput
+              value={field.state.value}
+              onChange={(val) => field.handleChange(val)}
+              onBlur={field.handleBlur}
+              error={field.state.meta.errors.length > 0}
+              placeholder="Enter your phone number"
+            />
             {field.state.meta.errors.length > 0 && (
               <div className="text-left text-sm text-destructive">{field.state.meta.errors[0]}</div>
             )}
             <p className="text-left text-xs text-muted-foreground">
-              Enter your Ghana mobile number (e.g., 24 123 4567)
+              Select your country and enter your phone number
             </p>
           </div>
         )}

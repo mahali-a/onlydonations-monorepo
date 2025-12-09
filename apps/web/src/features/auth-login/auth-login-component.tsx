@@ -151,9 +151,9 @@ export function LoginComponent({ next, honeypotProps }: LoginComponentProps) {
                     >
                       <emailForm.Subscribe selector={(state) => [state.errorMap]}>
                         {([errorMap]) =>
-                          errorMap?.onSubmit ? (
+                          errorMap?.onSubmit?.form ? (
                             <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-left text-sm text-destructive">
-                              {errorMap?.onSubmit.toString()}
+                              {errorMap.onSubmit.form}
                             </div>
                           ) : null
                         }

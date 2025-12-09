@@ -48,6 +48,7 @@ export function PhoneVerificationCard({
     const { error } = await authClient.phoneNumber.verify({
       phoneNumber: currentPhoneNumber,
       code: values.code,
+      updatePhoneNumber: true,
     });
 
     if (error) {

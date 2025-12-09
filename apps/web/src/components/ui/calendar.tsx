@@ -106,7 +106,7 @@ function Calendar({
           return (
             <div
               data-slot="calendar"
-              // @ts-ignore
+              // @ts-expect-error
               ref={rootRef}
               className={cn(className)}
               {...props}

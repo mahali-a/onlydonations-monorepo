@@ -107,8 +107,9 @@ function OnboardingPage() {
         to: "/onboarding/verify",
         search: { phone: result.phoneNumber, next: "/app" },
       });
+      return null;
     }
-    return null;
+    return { error: result.error ?? "Failed to update phone number" };
   };
 
   const handlePhoneSkip = async () => {

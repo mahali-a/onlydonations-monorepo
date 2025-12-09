@@ -50,10 +50,8 @@ export function ProfileForm({ onSubmit }: ProfileFormProps) {
     >
       <form.Subscribe selector={(state) => [state.errorMap]}>
         {([errorMap]) =>
-          errorMap?.onSubmit ? (
-            <div className="text-left text-sm text-destructive">
-              {errorMap?.onSubmit.toString()}
-            </div>
+          errorMap?.onSubmit?.form ? (
+            <div className="text-left text-sm text-destructive">{errorMap.onSubmit.form}</div>
           ) : null
         }
       </form.Subscribe>
