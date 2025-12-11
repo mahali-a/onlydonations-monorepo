@@ -20,18 +20,18 @@
     "cf-typegen": "wrangler types --env-interface BaseEnv"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.10.11",
-    "@types/node": "^22.19.1",
+    "@cloudflare/vitest-pool-workers": "^0.10.14",
+    "@types/node": "^22.19.2",
     "typescript": "^5.9.3",
-    "vitest": "~4.0.14",
-    "wrangler": "^4.51.0"
+    "vitest": "~4.0.15",
+    "wrangler": "^4.53.0"
   },
   "dependencies": {
     "@prelude.so/sdk": "^0.9.0",
     "@repo/core": "workspace:*",
     "@repo/email": "workspace:*",
-    "@sentry/cloudflare": "^10.27.0",
-    "hono": "^4.10.7",
+    "@sentry/cloudflare": "^10.29.0",
+    "hono": "^4.10.8",
     "zod": "^4.1.13"
   }
 }

@@ -37,17 +37,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-
   "dependencies": {
     "@react-email/components": "^1.0.1",
     "nanoid": "^5.1.6",
-    "react": "^19.2.0",
+    "react": "^19.2.1",
     "react-dom": "19.2.0",
-    "resend": "^6.5.2",
+    "resend": "^6.6.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251128.0",
+    "@cloudflare/workers-types": "^4.20251211.0",
     "@types/react": "^19.2.7",
     "react-email": "5.0.4",
     "tsc-alias": "^1.8.16",
