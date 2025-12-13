@@ -83,7 +83,7 @@ export async function retrieveCampaignsByCategoryIdFromDatabase(
       currency: campaign.currency,
       beneficiaryName: campaign.beneficiaryName,
       categoryName: category.name,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
     })
     .from(campaign)
     .innerJoin(category, eq(campaign.categoryId, category.id))
@@ -123,7 +123,7 @@ export async function retrieveCampaignsByCategoryNameFromDatabase(
       beneficiaryName: campaign.beneficiaryName,
       categoryId: category.id,
       categoryName: category.name,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
     })
     .from(campaign)
     .innerJoin(category, eq(campaign.categoryId, category.id))
@@ -163,7 +163,7 @@ export async function retrieveTrendingCampaignsFromDatabase(limit: number = 10) 
       currency: campaign.currency,
       beneficiaryName: campaign.beneficiaryName,
       categoryName: category.name,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       lastDonation: sql<Date>`max(${donation.completedAt})`.as("lastDonation"),
     })
     .from(campaign)

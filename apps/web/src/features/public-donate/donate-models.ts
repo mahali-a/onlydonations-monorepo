@@ -28,7 +28,7 @@ export async function retrieveCampaignWithCategoryFromDatabaseBySlug(slug: strin
       seoDescription: campaign.seoDescription,
       seoImage: campaign.seoImage,
       totalRaised:
-        sql<number>`COALESCE((SELECT SUM(${donation.amount}) FROM ${donation} WHERE ${donation.campaignId} = ${campaign.id} AND ${donation.status} = 'SUCCESS'), 0)`.as(
+        sql<number>`COALESCE((SELECT SUM(${donation.netAmount}) FROM ${donation} WHERE ${donation.campaignId} = ${campaign.id} AND ${donation.status} = 'SUCCESS'), 0)`.as(
           "totalRaised",
         ),
     })

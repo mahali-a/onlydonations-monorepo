@@ -103,7 +103,7 @@ export async function retrieveCampaignsWithDonationStatsFromDatabaseByOrganizati
       case "supporters":
         return count(donation.id);
       case "raised":
-        return sum(donation.amount);
+        return sum(donation.netAmount);
       default:
         return campaign.createdAt;
     }
@@ -136,7 +136,7 @@ export async function retrieveCampaignsWithDonationStatsFromDatabaseByOrganizati
         id: category.id,
         name: category.name,
       },
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)
@@ -216,7 +216,7 @@ export async function retrieveCampaignWithDonationStatsFromDatabaseById(
         id: category.id,
         name: category.name,
       },
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)
@@ -424,7 +424,7 @@ export async function retrievePublicCampaignFromDatabaseBySlug(slug: string) {
         id: category.id,
         name: category.name,
       },
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)
@@ -537,7 +537,7 @@ export async function retrieveCampaignForPreviewFromDatabaseById(campaignId: str
         id: category.id,
         name: category.name,
       },
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)
@@ -575,7 +575,7 @@ export async function retrieveSimilarCampaignsFromDatabaseByCategory(
       country: campaign.country,
       amount: campaign.amount,
       currency: campaign.currency,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)
@@ -614,7 +614,7 @@ export async function retrieveOtherCampaignsFromDatabase(
       country: campaign.country,
       amount: campaign.amount,
       currency: campaign.currency,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)

@@ -29,7 +29,7 @@ export const retrieveCampaignsByIdsFromServer = createServerFn({ method: "POST" 
         amount: campaign.amount,
         currency: campaign.currency,
         beneficiaryName: campaign.beneficiaryName,
-        totalRaised: sum(donation.amount),
+        totalRaised: sum(donation.netAmount),
       })
       .from(campaign)
       .leftJoin(donation, and(eq(donation.campaignId, campaign.id), eq(donation.status, "SUCCESS")))

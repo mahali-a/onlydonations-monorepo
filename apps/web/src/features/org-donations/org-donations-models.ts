@@ -175,7 +175,7 @@ export const donationModel = {
     const statsResult = await db
       .select({
         totalDonors: count(donation.donorEmail).mapWith(Number),
-        totalAmount: sum(donation.amount).mapWith(Number),
+        totalAmount: sum(donation.netAmount).mapWith(Number),
         donationCount: count(donation.id).mapWith(Number),
       })
       .from(donation)
@@ -200,7 +200,7 @@ export const donationModel = {
         name: donation.donorName,
         email: donation.donorEmail,
         isAnonymous: donation.isAnonymous,
-        totalContribution: sum(donation.amount).mapWith(Number),
+        totalContribution: sum(donation.netAmount).mapWith(Number),
       })
       .from(donation)
       .leftJoin(campaign, eq(donation.campaignId, campaign.id))
@@ -213,7 +213,7 @@ export const donationModel = {
         ),
       )
       .groupBy(donation.donorEmail, donation.donorName, donation.isAnonymous)
-      .orderBy(desc(sum(donation.amount)))
+      .orderBy(desc(sum(donation.netAmount)))
       .limit(1);
 
     const topDonor = topDonorResult[0]
@@ -300,13 +300,13 @@ export const donationModel = {
         name: donation.donorName,
         email: donation.donorEmail,
         isAnonymous: donation.isAnonymous,
-        totalContribution: sum(donation.amount).mapWith(Number),
+        totalContribution: sum(donation.netAmount).mapWith(Number),
       })
       .from(donation)
       .leftJoin(campaign, eq(donation.campaignId, campaign.id))
       .where(and(eq(campaign.organizationId, organizationId), eq(donation.status, "SUCCESS")))
       .groupBy(donation.donorEmail, donation.donorName, donation.isAnonymous)
-      .orderBy(desc(sum(donation.amount)))
+      .orderBy(desc(sum(donation.netAmount)))
       .limit(limit);
 
     return (results as TopDonorRow[]).map((row) => ({

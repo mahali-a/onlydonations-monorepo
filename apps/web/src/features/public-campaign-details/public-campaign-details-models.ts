@@ -64,7 +64,7 @@ export async function retrievePublicCampaignBySlug(slug: string) {
         id: category.id,
         name: category.name,
       },
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)
@@ -207,7 +207,7 @@ export async function retrieveSimilarCampaignsByCategory(
       currency: campaign.currency,
       beneficiaryName: campaign.beneficiaryName,
       categoryName: category.name,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
     })
     .from(campaign)
     .innerJoin(category, eq(campaign.categoryId, category.id))
@@ -247,7 +247,7 @@ export async function retrieveOtherCampaigns(excludeCampaignIds: string[], limit
       currency: campaign.currency,
       beneficiaryName: campaign.beneficiaryName,
       categoryName: category.name,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
     })
     .from(campaign)
     .innerJoin(category, eq(campaign.categoryId, category.id))

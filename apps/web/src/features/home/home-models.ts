@@ -43,7 +43,7 @@ export async function retrieveFeaturedCampaignsFromDatabase(
       currency: campaign.currency,
       beneficiaryName: campaign.beneficiaryName,
       countryName: countries.name,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       supporterCount: count(donation.id),
     })
     .from(campaign)

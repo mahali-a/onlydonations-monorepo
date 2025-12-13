@@ -49,7 +49,7 @@ export const dashboardModel = {
     const statsResult = (await db.all(
       sql`
       SELECT
-        COALESCE(SUM(d.amount), 0) as totalRaised,
+        COALESCE(SUM(d.net_amount), 0) as totalRaised,
         COUNT(DISTINCT d.donor_email) as totalDonors,
         d.currency
       FROM donation d
@@ -100,7 +100,7 @@ export const dashboardModel = {
     const statsResult = (await db.all(
       sql`
       SELECT
-        COALESCE(SUM(d.amount), 0) as totalRaised,
+        COALESCE(SUM(d.net_amount), 0) as totalRaised,
         COUNT(DISTINCT d.donor_email) as totalDonors,
         d.currency
       FROM donation d
@@ -211,7 +211,7 @@ export const dashboardModel = {
         COALESCE(c.status, 'DRAFT') as status,
         c.goal_amount as goal,
         c.currency,
-        COALESCE(SUM(d.amount), 0) as totalRaised,
+        COALESCE(SUM(d.net_amount), 0) as totalRaised,
         COUNT(d.id) as donationCount
       FROM campaign c
       LEFT JOIN donation d ON d.campaign_id = c.id AND d.status = 'SUCCESS'
@@ -246,7 +246,7 @@ export const dashboardModel = {
       sql`
       SELECT
         DATE(datetime(d.created_at, 'unixepoch')) as date,
-        COALESCE(SUM(d.amount), 0) as amount,
+        COALESCE(SUM(d.net_amount), 0) as amount,
         COUNT(DISTINCT d.donor_email) as donors
       FROM donation d
       LEFT JOIN campaign c ON d.campaign_id = c.id

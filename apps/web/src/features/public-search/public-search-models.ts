@@ -64,7 +64,7 @@ export async function retrievePublicCampaignsWithCategoryFromDatabaseByFilters(
   }
 
   // Determine sort order
-  const orderBy = sortBy === "raised" ? desc(sum(donation.amount)) : desc(campaign.publishedAt);
+  const orderBy = sortBy === "raised" ? desc(sum(donation.netAmount)) : desc(campaign.publishedAt);
 
   const results = await db
     .select({
@@ -81,7 +81,7 @@ export async function retrievePublicCampaignsWithCategoryFromDatabaseByFilters(
         id: category.id,
         name: category.name,
       },
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)

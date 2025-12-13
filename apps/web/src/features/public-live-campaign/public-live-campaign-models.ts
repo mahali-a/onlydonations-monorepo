@@ -39,7 +39,7 @@ export async function retrieveLiveCampaignBySlug(slug: string) {
       currency: campaign.currency,
       coverImage: campaign.coverImage,
       categoryName: category.name,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: count(donation.id),
     })
     .from(campaign)
