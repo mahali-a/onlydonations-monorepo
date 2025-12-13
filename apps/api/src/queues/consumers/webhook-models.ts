@@ -75,6 +75,8 @@ export async function updateDonationStatusInDatabaseById(
     completedAt?: Date;
     failedAt?: Date;
     failureReason?: string;
+    processorFees?: number;
+    netAmount?: number;
   },
 ) {
   const db = getDb();
@@ -85,6 +87,8 @@ export async function updateDonationStatusInDatabaseById(
       completedAt: additionalData?.completedAt,
       failedAt: additionalData?.failedAt,
       failureReason: additionalData?.failureReason,
+      processorFees: additionalData?.processorFees,
+      netAmount: additionalData?.netAmount,
       updatedAt: new Date(),
     })
     .where(eq(donation.id, id));

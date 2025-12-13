@@ -109,6 +109,7 @@ async function processPaystackWebhook(
       gateway_response?: string | null;
       transfer_code?: string;
       reason?: string;
+      fees?: number;
     };
   };
 
@@ -142,9 +143,13 @@ async function processPaystackWebhook(
       };
     }
 
-    // Update donation status
+    const processorFees = payload.data.fees ?? 0;
+    const netAmount = payload.data.amount - processorFees;
+
     await updateDonationStatusInDatabaseById(donation.id, "SUCCESS", {
       completedAt: new Date(),
+      processorFees,
+      netAmount,
     });
 
     // Update payment transaction status

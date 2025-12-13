@@ -40,6 +40,8 @@ export const donation = sqliteTable(
 
     status: text("status").notNull().default("PENDING"),
     coverFees: integer("cover_fees", { mode: "boolean" }).notNull().default(false),
+    processorFees: integer("processor_fees"),
+    netAmount: integer("net_amount"),
 
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" })

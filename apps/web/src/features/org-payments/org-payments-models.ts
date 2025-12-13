@@ -26,7 +26,7 @@ export async function retrieveTotalRaisedFromDatabaseByOrganization(
 
   const result = await db
     .select({
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       currency: donation.currency,
     })
     .from(donation)
@@ -65,7 +65,7 @@ export async function retrieveTotalRaisedFromDatabaseByOrganizationAndPeriod(
 
   const result = await db
     .select({
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
     })
     .from(donation)
     .innerJoin(campaign, eq(donation.campaignId, campaign.id))
@@ -95,7 +95,7 @@ export async function retrieveDonationAggregateFromDatabaseByOrganization(
   const db = getDb();
   const result = await db
     .select({
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: sql<number>`CAST(COUNT(${donation.id}) AS INTEGER)`,
     })
     .from(donation)
@@ -126,7 +126,7 @@ export async function retrieveDailyDonationAggregateFromDatabaseByOrganization(
   const result = await db
     .select({
       date: sql<string>`DATE(datetime(${donation.createdAt}, 'unixepoch'))`.as("date"),
-      amount: sum(donation.amount),
+      amount: sum(donation.netAmount),
       count: sql<number>`CAST(COUNT(${donation.id}) AS INTEGER)`.as("count"),
     })
     .from(donation)
@@ -178,7 +178,7 @@ export async function retrieveCampaignDonationStatsFromDatabaseByOrganization(
       campaignStatus: campaign.status,
       goalAmount: campaign.amount,
       currency: campaign.currency,
-      totalRaised: sum(donation.amount),
+      totalRaised: sum(donation.netAmount),
       donationCount: sql<number>`CAST(COUNT(${donation.id}) AS INTEGER)`,
     })
     .from(campaign)
@@ -192,7 +192,7 @@ export async function retrieveCampaignDonationStatsFromDatabaseByOrganization(
       campaign.amount,
       campaign.currency,
     )
-    .orderBy(desc(sql`${sum(donation.amount)}`))
+    .orderBy(desc(sql`${sum(donation.netAmount)}`))
     .limit(limit)
     .offset(offset);
 
