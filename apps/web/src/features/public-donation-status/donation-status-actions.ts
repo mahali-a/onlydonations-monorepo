@@ -26,7 +26,6 @@ export const postDonationMessage = createServerFn({ method: "POST" })
     const { donationId, message } = data;
 
     try {
-      // Check if donation exists and if message already posted
       const donation = await retrieveDonationFromDatabaseByIdWithCampaign(donationId);
 
       if (!donation) {
@@ -34,13 +33,11 @@ export const postDonationMessage = createServerFn({ method: "POST" })
         throw new Response("Donation not found", { status: 404 });
       }
 
-      // Prevent duplicate messages
       if (donation.donorMessage) {
         donationMessageLogger.warn("donation.message.already_exists", { donationId });
         throw new Response("Message already posted for this donation", { status: 409 });
       }
 
-      // Save message with PENDING status
       const updated = await updateDonationMessageInDatabaseById(donationId, message);
 
       if (!updated) {

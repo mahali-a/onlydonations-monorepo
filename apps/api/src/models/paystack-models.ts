@@ -158,7 +158,7 @@ export async function retrieveDonationWithCampaignFromDatabaseById(donationId: s
       campaignId: donation.campaignId,
       donorEmail: donation.donorEmail,
       donorName: donation.donorName,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       campaignTitle: campaign.title,
       campaignSlug: campaign.slug,

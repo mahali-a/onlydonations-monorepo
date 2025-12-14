@@ -453,7 +453,7 @@ export async function retrieveRecentDonationsFromDatabaseByCampaign(
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       donorName: donation.donorName,
       donorEmail: donation.donorEmail,
@@ -482,7 +482,7 @@ export async function retrieveDonationsWithMessagesFromDatabaseByCampaign(
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       donorName: donation.donorName,
       donorEmail: donation.donorEmail,

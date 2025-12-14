@@ -93,7 +93,6 @@ export const createWithdrawalRequestOnServer = createServerFn({ method: "POST" }
       );
     }
 
-    // Create transaction record
     const reference = `wdl_${nanoid(16)}`;
     const transaction = await savePaymentTransactionToDatabase({
       organizationId,

@@ -94,7 +94,7 @@ export async function retrieveRecentDonationsByCampaign(campaignId: string, limi
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       donorName: donation.donorName,
       donorMessage: donation.donorMessage,
@@ -124,12 +124,12 @@ export async function retrieveDonationsByCampaignWithPagination(
   const db = getDb();
   const offset = (page - 1) * limit;
 
-  const orderBy = sort === "newest" ? desc(donation.createdAt) : desc(donation.amount);
+  const orderBy = sort === "newest" ? desc(donation.createdAt) : desc(donation.netAmount);
 
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       donorName: donation.donorName,
       donorMessage: donation.donorMessage,
@@ -160,7 +160,7 @@ export async function retrieveDonationsWithMessagesByCampaign(
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       donorName: donation.donorName,
       donorMessage: donation.donorMessage,

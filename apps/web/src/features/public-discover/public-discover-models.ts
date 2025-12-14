@@ -215,13 +215,9 @@ export async function retrieveCategoryByNameFromDatabase(categoryName: string) {
  * @returns Object with trending campaigns and categories with their campaigns
  */
 export async function retrieveDiscoverPageDataFromDatabase(campaignsPerCategory: number = 3) {
-  // Get categories with campaigns
   const categoriesWithCounts = await retrieveCategoriesWithCampaignCountsFromDatabase();
-
-  // Get trending campaigns
   const trending = await retrieveTrendingCampaignsFromDatabase(campaignsPerCategory);
 
-  // Get campaigns for each category
   const categoriesWithCampaigns = await Promise.all(
     categoriesWithCounts.map(async (cat) => {
       const campaigns = await retrieveCampaignsByCategoryIdFromDatabase(
@@ -236,7 +232,6 @@ export async function retrieveDiscoverPageDataFromDatabase(campaignsPerCategory:
     }),
   );
 
-  // Filter out categories with no campaigns
   const filteredCategories = categoriesWithCampaigns.filter((cat) => cat.campaigns.length > 0);
 
   return {

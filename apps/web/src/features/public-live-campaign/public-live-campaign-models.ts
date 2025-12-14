@@ -73,7 +73,7 @@ export async function retrieveRecentLiveDonations(campaignId: string, limit: num
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       donorName: donation.donorName,
       isAnonymous: donation.isAnonymous,

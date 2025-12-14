@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/tanstackstart-react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
@@ -44,37 +45,28 @@ export function useRealtimeCampaign({
       reconnectInterval: 3000,
       reconnectAttempts: 10,
       share: true,
-      onOpen: () => console.log("[Realtime] Connected", { campaignId }),
-      onClose: () => console.log("[Realtime] Disconnected", { campaignId }),
-      onError: (error) => console.error("[Realtime] Error", error),
     },
     enabled,
   );
 
   const handleMessage = useCallback(
     (message: RealtimeMessage) => {
-      console.log("[Realtime] Message received:", message);
-
       switch (message.type) {
         case "DONATION_SUCCESS": {
-          // If this is for the current user's donation, trigger callback
           if (donationId && message.donationId === donationId) {
             onDonationSuccess?.(message.donationId);
           }
 
-          // Invalidate donation status query
           queryClient.invalidateQueries({
             queryKey: ["donation-status", message.donationId],
           });
 
-          // Invalidate campaign queries
           if (slug) {
             queryClient.invalidateQueries({
               queryKey: ["live-campaign", slug],
             });
           }
 
-          // Invalidate live donations feed
           queryClient.invalidateQueries({
             queryKey: ["live-donations", message.campaignId],
           });
@@ -83,7 +75,6 @@ export function useRealtimeCampaign({
         }
 
         case "CAMPAIGN_UPDATED": {
-          // Invalidate all campaign-related queries
           if (slug) {
             queryClient.invalidateQueries({
               queryKey: ["live-campaign", slug],
@@ -96,9 +87,6 @@ export function useRealtimeCampaign({
 
           break;
         }
-
-        default:
-          console.warn("[Realtime] Unknown message type:", message);
       }
     },
     [queryClient, slug, donationId, onDonationSuccess],
@@ -110,7 +98,7 @@ export function useRealtimeCampaign({
         const message = JSON.parse(lastMessage.data) as RealtimeMessage;
         handleMessage(message);
       } catch (error) {
-        console.error("[Realtime] Failed to parse message:", error);
+        Sentry.captureException(error, { extra: { data: lastMessage.data } });
       }
     }
   }, [lastMessage, handleMessage]);

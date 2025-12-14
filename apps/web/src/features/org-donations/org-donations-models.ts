@@ -11,6 +11,7 @@ import {
   lte,
   or,
   type SQL,
+  sql,
   sum,
 } from "@repo/core/drizzle";
 import { campaign, donation } from "@repo/core/drizzle/schema";
@@ -99,7 +100,7 @@ export const donationModel = {
 
     const orderByColumn =
       sortBy === "amount"
-        ? donation.amount
+        ? donation.netAmount
         : sortBy === "donorName"
           ? donation.donorName
           : sortBy === "campaignTitle"
@@ -114,7 +115,7 @@ export const donationModel = {
         donorName: donation.donorName,
         donorEmail: donation.donorEmail,
         isAnonymous: donation.isAnonymous,
-        amount: donation.amount,
+        amount: sql<number>`COALESCE(${donation.netAmount}, ${donation.amount})`,
         currency: donation.currency,
         status: donation.status,
         campaignTitle: campaign.title,
@@ -350,7 +351,7 @@ export const donationModel = {
         donorName: donation.donorName,
         donorEmail: donation.donorEmail,
         isAnonymous: donation.isAnonymous,
-        amount: donation.amount,
+        amount: sql<number>`COALESCE(${donation.netAmount}, ${donation.amount})`,
         currency: donation.currency,
         status: donation.status,
         campaignTitle: campaign.title,
@@ -373,7 +374,7 @@ export const donationModel = {
       .select({
         id: donation.id,
         campaignId: donation.campaignId,
-        amount: donation.amount,
+        amount: sql<number>`COALESCE(${donation.netAmount}, ${donation.amount})`,
         currency: donation.currency,
         reference: donation.reference,
         status: donation.status,

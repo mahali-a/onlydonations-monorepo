@@ -82,7 +82,6 @@ export function DonationStatus({ data }: DonationStatusProps) {
       url: shareableUrl,
     };
 
-    // Check if Web Share API is available
     if (navigator.share) {
       try {
         await navigator.share(shareData);

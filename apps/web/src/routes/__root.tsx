@@ -189,7 +189,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     document.documentElement.classList.add('light');
                     document.documentElement.classList.remove('dark');
                   }
-                } catch (e) {}
+                } catch {}
               })();
             `,
           }}

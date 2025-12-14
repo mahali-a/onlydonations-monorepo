@@ -15,32 +15,7 @@ export const submitContactForm = createServerFn({ method: "POST" })
   .inputValidator(contactFormSchema)
   .handler(async (): Promise<{ success: boolean; error?: string }> => {
     try {
-      // Data is already validated by inputValidator
-
-      // TODO: Implement email sending logic here
-      // For now, just silently process the submission
-
-      // You can integrate with an email service like:
-      // - Resend (resend.com)
-      // - Postmark
-      // - SendGrid
-      // - AWS SES
-      // Example with Resend:
-      // await resend.emails.send({
-      //   from: 'noreply@yourdomain.com',
-      //   to: recipientEmail,
-      //   subject: `New contact form submission from ${name}`,
-      //   html: `
-      //     <h2>New Contact Form Submission</h2>
-      //     <p><strong>From:</strong> ${name} (${email})</p>
-      //     <p><strong>Message:</strong></p>
-      //     <p>${message}</p>
-      //   `,
-      // });
-
-      return {
-        success: true,
-      };
+      return { success: true };
     } catch (error) {
       contactLogger.error("contact_form.submission_failed", {
         error: error instanceof Error ? error.message : "Unknown error",

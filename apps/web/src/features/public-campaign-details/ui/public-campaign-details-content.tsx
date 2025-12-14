@@ -357,7 +357,7 @@ export function CampaignDetailContent({
             <div className="flex-1">
               <div className="text-lg font-bold">{raisedAmount}</div>
               <div className="text-xs text-muted-foreground">
-                {hasDonations ? `${donationCount} donations` : "Be the first to donate"}
+                {hasDonations ? `raised of ${goalAmount} goal` : "Be the first to donate"}
               </div>
             </div>
             <Button

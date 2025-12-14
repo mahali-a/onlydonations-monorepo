@@ -114,7 +114,7 @@ export async function retrieveDonationFromDatabaseByIdWithCampaign(donationId: s
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       status: donation.status,
       donorName: donation.donorName,
@@ -197,7 +197,7 @@ export async function retrieveDonationWithCampaignFromDatabaseById(donationId: s
   const result = await db
     .select({
       id: donation.id,
-      amount: donation.amount,
+      amount: donation.netAmount,
       currency: donation.currency,
       status: donation.status,
       donorName: donation.donorName,

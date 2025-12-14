@@ -9,7 +9,6 @@ export function RefreshRouteOnSave({ cmsApiUrl }: { cmsApiUrl: string }) {
   return (
     <PayloadLivePreview
       refresh={() => {
-        console.log("invalidate");
         queryClient.invalidateQueries({ queryKey: ["cms-page"] });
         router.invalidate();
       }}
